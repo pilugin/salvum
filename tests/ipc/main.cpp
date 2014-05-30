@@ -84,7 +84,9 @@ int main(int argc, char **argv)
 
         qDebug("Start reader");
         Rd reader;
+	reader.reg();
         reader.read();
+	reader.unreg();
     }
 
     
