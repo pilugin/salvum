@@ -1,6 +1,8 @@
 #include "broadcast.h"
 #include <QByteArray>
+#include "if/ilog.h"
 
+using namespace Log;
 using namespace IPC;
 using namespace RdWr;
 
@@ -35,7 +37,8 @@ void Broadcast::write()
 
 bool Broadcast::prepare(BroadcastMessage &message)
 {
-    if ( message.rewind != IFetch::InvalidClusterNo) {
+    if ( message.rewind != IFetch::InvalidClusterNo && sharedMem().regCount == 1) {
+        Msg("BCAST.rewind(%08X)\n", message.rewind );
         mFetch->rewind( message.rewind );
         message.rewind = IFetch::InvalidClusterNo;
     }
