@@ -11,7 +11,7 @@ typedef Array<char, 4096> ClusterData; //< TBD: parameterize 4096 somehow
 
 struct Cluster 
 {
-    int         clusterNo;
+    int         clusterNo;  
     ClusterData cluster; 
 };
 
@@ -27,6 +27,7 @@ enum BroadcastStatus
 struct BroadcastMessage
 {
     BroadcastStatus status;
+    int             rewind;
     Clusters        clusters;
 };
 
@@ -40,7 +41,7 @@ struct Feedback
     bool            feedbackNeeded;
     int             completeCount; //< this prop is by recv when he finished the feedback
     SkipClusters    skip;
-    RewindClusters  rewind;
+//    RewindClusters  rewind;
 };
 
 enum FeedbackSync {

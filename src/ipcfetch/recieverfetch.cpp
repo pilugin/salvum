@@ -28,6 +28,12 @@ bool RecieverFetch::rewind(int clusterNo, int)
     return true;
 }
 
+void RecieverFetch::duringReg()
+{
+    if (sharedMem().regCount == 1 && sharedData().rewind == IFetch::InvalidClusterNo) 
+        sharedData().rewind = mWaitForCluster;
+}
+
 void RecieverFetch::fastfwd()
 {
 }

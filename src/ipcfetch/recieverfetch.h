@@ -29,6 +29,7 @@ public:
 
 protected:
     bool process(const BroadcastMessage &msg);
+    void duringReg();
 
 private:
     SharedFeedback                  *mFeedback;

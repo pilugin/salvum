@@ -20,14 +20,20 @@ public:
     void unreg();
     
 protected:
+    virtual void duringReg() {}
     virtual bool process(const T &data) =0;
+    virtual void duringUnreg() {}
+
+    typedef typename ShMemGen<T>::SharedData ShMem;
+    const ShMem &sharedMem() const { return *mMem; }
+    T &sharedData() { return mMem->data; }
+    const T &sharedData() const { return mMem->data; }
+
 
 private:
     Reader(); //< disable
     Reader(const Reader<T> &); //< disable
     Reader<T> &operator=(const Reader<T> &); //< disable
-
-    typedef typename ShMemGen<T>::SharedData ShMem;
 
     ShMem *mMem;
 };

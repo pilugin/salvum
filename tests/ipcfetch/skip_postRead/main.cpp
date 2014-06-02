@@ -4,6 +4,8 @@
 #include <QtDebug>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 class TestFetch : public IFetch
 {
@@ -50,6 +52,9 @@ public:
 
 int main(int argc, char **argv)
 {
+    const int forkCount = 4;
+    const int procCount = 2 << (forkCount -1);
+
     const char *shname = "/yobo";
     const char *shnamefb = "/yobo_fb";
     QVector<int> v;
@@ -71,17 +76,25 @@ int main(int argc, char **argv)
         }
 
         qDebug("BC - OK");
-        bc.startTest(16);
+
+
+        bc.startTest(procCount);
 
         qDebug()<<"Test finished:";
         qDebug()<<"skipped.size()"<<f.skipped.size();
 
+        for (int i=0; i<procCount; ++i) {
+            int status;
+            int pid = wait(&status);
+//            qDebug() << "Child exited: "<<pid<<status;
+
+        }
+
+
     } else {
         sleep(1);
-        fork();
-        fork();
-        fork();
-        fork();
+        for (int i=0; i<forkCount; ++i)
+            fork();
         
         IPCFetch::RecieverFetch rf(shname, shnamefb);
         if (! rf.isValid() ) {

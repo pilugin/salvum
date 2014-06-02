@@ -25,6 +25,8 @@ protected:
 
     typedef typename ShMemGen<T>::SharedData ShMem;
     const ShMem &sharedMem() const { return *mMem; }
+    T &sharedData() { return mMem->data; }
+    const T &sharedData() const { return mMem->data; }
 private:
     Writer(); //< disable
     Writer(const Writer<T> &); //< disable

@@ -29,6 +29,7 @@ void Reader<T>::reg()
     m.mutex<REG>().lock();
     ++ mMem->regCount;
 //    qDebug()<<"REGISTERED"<<mMem->regCount;
+    duringReg();
     m.mutex<REG>().unlock();
     c.cond<WR>().signal();
 }
@@ -68,11 +69,14 @@ void Reader<T>::unreg()
     // unregister reader
     m.mutex<REG>().lock();
     -- mMem->regCount;
+    duringUnreg();
     m.mutex<REG>().unlock();
     c.cond<WR>().signal();
 
 //    qDebug("READER unregistered");
 
 }
+
+
 
 } // ns RdWr

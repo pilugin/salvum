@@ -12,6 +12,8 @@ Broadcast::Broadcast(const char *shmemName, const char *shmemNameFeedback, IFetc
 , mFeedback(nullptr)
 , mFetch(fetch)
 {
+    sharedData().rewind = IFetch::InvalidClusterNo;
+
     mFeedback = SharedFeedback::create( shmemNameFeedback );
     mFeedback->completeCount = 0;
     mFeedback->feedbackNeeded = false;
@@ -33,6 +35,11 @@ void Broadcast::write()
 
 bool Broadcast::prepare(BroadcastMessage &message)
 {
+    if ( message.rewind != IFetch::InvalidClusterNo) {
+        mFetch->rewind( message.rewind );
+        message.rewind = IFetch::InvalidClusterNo;
+    }
+
     if ( mFetch->atEnd() ) {
         message.status = AtEnd;
         message.clusters.clear();
