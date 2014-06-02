@@ -30,16 +30,21 @@ public:
 protected:
     bool process(const BroadcastMessage &msg);
     void duringReg();
+    void duringUnreg();
 
 private:
     SharedFeedback                  *mFeedback;
     int                             mWaitForCluster; //< set by rewind()
+    bool                            mRegistered;
+    bool                            mAtEnd;
+    bool                            mExiting;
 
     QQueue<QPair<int, QByteArray>>  mRecvClusters;
 
-    class RecvThread                *mRecvThread;
-    QMutex                          mInternMtx;
-    QWaitCondition                  nInternCnd;
+    class RecvThread;
+    RecvThread                      *mRecvThread;
+    mutable QMutex                  mInternMtx;
+    mutable QWaitCondition          mInternCnd;
     
 };
 
