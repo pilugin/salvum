@@ -21,6 +21,7 @@ HEADERS += \
     util/ipc.h \
     util/private/ipc_private.h \
     filelogger.h \
+    simplelogger.h \
     defaultsettings.h \
     decodectrl.h \
     devicemapfetch.h \
@@ -34,6 +35,7 @@ SOURCES += \
     jpeg/picojpegdecodr.cpp \
 	jpeg/imagecursor.cpp \
     filelogger.cpp \
+    simplelogger.cpp \
     defaultsettings.cpp \
     rangefileresults.cpp \
     decodectrl.cpp \
