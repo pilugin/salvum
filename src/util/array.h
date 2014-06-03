@@ -57,7 +57,7 @@ public:
     const T *data() const { return mData; }
     void set(const T *data, int size)
     {
-        assert(size < N);
+        assert(size <= N);
         mSize = size;
         memcpy(mData, data, size * sizeof(T) );
     }

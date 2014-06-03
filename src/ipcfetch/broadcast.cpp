@@ -23,6 +23,7 @@ Broadcast::Broadcast(const char *shmemName, const char *shmemNameFeedback, IFetc
 
 Broadcast::~Broadcast()
 {
+    delete mFetch;
     if (mFeedback)
         SharedFeedback::destroy(mFeedback, mFeedbackName.c_str());
 }
@@ -44,6 +45,8 @@ bool Broadcast::prepare(BroadcastMessage &message)
     }
 
     if ( mFetch->atEnd() ) {
+        Msg("BCAST atEnd\n");
+
         message.status = AtEnd;
         message.clusters.clear();
 

@@ -18,7 +18,7 @@ public:
     RecieverFetch(const char *shmemName, const char *shmemFeedbackName);
     ~RecieverFetch();
 
-    bool rewind(int clusterNo, int clusterNoEnd);
+    bool rewind(int clusterNo, int clusterNoEnd =IFetch::InvalidClusterNo);
     void skip(const QVector<int> &clusters);
     void fetch(int &clusterNo, QByteArray &cluster);
     void fastfwd();

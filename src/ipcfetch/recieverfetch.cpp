@@ -139,9 +139,9 @@ void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
 
     QMutexLocker l( &mInternMtx );
 
-    if (mRecvClusters.size() <= Clusters::capacity()/4)
+    if (mRecvClusters.size() < Clusters::capacity()/4)
         mInternCnd.wakeOne();
-    else while (mRecvClusters.size() == 0)
+    while (mRecvClusters.size() == 0)
         mInternCnd.wait( &mInternMtx ); 
 
     clusterNo = mRecvClusters.head().first;

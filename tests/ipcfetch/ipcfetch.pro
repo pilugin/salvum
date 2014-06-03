@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = skip_postRead
+SUBDIRS = skip_postRead fetch
