@@ -39,13 +39,13 @@ void Broadcast::write()
 bool Broadcast::prepare(BroadcastMessage &message)
 {
     if ( message.rewind != IFetch::InvalidClusterNo && sharedMem().regCount == 1) {
-        Msg("BCAST.rewind(%08X)\n", message.rewind );
+        Msg("BCAST:prepare rewind(%08X)\n", message.rewind );
         mFetch->rewind( message.rewind );
         message.rewind = IFetch::InvalidClusterNo;
     }
 
     if ( mFetch->atEnd() ) {
-        Msg("BCAST atEnd\n");
+        Msg("BCAST:prepare atEnd\n");
 
         message.status = AtEnd;
         message.clusters.clear();
@@ -68,6 +68,7 @@ bool Broadcast::prepare(BroadcastMessage &message)
 
         message.status = (message.clusters.size() > 0) ? InProgress : AtEnd;
 
+        Msg("BCAST:prepare status=%s\n", message.status == InProgress ? "InProgress" : "AtEnd" );
     }
 
     return true;
@@ -78,6 +79,7 @@ void Broadcast::postRead(const BroadcastMessage &message)
     static const int feedbackTimeout = 2*1000;
 
     if (message.status == AtEnd) {
+        Msg("BCAST:postRead[AtEnd] waiting for feedback: %d\n", sharedMem().regCount );
 
         // check feedback here
         // lock until completeCount == regCount -OR- timeout
@@ -96,10 +98,13 @@ void Broadcast::postRead(const BroadcastMessage &message)
             memcpy( tmpvector.data(), mFeedback->skip.data(), sizeof(int) * mFeedback->skip.size() );
             mFetch->skip( tmpvector );
             mFeedback->skip.clear();
+            Msg("BCAST:postRead[AtEnd] skip\n");
         }
         mFeedback->completeCount = 0;        
         mFeedback->feedbackNeeded = false;
         m.mutex().unlock();        
+
+        Msg("BCAST:postRead[AtEnd] rewind+fastfwd\n");
 
         mFetch->rewind(0);
         mFetch->fastfwd();

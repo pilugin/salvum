@@ -7,8 +7,6 @@ using namespace Log;
 using namespace IPC;
 using namespace RdWr;
 
-
-
 namespace IPCFetch {
 
 class RecieverFetch::RecvThread : public QThread
@@ -70,6 +68,8 @@ bool RecieverFetch::rewind(int clusterNo, int)
     mWaitForCluster = clusterNo;
     mAtEnd = false;
 
+    Msg("\nRECV:rewind[%08X]", clusterNo);
+
     if (!mRegistered) {
         mRecvThread = new RecvThread(*this);
         mRecvThread->start();
@@ -115,6 +115,8 @@ void RecieverFetch::skip(const QVector<int> &clusters)
             mFeedback->skip.push_back(clusters[i]);
             
         }
+        Msg("\nRECV:skip feedback completed\n");
+
         ++mFeedback->completeCount;
         c.cond<BCAST>().signal();
     }
@@ -130,7 +132,9 @@ bool RecieverFetch::atEnd() const
 
 void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
 {
+    Msg("\n");
     if (atEnd()) {
+        Msg("[AtEnd]");
         clusterNo = IFetch::InvalidClusterNo;
         cluster.clear();
         return;
@@ -139,10 +143,14 @@ void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
 
     QMutexLocker l( &mInternMtx );
 
-    if (mRecvClusters.size() < Clusters::capacity()/4)
+    if (mRecvClusters.size() < Clusters::capacity()/4) {
+        Msg("W");
         mInternCnd.wakeOne();
-    while (mRecvClusters.size() == 0)
+    }
+    while (mRecvClusters.size() == 0) {
+        Msg("z");
         mInternCnd.wait( &mInternMtx ); 
+    }
 
     clusterNo = mRecvClusters.head().first;
     cluster = mRecvClusters.head().second;
@@ -151,12 +159,15 @@ void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
     if (clusterNo == IFetch::InvalidClusterNo) {
         cluster.clear();
         mAtEnd = true;
-    }
+        Msg("[AtEnd]");
+    } else 
+        Msg("[%08X]", clusterNo);
 }
 
 bool RecieverFetch::process(const BroadcastMessage &message)
 {
     QMutexLocker l( &mInternMtx );
+    Msg("\n------ RECV:process ");
 
     if (mExiting)
         return false;
@@ -168,18 +179,21 @@ bool RecieverFetch::process(const BroadcastMessage &message)
     // process
     if (message.status == AtEnd) {     
         mRecvClusters.enqueue( qMakePair((int)IFetch::InvalidClusterNo, QByteArray() ) );
+        Msg("AtEnd");
         
     } else {
 
         int i=0;
 
         // if rewind was called, skip bad clusters
-        if (mWaitForCluster != IFetch::InvalidClusterNo) 
+        if (mWaitForCluster != IFetch::InvalidClusterNo) {
+            Msg("skip until %08X", mWaitForCluster);
             for (; i<message.clusters.size(); ++i) 
                 if (message.clusters[i].clusterNo == mWaitForCluster) {
                     mWaitForCluster = IFetch::InvalidClusterNo;
                     break;
                 }
+        }
 
         for (; i<message.clusters.size(); ++i) {
     
