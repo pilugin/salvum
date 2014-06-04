@@ -46,7 +46,7 @@ struct Feedback
 
 enum FeedbackSync {
     BCAST = 0,  //< SharedFeedback broadcast condvar
-    RECV = 0    //< SharedFeedback reciever condvar
+    RECV = 1    //< SharedFeedback reciever condvar
 };
 
 typedef IPC::SynchroMem<Feedback, 1, 2> SharedFeedback;
