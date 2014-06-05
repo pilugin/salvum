@@ -17,8 +17,6 @@ Broadcast::Broadcast(const char *shmemName, const char *shmemNameFeedback, IFetc
     sharedData().rewind = IFetch::InvalidClusterNo;
 
     mFeedback = SharedFeedback::create( shmemNameFeedback );
-    mFeedback->completeCount = 0;
-    mFeedback->feedbackNeeded = false;
 }
 
 Broadcast::~Broadcast()
@@ -74,38 +72,41 @@ bool Broadcast::prepare(BroadcastMessage &message)
     return true;
 }
 
+
+
 void Broadcast::postRead(const BroadcastMessage &message)
 {
-    static const int feedbackTimeout = 2*1000;
+    static const int feedbackTimeout = 3*1000;
+
+    // check feedback here
+    Mutexes<1> &m   = mFeedback->mutexes();
+    Conds<2> &c     = mFeedback->conds();
+
+    QVector<int> tmpvector;
+    bool wasFull = false;
+
+    m.mutex().lock();
+    while ( ! mFeedback->skip.empty() ) {       
+        wasFull = mFeedback->skip.full();   
+        tmpvector.resize( mFeedback->skip.size() );
+        memcpy( tmpvector.data(), mFeedback->skip.data(), sizeof(int) * mFeedback->skip.size() );
+        mFetch->skip( tmpvector );
+        mFeedback->skip.clear();
+
+        if (! wasFull)
+            break;
+
+        c.cond<RECV>().broadcast();
+        while ( mFeedback->skip.empty() )
+            if ( ! c.cond<BCAST>().timedWait(m.mutex(), feedbackTimeout) ) //<timeout 
+                break;
+    }
+
+    m.mutex().unlock();
 
     if (message.status == AtEnd) {
-        Msg("BCAST:postRead[AtEnd] waiting for feedback: %d\n", sharedMem().regCount );
-
-        // check feedback here
-        // lock until completeCount == regCount -OR- timeout
-        Mutexes<1> &m   = mFeedback->mutexes();
-        Conds<2> &c     = mFeedback->conds();
-
-        m.mutex().lock();
-        mFeedback->feedbackNeeded = true;
-        while ( mFeedback->completeCount < sharedMem().regCount ) {
-            c.cond<RECV>().broadcast();
-            if ( ! c.cond<BCAST>().timedWait(m.mutex(), feedbackTimeout) ) //< timeout
-                break;
-
-            // process feedback partly
-            QVector<int> tmpvector( mFeedback->skip.size() );
-            memcpy( tmpvector.data(), mFeedback->skip.data(), sizeof(int) * mFeedback->skip.size() );
-            mFetch->skip( tmpvector );
-            mFeedback->skip.clear();
-            Msg("BCAST:postRead[AtEnd] skip\n");
-        }
-        mFeedback->completeCount = 0;        
-        mFeedback->feedbackNeeded = false;
-        m.mutex().unlock();        
 
         Msg("BCAST:postRead[AtEnd] rewind+fastfwd\n");
-
         mFetch->rewind(0);
         mFetch->fastfwd();
     }

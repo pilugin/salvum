@@ -38,10 +38,7 @@ typedef Array< std::pair<int, int>, 20> RewindClusters;
 
 struct Feedback
 {
-    bool            feedbackNeeded;
-    int             completeCount; //< this prop is by recv when he finished the feedback
     SkipClusters    skip;
-//    RewindClusters  rewind;
 };
 
 enum FeedbackSync {

@@ -1,5 +1,8 @@
 #include <ipcfetch/broadcast.h>
-#include <ipcfetch/recieverfetch.h>
+//#include <ipcfetch/recieverfetch.h>
+#include <ipcfetch/feedbackresults.h>
+
+#include <simplelogger.h>
 #include <QtCore>
 #include <QtDebug>
 #include <unistd.h>
@@ -25,28 +28,11 @@ public:
 
     void startTest(int reg)
     {
-        using namespace IPC;
-        using namespace IPCFetch;
-        using namespace RdWr;
-
-        const Broadcast::ShMem &cshm = sharedMem();
-        Broadcast::ShMem &shm = const_cast<Broadcast::ShMem &>(cshm);
-
-        Mutexes<2> &m = shm.mutexes();
-        Conds<2> &c =   shm.conds();
-
-        m.mutex<REG>().lock();
-        while (sharedMem().regCount < reg)
-            c.cond<WR>().wait(  m.mutex<REG>() );
-
-        qDebug("BC all registered");
-
+        qDebug()<<"StartTest  :"<<reg;
+        
         IPCFetch::BroadcastMessage bm;
         bm.status = IPCFetch::AtEnd;
-    
         postRead(bm);
-
-        m.mutex<REG>().unlock();
     }
 };
 
@@ -55,11 +41,11 @@ int main(int argc, char **argv)
     const int forkCount = 4;
     const int procCount = 2 << (forkCount -1);
 
+    SimpleLogger l;
+
     const char *shname = "/yobo";
     const char *shnamefb = "/yobo_fb";
     QVector<int> v;
-    for (int i=0; i<10000; ++i)
-        v.push_back(i);
 
     int rv = fork();
     if (rv == -1) {
@@ -68,8 +54,8 @@ int main(int argc, char **argv)
     }
 
     if (rv > 0) {
-        TestFetch f;
-        TestBroadcast bc(shname, shnamefb, &f);
+        TestFetch *f = new TestFetch;
+        TestBroadcast bc(shname, shnamefb, f);
         if (! bc.isValid()) {
             qDebug("Invalid BC");
             return -2;
@@ -77,11 +63,11 @@ int main(int argc, char **argv)
 
         qDebug("BC - OK");
 
-
+        sleep(1);
         bc.startTest(procCount);
 
         qDebug()<<"Test finished:";
-        qDebug()<<"skipped.size()"<<f.skipped.size();
+        qDebug()<<"skipped.size()"<<f->skipped.size();
 
         for (int i=0; i<procCount; ++i) {
             int status;
@@ -90,28 +76,26 @@ int main(int argc, char **argv)
 
         }
 
-
     } else {
-        sleep(1);
         for (int i=0; i<forkCount; ++i)
             fork();
+
+        for (int i=0; i<10000; ++i)
+            v.push_back(i);
         
-        IPCFetch::RecieverFetch rf(shname, shnamefb);
-        if (! rf.isValid() ) {
-            qDebug("Invalid RF");
+        IPCFetch::FeedbackResults fr(shnamefb);
+        if (!fr.isValid()) {
+            qDebug("Invalid FR");
             return -3;
-        } 
-        qDebug("RF - OK");
-        
-        rf.reg();
+        }
 
-        sleep(1);
+        qDebug("FR - OK");       
+        fr.restart(QString("%1").arg(getpid()));
 
-        qDebug("RF - start skip");
-        rf.skip(v);
-
-        rf.unreg();
-
+        qDebug("FR - start skip");   
+        fr.addClusters(v);
+        qDebug("FR - done %d", getpid());
+        fr.finilize(true);
     }
 
 

@@ -15,7 +15,7 @@ namespace IPCFetch {
 class RecieverFetch : public IFetch, public RdWr::Reader<BroadcastMessage>
 {
 public:
-    RecieverFetch(const char *shmemName, const char *shmemFeedbackName);
+    RecieverFetch(const char *shmemName);
     ~RecieverFetch();
 
     bool rewind(int clusterNo, int clusterNoEnd =IFetch::InvalidClusterNo);

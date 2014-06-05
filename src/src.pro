@@ -28,7 +28,8 @@ HEADERS += \
     rangefileresults.h \
     ipcfetch/common.h \
     ipcfetch/broadcast.h \
-    ipcfetch/recieverfetch.h
+    ipcfetch/recieverfetch.h \
+    ipcfetch/feedbackresults.h
 
 SOURCES += \
 	jpeg/advancedchecker.cpp \
@@ -42,5 +43,6 @@ SOURCES += \
     devicemapfetch.cpp \
     util/private/ipc_private.cpp \
     ipcfetch/broadcast.cpp \
-    ipcfetch/recieverfetch.cpp
+    ipcfetch/recieverfetch.cpp \
+    ipcfetch/feedbackresults.cpp
 

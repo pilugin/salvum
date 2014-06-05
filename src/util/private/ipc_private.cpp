@@ -1,5 +1,7 @@
 #include "../ipc.h"
 #include <cerrno>
+#include <cstring>
+#include <QtDebug>
 
 namespace IPC {
 
@@ -23,12 +25,14 @@ void Mutex::fini()
 
 void Mutex::lock()
 {
-    pthread_mutex_lock( &mMtx );
+    if (int err = pthread_mutex_lock( &mMtx ))
+        qDebug()<<__FUNCTION__<<strerror(err);
 }
 
 void Mutex::unlock()
 {
-    pthread_mutex_unlock( &mMtx );
+    if (int err = pthread_mutex_unlock( &mMtx ))
+        qDebug()<<__FUNCTION__<<strerror(err);
 }
 
 //////
@@ -48,12 +52,14 @@ void Cond::init(bool pshared)
 
 void Cond::fini()
 {
-    pthread_cond_destroy( &mCnd );
+    if (int err = pthread_cond_destroy( &mCnd ))
+        qDebug()<<__FUNCTION__<<strerror(err);
 }
 
 void Cond::wait(Mutex &mtx)
 {
-    pthread_cond_wait(&mCnd, &mtx.mMtx);
+    if (int err = pthread_cond_wait(&mCnd, &mtx.mMtx))
+        qDebug()<<__FUNCTION__<<strerror(err);
 }
 
 bool Cond::timedWait(Mutex &mtx, int msec)
@@ -61,17 +67,22 @@ bool Cond::timedWait(Mutex &mtx, int msec)
     int sec = msec / 1000;
     int nsec = (msec % 1000) * 1000*1000;
     struct timespec ts { time(nullptr) + sec, nsec };
-    return pthread_cond_timedwait( &mCnd, &mtx.mMtx, &ts ) != ETIMEDOUT;
+    int err = pthread_cond_timedwait( &mCnd, &mtx.mMtx, &ts );
+    if (err != ETIMEDOUT && err != 0)
+        qDebug()<<__FUNCTION__<<strerror(err);
+    return err != ETIMEDOUT;
 }
 
 void Cond::signal()
 {
-    pthread_cond_signal(&mCnd);
+    if (int err = pthread_cond_signal(&mCnd))
+        qDebug()<<__FUNCTION__<<strerror(err);
 }
 
 void Cond::broadcast()
 {
-    pthread_cond_broadcast(&mCnd);
+    if (int err = pthread_cond_broadcast(&mCnd))
+        qDebug()<<__FUNCTION__<<strerror(err);
 }
 
 

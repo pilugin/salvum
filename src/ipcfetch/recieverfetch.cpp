@@ -27,7 +27,7 @@ protected:
     Reader<BroadcastMessage> &mReader;
 };
 
-RecieverFetch::RecieverFetch(const char *shmemName, const char *shmemFeedbackName)
+RecieverFetch::RecieverFetch(const char *shmemName)
 : Reader<BroadcastMessage>(shmemName)
 , mWaitForCluster(IFetch::InvalidClusterNo)
 , mRegistered(false)
@@ -35,14 +35,10 @@ RecieverFetch::RecieverFetch(const char *shmemName, const char *shmemFeedbackNam
 , mExiting(false)
 , mRecvThread(nullptr)
 {
-    mFeedback = SharedFeedback::attach(shmemFeedbackName);
 }
 
 RecieverFetch::~RecieverFetch()
 {
-    if (mFeedback)
-        SharedFeedback::detach(mFeedback);
-
     if (mRecvThread) {
         {
             QMutexLocker l( &mInternMtx );
@@ -100,6 +96,7 @@ void RecieverFetch::fastfwd()
 
 void RecieverFetch::skip(const QVector<int> &clusters)
 {
+/*
     Mutexes<1> &m   = mFeedback->mutexes();
     Conds<2> &c     = mFeedback->conds();
 
@@ -121,6 +118,7 @@ void RecieverFetch::skip(const QVector<int> &clusters)
         c.cond<BCAST>().signal();
     }
     m.mutex().unlock();
+*/
 }
 
 bool RecieverFetch::atEnd() const

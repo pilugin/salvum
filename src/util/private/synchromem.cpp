@@ -26,7 +26,7 @@ SynchroMem<T, NMutexes, NConds> *SynchroMem<T, NMutexes, NConds>::attach(const c
 
     int fd_sync = shm_open(name, O_RDWR, S_IRUSR|S_IWUSR);
     void* addr_sync = mmap(0, sizeof(SynchroMem<T, NMutexes, NConds>), PROT_READ|PROT_WRITE, MAP_SHARED, fd_sync, 0);
-    res = new (addr_sync) SynchroMem<T, NMutexes, NConds>;
+    res = static_cast<SynchroMem<T, NMutexes, NConds> *> (addr_sync);
 
     return res;    
 }

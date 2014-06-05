@@ -16,6 +16,7 @@ public:
     static int capacity() { return N; }
 
     int size() const { return mSize; }
+    bool empty() const { return mSize == 0; }
     bool full() const { return mSize == N; }
     void clear() { mSize=0; }
     void push_back(const T &item)
@@ -63,7 +64,7 @@ public:
     }
 
 private:
-    int mSize;
+    volatile int mSize;
     T mData[N];
 };
 
