@@ -76,7 +76,7 @@ bool Broadcast::prepare(BroadcastMessage &message)
 
 void Broadcast::postRead(const BroadcastMessage &message)
 {
-    static const int feedbackTimeout = 3*1000;
+    static const int feedbackTimeout = 1*1000;
 
     // check feedback here
     Mutexes<1> &m   = mFeedback->mutexes();

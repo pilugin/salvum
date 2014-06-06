@@ -65,6 +65,9 @@ int main(int argc, char **argv)
 
         sleep(1);
         bc.startTest(procCount);
+        bc.startTest(procCount);
+        bc.startTest(procCount);
+        bc.startTest(procCount);
 
         qDebug()<<"Test finished:";
         qDebug()<<"skipped.size()"<<f->skipped.size();

@@ -35,7 +35,7 @@ Writer<T>::~Writer()
 template <class T>
 void Writer<T>::write()
 {
-    static const int noregTimeout = 20*1000;
+    static const int noregTimeout = 20*60*1000;
 
     IPC::Mutexes<2> &m = mMem->mutexes(); //< workaround for gcc
     IPC::Conds<2> &c = mMem->conds();
