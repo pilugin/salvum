@@ -10,8 +10,10 @@ CONFIG += debug
 QMAKE_CXXFLAGS += -std=c++0x
 
 HEADERS = createtestmedia.h \
-             decoder.h
+             decoder.h \
+    testdecodectrl.h
 
 SOURCES = main.cpp \
              createtestmedia.cpp \
-             decoder.cpp
+             decoder.cpp \
+    testdecodectrl.cpp

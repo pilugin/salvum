@@ -5,7 +5,8 @@
 #include <QtDebug>
 #include <QtCore>
 
-Decoder::Decoder(int size) : mLast(0), mCount(0), mTotal(size), mFetch(0) 
+Decoder::Decoder()
+: mLast(0), mCount(0), mFetch(0)
 {
 }
 

@@ -6,11 +6,11 @@
 class Decoder : public IDecod
 {
 public:
-    Decoder(int size);
+    Decoder();
     bool restart(IFetch *f);
     bool decodeCluster();
     void revert() {}
-    bool done() const { return mCount == mTotal; }
+    bool done() const { return mLast == -1; }
     QVector<int> usedClusters() const { return mUsedClusters; }
 private:
     int first(const QByteArray &ar) const;
@@ -18,7 +18,6 @@ private:
 
     int mLast;
     int mCount;
-    int mTotal;
     IFetch *mFetch;
     QVector<int> mUsedClusters;
 };

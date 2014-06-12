@@ -16,6 +16,8 @@
 #include <string.h>
 
 #include "createtestmedia.h"
+#include "testdecodectrl.h"
+#include "decoder.h"
 
 using namespace IPC;
 using namespace IPCFetch;
@@ -29,14 +31,14 @@ int main(int argc, char **argv)
         return 0;
     }
 
-//    SimpleLogger l;
-    FileLogger l("log");
     DefaultSettings s;
 
     const char *shmem = "/yobo";
     const char *shmemfb = "/yobo_fb";
 
     if ( !strcmp(argv[1], "bcast") ) {
+
+        FileLogger l("log");
 
         l.setSession("BCAST");
 
@@ -56,30 +58,35 @@ int main(int argc, char **argv)
 
     } else {
 
+        SimpleLogger l;
+
+        if (argc != 3) {
+            qDebug()<<"Usage: " << argv[0] << " " << argv[1] << " <clusterNumberHex>";
+            return 0;
+        }
+        bool ok = false;
+        int clusterNo = QString(argv[2]).toInt(&ok, 16);
+        if (!ok) {
+            qDebug()<<"Failed to parse clusterNumber: "<<argv[2];
+            return 0;
+        }
+
         RecieverFetch f(shmem);
         FeedbackResults r(shmemfb, "log");
 
         qDebug()<<"RF created. valid:"<<f.isValid();
         qDebug()<<"FR created. valid:"<<r.isValid();
-        qDebug()<<"RF rewind";
-        f.rewind(9970);
 
-        int clusterNo;
-        QByteArray ba;
+        if (!f.isValid() || !r.isValid())
+            return false;
 
-        sleep(1);
-        qDebug()<<"RF about 2 fetch";
-        while (!f.atEnd()) {
-            f.fetch(clusterNo, ba);
-            qDebug()<<"RF fetch:"<<clusterNo;
-        }
+        Decoder d;
 
-        f.rewind(0);
-        qDebug()<<"RF about 2 fetch 2";
-        while (!f.atEnd()) {
-            f.fetch(clusterNo, ba);
-            qDebug()<<"RF fetch:"<<clusterNo;
-        }
+        TestDecodeCtrl ctrl;
+
+        bool res = ctrl.decode(&d, &f, &r, clusterNo);
+
+        qDebug()<<"Decode"<<res;
     }
     
 

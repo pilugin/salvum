@@ -19,8 +19,12 @@ public:
 
         *first = mCurrent;
         mCurrent += mTotal;
-        *last = mCurrent;
         ++mCurrentSize;
+        if (atEnd())
+            *last = -1;
+        else
+            *last = mCurrent;
+
         return res;
     }
     bool atEnd() const { return mCurrentSize >= mSize; }

@@ -18,7 +18,7 @@ public:
     void write();
     bool isValid() const;
 
-protected:
+protected:   
     bool prepare(BroadcastMessage &message);
     void postRead(const BroadcastMessage &message);
 private:
