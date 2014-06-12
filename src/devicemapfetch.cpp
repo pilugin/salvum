@@ -101,6 +101,10 @@ void DeviceMapFetch::skip(const QVector<int> &clusters)
 {
     static const char used = Get( UsedCluster ).toChar().toAscii();
 
+    Msg("\n[FSKIP: #=%d, (%08X, %08X)]", clusters.size(),
+                clusters.size() ? clusters.front() : -1,
+                clusters.size() ? clusters.back() : -1);
+
     for (int i=0; i<clusters.size(); ++i)
         if (clusters[i] < mMap.size())
             mMap[ clusters[i] ] = used;

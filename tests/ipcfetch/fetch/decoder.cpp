@@ -1,9 +1,12 @@
 #include "decoder.h"
 
 #include <if/ifetch.h>
+#include <if/ilog.h>
 
 #include <QtDebug>
 #include <QtCore>
+
+using namespace Log;
 
 Decoder::Decoder()
 : mLast(0), mCount(0), mFetch(0)
@@ -44,6 +47,7 @@ bool Decoder::decodeCluster()
     if (clusterNo == IFetch::InvalidClusterNo || (unsigned int)cluster.size()<sizeof(int))
         return false;
 
+    Msg("D:last=%d, cur=%d--%d", mLast, first(cluster), last(cluster));
     if (first(cluster) != mLast)
         return false;
     

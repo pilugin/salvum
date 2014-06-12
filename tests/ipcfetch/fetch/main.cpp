@@ -48,7 +48,7 @@ int main(int argc, char **argv)
         }
         qDebug("media/bitmap ready");
 
-        IFetch *f = new DeviceMapFetch(QString("MEDIA"), QString("BITMAP"));
+        IFetch *f = new DeviceMapFetch(QString("MEDIA"), QString("BITMAP"), true);
 
         Broadcast bs(shmem, shmemfb, f);
 
@@ -58,7 +58,8 @@ int main(int argc, char **argv)
 
     } else {
 
-        SimpleLogger l;
+        //SimpleLogger l;
+        FileLogger l("log");
 
         if (argc != 3) {
             qDebug()<<"Usage: " << argv[0] << " " << argv[1] << " <clusterNumberHex>";

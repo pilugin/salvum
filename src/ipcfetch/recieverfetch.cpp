@@ -19,8 +19,13 @@ public:
 protected:
     void run()
     {
+        qDebug("Bout 2 reg");
         mReader.reg();
+
+        qDebug("Bout 2 read");
         mReader.read();
+
+        qDebug("Bout 2 unreg");
         mReader.unreg();
     }
 
@@ -61,7 +66,6 @@ bool RecieverFetch::rewind(int clusterNo, int)
 {
     QMutexLocker l( &mInternMtx );
 
-    mWaitForCluster = clusterNo;
     mAtEnd = false;
 
     Msg("\nRECV:rewind[%08X]", clusterNo);
@@ -69,6 +73,7 @@ bool RecieverFetch::rewind(int clusterNo, int)
     if (!mRegistered) {
         mRecvThread = new RecvThread(*this);
         mRecvThread->start();
+        mWaitForCluster = clusterNo;
     }
     return true;
 }
@@ -94,7 +99,7 @@ void RecieverFetch::fastfwd()
 {
 }
 
-void RecieverFetch::skip(const QVector<int> &clusters)
+void RecieverFetch::skip(const QVector<int> &/*clusters*/)
 {
 /*
     Mutexes<1> &m   = mFeedback->mutexes();
@@ -142,7 +147,7 @@ void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
     QMutexLocker l( &mInternMtx );
 
     if (mRecvClusters.size() < Clusters::capacity()/4) {
-        Msg("W");
+        Msg("q");
         mInternCnd.wakeOne();
     }
     while (mRecvClusters.size() == 0) {
@@ -165,7 +170,7 @@ void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
 bool RecieverFetch::process(const BroadcastMessage &message)
 {
     QMutexLocker l( &mInternMtx );
-    Msg("\n------ RECV:process ");
+    Msg("\nthr------ RECV:process ");
 
     if (mExiting)
         return false;
@@ -177,7 +182,7 @@ bool RecieverFetch::process(const BroadcastMessage &message)
     // process
     if (message.status == AtEnd) {     
         mRecvClusters.enqueue( qMakePair((int)IFetch::InvalidClusterNo, QByteArray() ) );
-        Msg("AtEnd");
+        Msg("BCAST:AtEnd");
         
     } else {
 
@@ -206,7 +211,7 @@ bool RecieverFetch::process(const BroadcastMessage &message)
 
     mInternCnd.wakeOne();
 
-    return true;
+    return ! mExiting;
 }
 
 } // ns IPCFetch
