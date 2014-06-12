@@ -21,6 +21,7 @@ public:
 
     virtual bool atEnd() const =0;
 
+    virtual QByteArray bitmap() const { return QByteArray(); }
 };
 
 #endif // IFETCH_H

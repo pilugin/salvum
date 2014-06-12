@@ -18,6 +18,7 @@ public:
     void skip(const QVector<int> &clusters);
     void fastfwd();
     bool atEnd() const;
+    QByteArray bitmap() const { return mMap; }
 
 protected:
     QByteArray mMap;

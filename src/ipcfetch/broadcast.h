@@ -16,7 +16,7 @@ public:
     ~Broadcast();
     
     void write();
-    bool isValid() const;
+    bool isValid() const;       
 
 protected:   
     bool prepare(BroadcastMessage &message);
