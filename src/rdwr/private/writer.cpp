@@ -49,7 +49,6 @@ void Writer<T>::write()
             // wait for at least one reader to register
             m.mutex<REG>().lock();
             while ( mMem->regCount == 0) {
-//                qDebug()<<"WR::REGWAIT"<<mMem->regCount<<mMem->readCount;
                 if ( ! c.cond<WR>().timedWait( m.mutex<REG>(), noregTimeout ) ) { //<timeout?
                     m.mutex<REG>().unlock();
                     return;
@@ -61,8 +60,10 @@ void Writer<T>::write()
         
             mMem->readCount = 0;
             while ( mMem->readCount < mMem->regCount )  {
-//                qDebug()<<"WR::READWAIT"<<mMem->regCount<<mMem->readCount;
+                // here we open both mutexes, so client can READ or UNREGISTER
+                m.mutex<REG>().unlock();
                 c.cond<WR>().wait( m.mutex<READ>() );
+                m.mutex<REG>().lock();
             }
 
             postRead(mMem->data);
@@ -71,8 +72,6 @@ void Writer<T>::write()
 
         } else {
             
-//            qDebug("WRITER EXITING");
-
             // wait until all readers unregister
             m.mutex<REG>().lock();
             while ( mMem->regCount > 0 )
@@ -85,7 +84,7 @@ void Writer<T>::write()
             break;
         }
 
-    }
+    } // for
 }
 
 template <class T>

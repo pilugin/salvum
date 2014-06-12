@@ -16,11 +16,12 @@ Decoder::Decoder()
 bool Decoder::restart(IFetch *f)
 {
     QByteArray cluster;
-    int clusterNo;
+    int clusterNo = IFetch::InvalidClusterNo;
 
     mFetch = f;
 
-    f->fetch(clusterNo, cluster);
+    for (int i=0; i<10 && clusterNo == IFetch::InvalidClusterNo; ++i)
+        f->fetch(clusterNo, cluster);
     ++mCount;
     
     mUsedClusters.clear();
@@ -54,6 +55,8 @@ bool Decoder::decodeCluster()
     mLast = last(cluster);
 
     ++mCount;
+
+    qDebug()<<"DECODER::DECOD[success]"<<mCount<<mLast;
 
     return true;
 }

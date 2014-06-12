@@ -42,7 +42,7 @@ protected:
 
 
 
-int main(int argc, char **argv)
+int main(int , char **)
 {
     IPC::Container<QString, 3> strs;
 
@@ -52,6 +52,7 @@ int main(int argc, char **argv)
 
 
     IPC::SynchroMem< S, 1, 2 > * sm = IPC::SynchroMem< S, 1, 2>::create("/yobo");
+    (void)sm;
 
     qDebug() << strs.get<0>() << strs.get<1>() << strs.get<2>() << std::is_pod<IPC::SynchroMem< S, 1, 2> > ::value
             << std::is_pod< IPC::Mutex >::value;

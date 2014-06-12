@@ -36,7 +36,7 @@ public:
     }
 };
 
-int main(int argc, char **argv)
+int main(int , char **)
 {
     const int forkCount = 4;
     const int procCount = 2 << (forkCount -1);
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
         for (int i=0; i<procCount; ++i) {
             int status;
-            int pid = wait(&status);
+            wait(&status);
 //            qDebug() << "Child exited: "<<pid<<status;
 
         }

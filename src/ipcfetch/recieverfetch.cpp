@@ -101,29 +101,6 @@ void RecieverFetch::fastfwd()
 
 void RecieverFetch::skip(const QVector<int> &/*clusters*/)
 {
-/*
-    Mutexes<1> &m   = mFeedback->mutexes();
-    Conds<2> &c     = mFeedback->conds();
-
-    m.mutex().lock();
-    if (mFeedback->feedbackNeeded) {
-        int i=0;
-        for (; i<clusters.size(); ++i) {
-            while (mFeedback->skip.full()) {
-                c.cond<BCAST>().signal();
-                c.cond<RECV>().wait( m.mutex() ); 
-            }
-            
-            mFeedback->skip.push_back(clusters[i]);
-            
-        }
-        Msg("\nRECV:skip feedback completed\n");
-
-        ++mFeedback->completeCount;
-        c.cond<BCAST>().signal();
-    }
-    m.mutex().unlock();
-*/
 }
 
 bool RecieverFetch::atEnd() const
@@ -136,13 +113,6 @@ bool RecieverFetch::atEnd() const
 void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
 {
     Msg("\n");
-    if (atEnd()) {
-        Msg("[AtEnd]");
-        clusterNo = IFetch::InvalidClusterNo;
-        cluster.clear();
-        return;
-    }
-
 
     QMutexLocker l( &mInternMtx );
 
@@ -163,8 +133,10 @@ void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
         cluster.clear();
         mAtEnd = true;
         Msg("[AtEnd]");
-    } else 
+    } else {
+        mAtEnd = false;
         Msg("[%08X]", clusterNo);
+    }
 }
 
 bool RecieverFetch::process(const BroadcastMessage &message)
@@ -176,8 +148,10 @@ bool RecieverFetch::process(const BroadcastMessage &message)
         return false;
 
     // if queue not empty wait.
-    while (mRecvClusters.size() > message.clusters.capacity()/4)
+    while (mRecvClusters.size() > message.clusters.capacity()/4 && !mExiting) {
+        Msg("Wait..");
         mInternCnd.wait( &mInternMtx );
+    }
 
     // process
     if (message.status == AtEnd) {     
@@ -198,6 +172,7 @@ bool RecieverFetch::process(const BroadcastMessage &message)
                 }
         }
 
+        Msg("copy %d", message.clusters.size() -i);
         for (; i<message.clusters.size(); ++i) {
     
             QPair<int, QByteArray> pair( message.clusters[i].clusterNo, QByteArray() );

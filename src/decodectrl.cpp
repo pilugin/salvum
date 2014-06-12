@@ -32,6 +32,7 @@ bool DecodeCtrl::decode(IDecod *decodr, IFetch *fetch, IResults *results, const 
 
     qDebug("%08X start", clusterNo);
     if (rewind(fetch)   &&  startDecode(decodr, fetch, results) ) {
+        bool afterStart = true;
         int prevClustersFit = results->clusters().size();
 
         for (;;) {
@@ -40,12 +41,14 @@ bool DecodeCtrl::decode(IDecod *decodr, IFetch *fetch, IResults *results, const 
                 break;
 
             int clustersFit = results->clusters().size();
-            if (clustersFit == prevClustersFit) //< no new clusters since prev decode; exit :(
+            if (clustersFit == prevClustersFit && !afterStart) //< no new clusters since prev decode; exit :(
                 break;
             prevClustersFit = clustersFit;
 
             fetch->skip( results->clusters() );
             rewind(fetch);
+
+            afterStart = false;
         }
 
     }
