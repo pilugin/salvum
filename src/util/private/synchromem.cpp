@@ -8,9 +8,17 @@ SynchroMem<T, NMutexes, NConds> *SynchroMem<T, NMutexes, NConds>::create(const c
     SynchroMem<T, NMutexes, NConds> *res = 0;
 
     int fd_sync = shm_open(name, O_CREAT|O_RDWR, S_IRUSR|S_IWUSR);
+    if (fd_sync < 0)
+        return nullptr;
+
     int rv = ftruncate(fd_sync, sizeof(SynchroMem<T, NMutexes, NConds>));
-    (void)rv;
+    if (rv == -1)
+        return nullptr;
+
     void* addr_sync = mmap(0, sizeof(SynchroMem<T, NMutexes, NConds>), PROT_READ|PROT_WRITE, MAP_SHARED, fd_sync, 0);
+    if (addr_sync == MAP_FAILED)
+        return nullptr;
+
     res = new (addr_sync) SynchroMem<T, NMutexes, NConds>;
 
     res->Mutexes<NMutexes>::init(true);
@@ -25,7 +33,13 @@ SynchroMem<T, NMutexes, NConds> *SynchroMem<T, NMutexes, NConds>::attach(const c
     SynchroMem<T, NMutexes, NConds> *res = 0;
 
     int fd_sync = shm_open(name, O_RDWR, S_IRUSR|S_IWUSR);
+    if (fd_sync < 0)
+        return nullptr;
+
     void* addr_sync = mmap(0, sizeof(SynchroMem<T, NMutexes, NConds>), PROT_READ|PROT_WRITE, MAP_SHARED, fd_sync, 0);
+    if (addr_sync == MAP_FAILED)
+        return nullptr;
+
     res = static_cast<SynchroMem<T, NMutexes, NConds> *> (addr_sync);
 
     return res;    
