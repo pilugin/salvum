@@ -32,7 +32,9 @@ HEADERS += \
     ipcfetch/common.h \
     ipcfetch/broadcast.h \
     ipcfetch/recieverfetch.h \
-    ipcfetch/feedbackresults.h
+    ipcfetch/feedbackresults.h \
+    ipcfetch/bcastctrl.h \
+    ipcfetch/bcastctrlagent.h
 
 SOURCES += \
     jpeg/advancedchecker.cpp \
@@ -47,5 +49,6 @@ SOURCES += \
     util/private/ipc_private.cpp \
     ipcfetch/broadcast.cpp \
     ipcfetch/recieverfetch.cpp \
-    ipcfetch/feedbackresults.cpp
+    ipcfetch/feedbackresults.cpp \
+    ipcfetch/bcastctrlagent.cpp
 

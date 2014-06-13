@@ -117,4 +117,21 @@ bool Broadcast::isValid() const
     return mFeedback != nullptr && Writer<BroadcastMessage>::isValid();
 }
 
+QMap<char, int> Broadcast::getMapStats() const
+{
+    QMap<char, int> stats;
+
+    QByteArray arr = mFetch->bitmap();
+
+    foreach (char key, arr) {
+        QMap<char, int>::iterator itr = stats.find(key);
+        if (itr == stats.end())
+            stats.insert(key, 1);
+        else
+            ++ itr.value();
+    }
+
+    return stats;
+}
+
 } // ns IPCFetch

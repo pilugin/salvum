@@ -7,6 +7,8 @@
 #include <ipcfetch/common.h>
 #include <string>
 
+#include <QMap>
+
 namespace IPCFetch {
 
 class Broadcast : public RdWr::Writer<BroadcastMessage>
@@ -17,6 +19,8 @@ public:
     
     void write();
     bool isValid() const;       
+
+    QMap<char, int> getMapStats() const;
 
 protected:   
     bool prepare(BroadcastMessage &message);

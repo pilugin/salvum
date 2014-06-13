@@ -68,7 +68,7 @@ bool DeviceMapFetch::rewind(int clusterNo, int clusterNoEnd)
 {
     mCurrentCluster = clusterNo;
     mClusterEnd = clusterNoEnd;
-    return ! atEnd();
+    return !atEnd()     && !mMap.isEmpty()      && mFile.isOpen();
 }
 
 void DeviceMapFetch::fastfwd()
