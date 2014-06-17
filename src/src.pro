@@ -33,7 +33,7 @@ HEADERS += \
     ipcfetch/broadcast.h \
     ipcfetch/recieverfetch.h \
     ipcfetch/feedbackresults.h \
-    ipcfetch/bcastctrl.h \
+    ipcfetch/bcastctrlcommon.h \
     ipcfetch/bcastctrlagent.h
 
 SOURCES += \

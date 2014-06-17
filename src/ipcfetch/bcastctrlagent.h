@@ -1,7 +1,7 @@
 #ifndef IPCFETCH_BCASTCTRLAGENT_H
 #define IPCFETCH_BCASTCTRLAGENT_H
 
-#include <ipcfetch/bcastctrl.h>
+#include <ipcfetch/bcastctrlcommon.h>
 #include <string>
 
 namespace IPCFetch {
@@ -13,7 +13,13 @@ public:
     ~BcastCtrlAgent();
 
     bool isValid() const { return mData != nullptr; }
-    void process();
+
+    bool waitForRequest(); //< return true on incoming message, false on timeout
+
+    const BcastCtrlRequest &request() const { return mData->request; }
+    BcastCtrlResponse &response()           { return mData->response; }
+
+    void sendResponse();
 private:
     const std::string       mShmemName;
     SharedBcastCtrlData     *mData;

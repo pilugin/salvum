@@ -8,6 +8,8 @@
 #include <string>
 
 #include <QMap>
+#include <QMutex>
+#include <QWaitCondition>
 
 namespace IPCFetch {
 
@@ -17,8 +19,16 @@ public:
     Broadcast(const char *shmemName, const char *shmemNameFeedback, IFetch *fetch);
     ~Broadcast();
     
-    void write();
     bool isValid() const;       
+
+    void write();
+
+    void stop();
+    void pause();
+    void resume();
+
+    enum RunState { Running, Stopping, Stopped, Pausing, Paused };
+    RunState runState() const;
 
     QMap<char, int> getMapStats() const;
 
@@ -29,6 +39,12 @@ private:
     const std::string mFeedbackName;
     SharedFeedback  *mFeedback;
     IFetch          *mFetch;
+
+    mutable QMutex  mInternalMtx;
+    QWaitCondition  mInternalCnd;
+
+    RunState        mRunState;
+
 };
 
 } // ns IPCFetch

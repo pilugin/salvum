@@ -1,11 +1,10 @@
 #include <QtCore>
 #include <QtDebug>
-#include <devicemapfetch.h>
-#include <defaultsettings.h>
 #include <filelogger.h>
-#include <ipcfetch/broadcast.h>
+#include <defaultsettings.h>
 
-using namespace IPCFetch;
+#include "bcastctrl.h"
+
 
 int main(int argc, char **argv)
 {
@@ -17,18 +16,18 @@ int main(int argc, char **argv)
     FileLogger l("res");
     DefaultSettings s;
 
-    DeviceMapFetch *f = new DeviceMapFetch(QString(argv[1]), QString(argv[2]));
+    QByteArray shmem = argv[3];
+    QByteArray shmemfb = shmem + "_fb";
+    QByteArray shmemctrl = shmem + "_ctrl";
 
-    QString shmem = argv[3];
-    QString shmemfb = shmem + "_fb";
-    Broadcast bcast(shmem.toUtf8().data(), shmemfb.toUtf8().data(), f);
+    BcastCtrl bcastCtrl(shmem.data(), shmemfb.data(), shmemctrl.data(), argv[1], argv[2]);
 
-    if (!bcast.isValid()) {
+    if (!bcastCtrl.isValid()) {
         qDebug()<<"Broadcast is invalid";
         return -3;
     }
 
-    bcast.write();
+    bcastCtrl.exec();
 
     return 0;
 }

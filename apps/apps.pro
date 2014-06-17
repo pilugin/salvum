@@ -1,3 +1,3 @@
 TEMPLATE=subdirs
-SUBDIRS=salv bcast dsalv
+SUBDIRS=salv bcast dsalv bcastctrl
 

@@ -20,6 +20,8 @@ public:
     bool atEnd() const;
     QByteArray bitmap() const { return mMap; }
 
+    void setBrute(bool brute) { mBrute = brute; }
+
 protected:
     QByteArray mMap;
     int mCurrentCluster;

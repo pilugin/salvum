@@ -8,23 +8,32 @@ BcastCtrlAgent::BcastCtrlAgent(const char *shmem)
 : mShmemName(shmem)
 , mData(SharedBcastCtrlData::create(shmem))
 {
+    mData->mutex().lock();
 }
 
 BcastCtrlAgent::~BcastCtrlAgent()
 {
     if (mData)
         SharedBcastCtrlData::destroy(mData, mShmemName.c_str());
+
+    mData->mutex().unlock();
 }
 
-void BcastCtrlAgent::process()
+bool BcastCtrlAgent::waitForRequest()
 {
-    Mutexes<1> &m = mData->mutexes();
+    static const int to = 3*1000;
+    
+    while (! mData->isRequest())
+        if (! mData->cond().timedWait( mData->mutex(), to ))
+            return false;
 
-    if (m.mutex().tryLock()) {
+    return true;
+}
 
-
-        m.mutex().unlock();
-    }
+void BcastCtrlAgent::sendResponse()
+{
+    mData->msgType = Response;
+    mData->cond().broadcast();
 }
 
 } // ns IPCFetch

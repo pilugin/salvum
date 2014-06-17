@@ -68,4 +68,21 @@ private:
     T mData[N];
 };
 
+/// specialization for char strings
+/*
+template <int N>
+void Array<char, N>::clear()
+{
+    mSize=0; mData[0] = 0;
+}
+
+template <int N>
+void Array<char, N>::set(const char *data, int size)
+{
+    assert( (size-1) <= N);
+    mSize = size;
+    memcpy(mData, data, size * sizeof(char) );
+    mData[ mSize ] = 0;
+}
+*/
 #endif

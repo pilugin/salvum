@@ -17,6 +17,7 @@ Broadcast::Broadcast(const char *shmemName, const char *shmemNameFeedback, IFetc
     sharedData().rewind = IFetch::InvalidClusterNo;
 
     mFeedback = SharedFeedback::create( shmemNameFeedback );
+    mRunState = Stopped;
 }
 
 Broadcast::~Broadcast()
@@ -31,11 +32,31 @@ void Broadcast::write()
     mFetch->rewind(0);
     mFetch->fastfwd();
 
+    mRunState = Running;
     Writer< BroadcastMessage > ::write();
+    mRunState = Stopped;
 }
 
 bool Broadcast::prepare(BroadcastMessage &message)
 {
+    // process Pause & Stop
+    if (mRunState != Running) {
+        QMutexLocker l(&mInternalMtx);
+        if (mRunState == Pausing) {
+            mRunState = Paused;
+            mInternalCnd.wait( &mInternalMtx );
+            if (mRunState == Paused)
+                mRunState = Running;
+        }
+
+        if (mRunState == Stopping) {
+            message.status = About2Quit;
+            message.clusters.clear();
+            return false;
+        }
+    }
+
+    // process data
     if ( message.rewind != IFetch::InvalidClusterNo && sharedMem().regCount == 1) {
         Msg("BCAST:prepare rewind(%08X)\n", message.rewind );
         mFetch->rewind( message.rewind );
@@ -115,6 +136,38 @@ void Broadcast::postRead(const BroadcastMessage &message)
 bool Broadcast::isValid() const
 {
     return mFeedback != nullptr && Writer<BroadcastMessage>::isValid();
+}
+
+void Broadcast::stop()
+{
+    QMutexLocker l(&mInternalMtx);
+    if (mRunState == Paused)
+        mInternalCnd.wakeOne();
+    mRunState = Stopping;
+}
+
+void Broadcast::pause()
+{
+    if (mRunState == Running) {
+        QMutexLocker l(&mInternalMtx);
+        if (mRunState == Running)
+            mRunState = Pausing;
+    }
+}
+
+void Broadcast::resume()
+{
+    if (mRunState == Paused) {
+        QMutexLocker l(&mInternalMtx);
+        if (mRunState == Paused)
+            mInternalCnd.wakeOne();
+    }
+}
+
+Broadcast::RunState Broadcast::runState() const
+{
+    QMutexLocker l(&mInternalMtx);
+    return mRunState;
 }
 
 QMap<char, int> Broadcast::getMapStats() const

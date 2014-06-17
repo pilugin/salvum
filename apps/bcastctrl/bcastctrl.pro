@@ -1,6 +1,6 @@
 QT       += core
 
-TARGET = bcast
+TARGET = bcastctrl
 CONFIG   += console debug
 CONFIG   -= app_bundle
 
@@ -15,7 +15,7 @@ LIBS += -L../../src -lsalv
 
 SOURCES += \
     main.cpp \
-   bcastctrl.cpp
+   bcastremotectrl.cpp
 
 HEADERS += \
-    bcastctrl.h
+    bcastremotectrl.h
