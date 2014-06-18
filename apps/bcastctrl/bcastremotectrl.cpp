@@ -30,7 +30,7 @@ bool BcastRemoteCtrl::exchange()
 
     while ( ! mData->isResponse(id) ) {
         mData->cond().broadcast();
-        mData->cond().wait( mData->mutex() );
+        mData->cond().timedWait( mData->mutex(), 1000 );
     }
 
     return true;
@@ -40,7 +40,7 @@ bool BcastRemoteCtrl::free()
 {
     mData->free();
 
-    mData->cond().broadcast();
+//    mData->cond().broadcast(); // this code hangs if cond is free. maybe a bug
     mData->mutex().unlock();
 
     return true;

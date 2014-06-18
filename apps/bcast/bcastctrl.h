@@ -21,7 +21,6 @@ public:
     bool isValid() const;
 
     bool exec();
-
     
 
 private:
@@ -31,8 +30,6 @@ private:
     class Thread;
 
     IPCFetch::BcastCtrlAgent    *mCtrl;
-    IPCFetch::Broadcast         *mBcast;
-    DeviceMapFetch              *mFetch;
     Thread                      *mThread;
 
 };

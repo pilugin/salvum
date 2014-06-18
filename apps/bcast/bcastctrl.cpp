@@ -12,16 +12,33 @@ using namespace IPCFetch;
 class BcastCtrl::Thread : public QThread
 {
 public:
-    Thread( Broadcast *bcast ) : mBcast(bcast) {}
+    Thread(const char *bcast_shmem, const char *bcastfb_shmem, 
+              const QString &deviceFile, const QString &mapFile) 
+    : mBcast(0)
+    , mBcastShmem(bcast_shmem)
+    , mBcastfbShmem(bcastfb_shmem)
+    , mDeviceFile(deviceFile)
+    , mMapFile(mapFile) 
+    {} 
 
+    Broadcast *bcast() { return mBcast; } 
 private:
     void run()
     {
-        qDebug("Start Write");
+        mBcast = new Broadcast(mBcastShmem, mBcastfbShmem, new DeviceMapFetch(mDeviceFile, mMapFile)  );
+
         mBcast->write();
+
+        delete mBcast;
+        mBcast = 0;
     }
 
     Broadcast *mBcast;
+    const char *mBcastShmem;
+    const char *mBcastfbShmem;
+    QString mDeviceFile;
+    QString mMapFile;
+
 };
 
 
@@ -30,29 +47,18 @@ private:
 BcastCtrl::BcastCtrl(const char *bcast_shmem, const char *bcastfb_shmem, const char *ctrl_shmem, 
                         const QString &deviceFile, const QString &mapFile)
 : mCtrl(new BcastCtrlAgent(ctrl_shmem))
-, mBcast(0)
-, mFetch(new DeviceMapFetch(deviceFile, mapFile))
-, mThread(0)
+, mThread(new Thread(bcast_shmem, bcastfb_shmem, deviceFile, mapFile))
 {
-    mBcast = new Broadcast(bcast_shmem, bcastfb_shmem, mFetch);
-    mThread = new Thread(mBcast);
 }
 
 BcastCtrl::~BcastCtrl()
 {
     delete mCtrl;
-    delete mBcast;
-    // don't delete fetch, as it is deleted by bcast
     delete mThread;
 }
 
 bool BcastCtrl::isValid() const
 {
-    if (! mBcast->isValid() ) {
-        qDebug("Broadcast object is invalid");
-        return false;
-    }
-
     if (! mCtrl->isValid() ) {
         qDebug("BcastCtrl object is invalid");
         return false;
@@ -87,28 +93,28 @@ bool BcastCtrl::processRq( const BcastCtrlRequest &rq, BcastCtrlResponse &rs )
     case Noop: break;
     case Pause:
         qDebug("Pause");
-        mBcast->pause();
+        mThread->bcast()->pause();
         break;
 
     case Resume:
         qDebug("Resume");
-        mBcast->resume();
+        mThread->bcast()->resume();
         break;
 
     case Exit:
         qDebug("Exit");
-        mBcast->stop();
+        mThread->bcast()->stop();
         break;
 
     case Brute:
         qDebug("Brute: %s", rq.boolparam ? "On" : "Off");
-        mFetch->setBrute( rq.boolparam );
+//        mFetch->setBrute( rq.boolparam );
         break;
 
     case DumpStats:
         qDebug("Stats"); 
         {
-            QMap<char, int> stats = mBcast->getMapStats();
+//            QMap<char, int> stats = mBcast->getMapStats();
 //            rs.strparam.data()
         }
         break;

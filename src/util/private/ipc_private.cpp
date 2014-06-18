@@ -35,6 +35,14 @@ void Mutex::unlock()
         qDebug()<<__FUNCTION__<<strerror(err);
 }
 
+bool Mutex::tryLock()
+{
+    int err = pthread_mutex_unlock( &mMtx );
+    if (err != 0 && err != EBUSY)
+        qDebug()<<__FUNCTION__<<strerror(err);
+    return err == 0;
+}
+
 //////
 
 Cond::Cond()

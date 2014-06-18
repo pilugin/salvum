@@ -23,15 +23,6 @@ public:
 
     void write();
 
-    void stop();
-    void pause();
-    void resume();
-
-    enum RunState { Running, Stopping, Stopped, Pausing, Paused };
-    RunState runState() const;
-
-    QMap<char, int> getMapStats() const;
-
 protected:   
     bool prepare(BroadcastMessage &message);
     void postRead(const BroadcastMessage &message);
@@ -39,12 +30,6 @@ private:
     const std::string mFeedbackName;
     SharedFeedback  *mFeedback;
     IFetch          *mFetch;
-
-    mutable QMutex  mInternalMtx;
-    QWaitCondition  mInternalCnd;
-
-    RunState        mRunState;
-
 };
 
 } // ns IPCFetch

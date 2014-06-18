@@ -2,8 +2,6 @@
 
 
 
-//#include <QtDebug>
-
 namespace RdWr {
 
 template <class T>
@@ -20,6 +18,9 @@ Writer<T>::Writer(const char *name)
     m.mutex<READ>().lock();
     mMem->readCount = 0;
 
+    // internals
+    mInternalMtx.init(false);
+    mInternalCnd.init(false);
 }
 
 template <class T>
@@ -30,6 +31,7 @@ Writer<T>::~Writer()
 
         ShMem::destroy(mMem, mShMemName.c_str());
     }
+
 }
 
 template <class T>
@@ -40,56 +42,137 @@ void Writer<T>::write()
     IPC::Mutexes<2> &m = mMem->mutexes(); //< workaround for gcc
     IPC::Conds<2> &c = mMem->conds();
 
-    bool exit = false;
-    for (;;) {
+    bool cont = true;
+    while (cont) {
 
-        if (!exit) {
-            exit = ! prepare(mMem->data);
+        cont = prepare(mMem->data);
 
-            // wait for at least one reader to register
-            m.mutex<REG>().lock();
-            while ( mMem->regCount == 0) {
-                if ( ! c.cond<WR>().timedWait( m.mutex<REG>(), noregTimeout ) ) { //<timeout?
-                    m.mutex<REG>().unlock();
-                    return;
-                }
-            }
-        
-            // wake all readers
-            c.cond<RD>().broadcast();
-        
-            mMem->readCount = 0;
-            while ( mMem->readCount < mMem->regCount )  {
-                // here we open both mutexes, so client can READ or UNREGISTER
-                m.mutex<REG>().unlock();
-                c.cond<WR>().wait( m.mutex<READ>() );
-                m.mutex<REG>().lock();
-            }
+        // wait for at least one reader to register
+        m.mutex<REG>().lock();
 
-            postRead(mMem->data);
+        while ( mMem->regCount == 0 && cont) {
+            c.cond<WR>().wait( m.mutex<REG>() );
+            cont = checkInternalMsg();
+        }
         
+        // wake all readers
+        c.cond<RD>().broadcast();
+
+        // previous prepare or internalMsg got exit
+        if ( ! cont ) {
             m.mutex<REG>().unlock();
-
-        } else {
-            
-            // wait until all readers unregister
-            m.mutex<REG>().lock();
-            while ( mMem->regCount > 0 )
-                if ( ! c.cond<WR>().timedWait( m.mutex<REG>(), noregTimeout ) ) {
-                    mMem->regCount = 0;
-                    break;
-                }
-            m.mutex<REG>().unlock();
-
             break;
         }
+        
+        mMem->readCount = 0;
+        while ( mMem->readCount < mMem->regCount )  {
+            // here we open both mutexes, so client can READ or UNREGISTER
+            m.mutex<READ>().unlock();
+            c.cond<WR>().wait( m.mutex<REG>() );
+            m.mutex<READ>().lock();
 
-    } // for
+            cont = checkInternalMsg();
+        }
+
+        postRead(mMem->data);
+        
+        m.mutex<REG>().unlock();
+
+    } // loop
+
+
+    // wait until all readers unregister
+    if ( mMem->regCount > 0) {
+        cont = true;    
+        m.mutex<REG>().lock();
+        while ( mMem->regCount > 0 && cont) {
+            if ( ! c.cond<WR>().timedWait( m.mutex<REG>(), noregTimeout ) ) {
+//                mMem->regCount = 0;
+                break;
+            }
+
+            cont = checkInternalMsg();
+        }
+        m.mutex<REG>().unlock();
+    }
 }
 
 template <class T>
 void Writer<T>::postRead(const T &)
 {
 }
+
+//////////////////// internal control
+
+template <class T>
+void Writer<T>::stop()
+{
+    interrupt(Exit);
+}
+
+template <class T>
+void Writer<T>::pause()
+{
+    interrupt(Pause);  
+}
+
+template <class T>
+void Writer<T>::resume()
+{
+    mInternalCnd.signal();
+}
+
+template <class T>
+void Writer<T>::interrupt(int msg)
+{
+    IPC::Conds<2> &c = mMem->conds();
+    static const int to = 1*1000;
+
+    mInternalMtx.lock();
+    mInternalMsg = msg;
+
+    if (msg == Exit )
+        mInternalCnd.signal();
+
+    c.cond<WR>().signal();
+    while ( ! mInternalCnd.timedWait( mInternalMtx, to ) ) 
+        c.cond<WR>().signal();
+
+    mInternalMtx.unlock();
+}
+
+template <class T>
+bool Writer<T>::checkInternalMsg()
+{
+    bool rv = true;
+    if ( mInternalMsg != Noop ) {
+        mInternalMtx.lock();
+
+        rv = processInternalMsg();
+        mInternalMsg = Noop;
+        
+        mInternalCnd.signal();
+        mInternalMtx.unlock();
+    }
+    return rv;
+}
+
+template <class T>
+bool Writer<T>::processInternalMsg()
+{
+    switch (mInternalMsg) {
+    case Pause:
+        mInternalCnd.signal();
+        mInternalCnd.wait( mInternalMtx );
+        return mInternalMsg != Exit;
+
+    case Exit:
+        return false;
+    default:
+        break;
+    }
+    return true;
+}
+
 
 } // ns RdWr

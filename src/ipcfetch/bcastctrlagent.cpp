@@ -13,10 +13,9 @@ BcastCtrlAgent::BcastCtrlAgent(const char *shmem)
 
 BcastCtrlAgent::~BcastCtrlAgent()
 {
-    if (mData)
-        SharedBcastCtrlData::destroy(mData, mShmemName.c_str());
-
     mData->mutex().unlock();
+
+    SharedBcastCtrlData::destroy(mData, mShmemName.c_str());
 }
 
 bool BcastCtrlAgent::waitForRequest()
@@ -24,7 +23,7 @@ bool BcastCtrlAgent::waitForRequest()
     static const int to = 3*1000;
     
     while (! mData->isRequest())
-        if (! mData->cond().timedWait( mData->mutex(), to ))
+        if (! mData->cond().timedWait( mData->mutex(), to )) 
             return false;
 
     return true;
