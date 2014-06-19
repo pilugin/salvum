@@ -9,6 +9,8 @@
 
 struct S { int a; };
 
+static const int N=3;
+
 class Rd : public RdWr::Reader<S>
 {
 public:
@@ -16,10 +18,10 @@ public:
 protected:
     bool process(const S &data) 
     {
-
-        qDebug()<<" READ"<<data.a;
+        bool rv = data.a < N;
+        qDebug()<<" READ"<<data.a<<rv;
         sleep(1);
-        return data.a < 10;
+        return rv;
     }    
 
 };
@@ -31,11 +33,11 @@ public:
 protected:
     bool prepare(S &data)
     {
-        qDebug()<<"WRITE"<<a;
         data.a = a++;
-
+        bool rv = data.a < N;
+        qDebug()<<"WRITE"<<data.a<<rv;
         sleep(1);
-        return data.a < 10;
+        return rv;
     }
     int a;
 };
@@ -85,9 +87,9 @@ int main(int , char **)
 
         qDebug("Start reader");
         Rd reader;
-	reader.reg();
+        reader.reg();
         reader.read();
-	reader.unreg();
+	    reader.unreg();
     }
 
     

@@ -158,6 +158,11 @@ bool RecieverFetch::process(const BroadcastMessage &message)
         mRecvClusters.enqueue( qMakePair((int)IFetch::InvalidClusterNo, QByteArray() ) );
         Msg("BCAST:AtEnd");
         
+    } else if (message.status == About2Quit) {
+        mRecvClusters.enqueue( qMakePair((int)IFetch::InvalidClusterNo, QByteArray() ) );
+        Msg("BCAST:About2Quit");
+        mExiting = true;
+
     } else {
 
         int i=0;

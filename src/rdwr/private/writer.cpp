@@ -45,33 +45,26 @@ void Writer<T>::write()
     bool cont = true;
     while (cont) {
 
-        cont = prepare(mMem->data);
+        cont = cont && prepare(mMem->data);
 
         // wait for at least one reader to register
         m.mutex<REG>().lock();
 
         while ( mMem->regCount == 0 && cont) {
             c.cond<WR>().wait( m.mutex<REG>() );
-            cont = checkInternalMsg();
+            cont = cont && checkInternalMsg();
         }
-        
+
         // wake all readers
         c.cond<RD>().broadcast();
-
-        // previous prepare or internalMsg got exit
-        if ( ! cont ) {
-            m.mutex<REG>().unlock();
-            break;
-        }
-        
         mMem->readCount = 0;
         while ( mMem->readCount < mMem->regCount )  {
             // here we open both mutexes, so client can READ or UNREGISTER
-            m.mutex<READ>().unlock();
-            c.cond<WR>().wait( m.mutex<REG>() );
-            m.mutex<READ>().lock();
+            m.mutex<REG>().unlock();
+            c.cond<WR>().wait( m.mutex<READ>() );
+            m.mutex<REG>().lock();
 
-            cont = checkInternalMsg();
+            cont = cont && checkInternalMsg();
         }
 
         postRead(mMem->data);
