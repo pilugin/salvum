@@ -1,4 +1,5 @@
 #include <ipcfetch/bcastctrlagent.h>
+#include <unistd.h>
 
 using namespace IPC;
 
@@ -14,6 +15,8 @@ BcastCtrlAgent::BcastCtrlAgent(const char *shmem)
 BcastCtrlAgent::~BcastCtrlAgent()
 {
     mData->mutex().unlock();
+
+    sleep(1); // we let bcastRemoteCtrl exit normally
 
     SharedBcastCtrlData::destroy(mData, mShmemName.c_str());
 }

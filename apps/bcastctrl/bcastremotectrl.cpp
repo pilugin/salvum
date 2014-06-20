@@ -40,7 +40,7 @@ bool BcastRemoteCtrl::free()
 {
     mData->free();
 
-//    mData->cond().broadcast(); // this code hangs if cond is free. maybe a bug
+    mData->cond().broadcast();
     mData->mutex().unlock();
 
     return true;
