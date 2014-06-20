@@ -78,6 +78,10 @@ int main(int , char **)
 //            qDebug() << "Child exited: "<<pid<<status;
 
         }
+    
+        qDebug("Sleep 5");
+        sleep(5);
+        qDebug("Exit");
 
     } else {
         for (int i=0; i<forkCount; ++i)
