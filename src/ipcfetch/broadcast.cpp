@@ -117,4 +117,19 @@ bool Broadcast::isValid() const
     return mFeedback != nullptr && Writer<BroadcastMessage>::isValid();
 }
 
+//////
+
+QByteArray Broadcast::dumpStats()
+{
+    mStats.clear();
+    interrupt(DumpStats);
+    return mStats;
+}
+
+QPair<bool, QString> Broadcast::saveBitmap(const QString &filename)
+{
+    interrupt(SaveBitmap);
+    return qMakePair(mSaveBitmapSuccess, mSaveBitmapError);
+}
+
 } // ns IPCFetch

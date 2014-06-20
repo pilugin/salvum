@@ -1,6 +1,8 @@
 #ifndef ICHECK_H
 #define ICHECK_H
 
+/// used by jpeg decoder only
+
 class QImage;
 
 class ICheck

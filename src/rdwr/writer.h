@@ -28,7 +28,7 @@ protected:
     virtual bool prepare(T &data) =0; //< Mutexes: REG=unlocked, READ=locked
     virtual void postRead(const T &data); //< empty method. called after all registered clients read. Mutexes: REG=locked, READ=locked
 
-    void interrupt(int msg=Custom);
+    void interrupt(int msg=Custom); //< blocks untils checkInternaMsg() returns in other thread
     bool checkInternalMsg();
     virtual bool processInternalMsg();
 

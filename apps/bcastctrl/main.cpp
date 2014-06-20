@@ -35,18 +35,31 @@ int main(int argc, char **argv)
         ctrl.request().command = Exit;
 
     } else if ( command == "brute" ) {
+        if (argc != 4 || !(QStringList() << "on" << "off").contains(argv[3]) ) {
+            qDebug()<<"Usage: "<<argv[0]<<" shmemname brute {on,off}";
+        } else {
+            ctrl.request().command = Brute; 
+            ctrl.request().boolparam = !qstrcmp(argv[3], "on");
+        }
 
     } else if ( command == "stats" ) {
+        ctrl.request().command = DumpStats;
 
     } else if ( command == "save" ) {
+        if (argc != 4) {
+            qDebug()<<"Usage: "<<argv[0]<<" shmemname save filename";
+        } else {
+            ctrl.request().command = SaveBitmap;
+            ctrl.request().strparam.set(argv[3], strlen(argv[3]) +1);
+        }
 
     }
 
-    ctrl.exchange();
-    qDebug("Xcg");
+    if (ctrl.request().command != Noop) {
+        ctrl.exchange();
+        qDebug("Xcg\t\tsuccess=%s", ctrl.response().success ? "Ok" : "Fail" );
+    }
     
-    qDebug("success=%s", ctrl.response().success ? "Ok" : "Fail" );
-
     ctrl.free();
     qDebug("Fre");
 

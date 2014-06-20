@@ -112,7 +112,7 @@ bool BcastCtrl::processRq( const BcastCtrlRequest &rq, BcastCtrlResponse &rs )
         break;
 
     case DumpStats:
-        qDebug("Stats"); 
+        qDebug("DumpStats"); 
         {
 //            QMap<char, int> stats = mBcast->getMapStats();
 //            rs.strparam.data()
@@ -120,6 +120,8 @@ bool BcastCtrl::processRq( const BcastCtrlRequest &rq, BcastCtrlResponse &rs )
         break;
 
     case SaveBitmap:
+//        rs.success = mThread->bcast()->saveBitmap( rq.strparam.data() );
+//        qDebug("SaveBitmap: %s   %s", rq.strparam.data(), rs.success ? "Ok" : "Failed" );
         break;
     
     default:

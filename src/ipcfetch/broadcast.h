@@ -10,6 +10,8 @@
 #include <QMap>
 #include <QMutex>
 #include <QWaitCondition>
+#include <QString>
+#include <QPair>
 
 namespace IPCFetch {
 
@@ -23,13 +25,27 @@ public:
 
     void write();
 
+    QByteArray dumpStats();
+    QPair<bool, QString> saveBitmap(const QString &filename);
 protected:   
+    enum InternalOperation { 
+        DumpStats = RdWr::Writer<BroadcastMessage>::Custom, 
+        SaveBitmap,
+        Custom
+    };
+    
+
     bool prepare(BroadcastMessage &message);
     void postRead(const BroadcastMessage &message);
 private:
     const std::string mFeedbackName;
     SharedFeedback  *mFeedback;
     IFetch          *mFetch;
+
+    QByteArray      mStats;
+    bool            mSaveBitmapSuccess;
+    QString         mSaveBitmapError;
+   
 };
 
 } // ns IPCFetch
