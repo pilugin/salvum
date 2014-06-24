@@ -3,6 +3,8 @@
 
 #include <cassert>
 #include <type_traits>
+#include <algorithm>
+#include <cstring>
 
 /// very simple array class for IPC exchange
 
@@ -17,7 +19,7 @@ public:
 
     int size() const { return mSize; }
     bool empty() const { return mSize == 0; }
-    bool full() const { return mSize == N; }
+    bool full() const { return mSize == capacity(); }
     void clear() { mSize=0; }
     void push_back(const T &item)
     {
@@ -63,26 +65,33 @@ public:
         memcpy(mData, data, size * sizeof(T) );
     }
 
-private:
+protected:
     volatile int mSize;
     T mData[N];
 };
 
-/// specialization for char strings
-/*
-template <int N>
-void Array<char, N>::clear()
-{
-    mSize=0; mData[0] = 0;
-}
+////
 
 template <int N>
-void Array<char, N>::set(const char *data, int size)
+class String : public Array<char, N>
 {
-    assert( (size-1) <= N);
-    mSize = size;
-    memcpy(mData, data, size * sizeof(char) );
-    mData[ mSize ] = 0;
-}
-*/
+    typedef Array<char, N> Super;
+public:
+    static int capacity() { return N-1; }
+    void set(const char *data, int size =-1)
+    {
+        if (size == -1) 
+            size = std::min( capacity(), static_cast<int>(strlen(data)) );
+        Super::mSize = size;
+        memcpy(Super::mData, data, size);
+        Super::mData[Super::mSize] = 0;
+    }
+    void clear()
+    {
+        Super::mData[0] = 0;
+        Super::mSize = 0;
+    }
+    bool full() const { return Super::mSize == capacity(); }
+};
+
 #endif
