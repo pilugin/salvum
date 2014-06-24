@@ -141,7 +141,7 @@ bool Writer<T>::checkInternalMsg()
     if ( mInternalMsg != Noop ) {
         mInternalMtx.lock();
 
-        rv = processInternalMsg();
+        rv = processInternalMsg(mInternalMsg);
         mInternalMsg = Noop;
         
         mInternalCnd.signal();
@@ -151,9 +151,9 @@ bool Writer<T>::checkInternalMsg()
 }
 
 template <class T>
-bool Writer<T>::processInternalMsg()
+bool Writer<T>::processInternalMsg(int internalMsg)
 {
-    switch (mInternalMsg) {
+    switch (internalMsg) {
     case Pause:
         mInternalCnd.signal();
         mInternalCnd.wait( mInternalMtx );

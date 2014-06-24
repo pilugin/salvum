@@ -1,6 +1,9 @@
 #include "broadcast.h"
-#include <QByteArray>
 #include "if/ilog.h"
+
+#include <QByteArray>
+#include <QFile>
+#include <cctype>
 
 using namespace Log;
 using namespace IPC;
@@ -128,8 +131,55 @@ QByteArray Broadcast::dumpStats()
 
 QPair<bool, QString> Broadcast::saveBitmap(const QString &filename)
 {
+    mSaveBitmapFilename = filename;
     interrupt(SaveBitmap);
     return qMakePair(mSaveBitmapSuccess, mSaveBitmapError);
+}
+
+bool Broadcast::processInternalMsg(int internalMsg)
+{
+    switch (internalMsg) {
+    case DumpStats:
+        {
+            QByteArray bm = mFetch->bitmap();
+            QVector<int> stats(256, 0);
+            for (int i=0; i<bm.size(); ++i)
+                ++stats[ bm[i] ];
+            // print
+            char tmpstr[64];
+            QByteArray statsText;
+            for (int i=0; i<stats.size(); ++i) 
+                if (stats[i] > 0) {
+                    char c = i;
+                    if ( isascii(c) )
+                        snprintf( tmpstr, sizeof(tmpstr)-1, "%c=%d\n", c, stats[i] );
+                    else 
+                        snprintf( tmpstr, sizeof(tmpstr)-1, "0x%X=%d\n", i, stats[i] );
+                        
+                    statsText.append(tmpstr);                
+                }
+            mStats = statsText;
+        }
+        return true;
+    case SaveBitmap:
+        {
+            QByteArray bm = mFetch->bitmap();
+            QFile out(mSaveBitmapFilename);
+            if (! out.open(QFile::WriteOnly | QFile::Truncate) ) {
+                mSaveBitmapSuccess = false;
+                mSaveBitmapError = out.errorString();
+
+            } else {
+                int written = out.write(bm);
+                mSaveBitmapSuccess = (written == bm.size());
+                if (!mSaveBitmapSuccess) 
+                    mSaveBitmapError.sprintf("Could not write whole bitmap file. Only %d/%d written", written, bm.size() );
+            }
+        }
+        return true;
+    default:
+        return Super::processInternalMsg(internalMsg);
+    }
 }
 
 } // ns IPCFetch

@@ -30,7 +30,7 @@ protected:
 
     void interrupt(int msg=Custom); //< blocks untils checkInternaMsg() returns in other thread
     bool checkInternalMsg();
-    virtual bool processInternalMsg();
+    virtual bool processInternalMsg(int internalMsg);
 
     typedef typename ShMemGen<T>::SharedData ShMem;
     const ShMem &sharedMem() const { return *mMem; }

@@ -53,11 +53,19 @@ int main(int argc, char **argv)
             ctrl.request().strparam.set(argv[3], strlen(argv[3]) +1);
         }
 
+    } else {
+        if (command != "help")
+            qDebug()<<"Command "<<command<<" not found";
+        qDebug()<<"Available commands: \n'pause' \n'resume' \n'exit' 'stop'\n'brute'\n'stats'\n'save'";
     }
 
     if (ctrl.request().command != Noop) {
         ctrl.exchange();
         qDebug("Xcg\t\tsuccess=%s", ctrl.response().success ? "Ok" : "Fail" );
+
+        if (!ctrl.response().str.empty()) 
+            qDebug()<<">>\n"<<ctrl.response().str.data();
+        
     }
     
     ctrl.free();

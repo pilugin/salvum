@@ -109,19 +109,26 @@ bool BcastCtrl::processRq( const BcastCtrlRequest &rq, BcastCtrlResponse &rs )
     case Brute:
         qDebug("Brute: %s", rq.boolparam ? "On" : "Off");
 //        mFetch->setBrute( rq.boolparam );
+        qDebug("Not implemented");
         break;
 
     case DumpStats:
         qDebug("DumpStats"); 
         {
-//            QMap<char, int> stats = mBcast->getMapStats();
-//            rs.strparam.data()
+            QByteArray stats = mThread->bcast()->dumpStats();
+            rs.str.set( stats.data() );
         }
         break;
 
     case SaveBitmap:
-//        rs.success = mThread->bcast()->saveBitmap( rq.strparam.data() );
-//        qDebug("SaveBitmap: %s   %s", rq.strparam.data(), rs.success ? "Ok" : "Failed" );
+        {
+            QPair<bool, QString> rv = mThread->bcast()->saveBitmap( rq.strparam.data() );
+            rs.success = rv.first;
+            rs.str.set( rv.second.toUtf8().data() );
+            qDebug("SaveBitmap: %s   %s", rq.strparam.data(), rs.success ? "Ok" : "Failed" );
+            if (!rs.success) 
+                qDebug("\t%s", rs.str.data() );
+        }
         break;
     
     default:

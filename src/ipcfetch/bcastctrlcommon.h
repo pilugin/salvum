@@ -29,14 +29,14 @@ struct BcastCtrlRequest
     BcastCtrlRequest() : command(Noop) {}
 
     BcastCtrlCommand    command;
-    Array<char, 1024>   strparam;
+    String<1024>        strparam;
     bool                boolparam;
 };
 
 struct BcastCtrlResponse
 {
     bool                success;
-    Array<char, 1024>   str; //< in case when success=false str is used to describe an error
+    String<1024>        str; //< in case when success=false str is used to describe an error
 };
 
 /*

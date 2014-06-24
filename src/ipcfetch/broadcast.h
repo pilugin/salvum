@@ -17,6 +17,7 @@ namespace IPCFetch {
 
 class Broadcast : public RdWr::Writer<BroadcastMessage>
 {
+    typedef RdWr::Writer<BroadcastMessage> Super;
 public:
     Broadcast(const char *shmemName, const char *shmemNameFeedback, IFetch *fetch);
     ~Broadcast();
@@ -33,7 +34,7 @@ protected:
         SaveBitmap,
         Custom
     };
-    
+    bool processInternalMsg(int internalMsg);
 
     bool prepare(BroadcastMessage &message);
     void postRead(const BroadcastMessage &message);
@@ -45,7 +46,7 @@ private:
     QByteArray      mStats;
     bool            mSaveBitmapSuccess;
     QString         mSaveBitmapError;
-   
+    QString         mSaveBitmapFilename;
 };
 
 } // ns IPCFetch

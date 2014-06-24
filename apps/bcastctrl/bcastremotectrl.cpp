@@ -39,6 +39,7 @@ bool BcastRemoteCtrl::exchange()
 bool BcastRemoteCtrl::free()
 {
     mData->free();
+    mData->request.command = Noop;
 
     mData->cond().broadcast();
     mData->mutex().unlock();
