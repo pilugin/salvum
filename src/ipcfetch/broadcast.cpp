@@ -148,6 +148,8 @@ bool Broadcast::processInternalMsg(int internalMsg)
             // print
             char tmpstr[64];
             QByteArray statsText;
+            snprintf( tmpstr, sizeof(tmpstr)-1, "REG:%d\n", sharedMem().regCount);
+            statsText.append(tmpstr);
             for (int i=0; i<stats.size(); ++i) 
                 if (stats[i] > 0) {
                     char c = i;
