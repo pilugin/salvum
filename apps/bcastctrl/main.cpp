@@ -50,7 +50,8 @@ int main(int argc, char **argv)
             qDebug()<<"Usage: "<<argv[0]<<" shmemname save filename";
         } else {
             ctrl.request().command = SaveBitmap;
-            ctrl.request().strparam.set(argv[3], strlen(argv[3]) +1);
+            QByteArray path = QFileInfo(argv[3]).absoluteFilePath().toUtf8();
+            ctrl.request().strparam.set(path.data(), path.size() +1);
         }
 
     } else {
