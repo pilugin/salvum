@@ -5,6 +5,9 @@
 
 class QImage;
 
+namespace Jpeg 
+{
+
 class ICheck
 {
 public:
@@ -13,5 +16,6 @@ public:
     virtual bool check(const QImage &image, int blockBegin, int blockEnd) =0;
 };
 
+} // eons Jpeg
 
 #endif // ICHECK_H

@@ -13,7 +13,7 @@ HEADERS += \
     if/ilog.h \
     if/idecod.h \
     if/iresults.h \
-    if/icheck.h \
+    if/jpeg/icheck.h \
     jpeg/imagecursor.h \
     jpeg/picojpegdecodr.h \
     jpeg/advancedchecker.h \

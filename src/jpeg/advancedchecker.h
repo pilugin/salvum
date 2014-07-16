@@ -1,9 +1,9 @@
 #ifndef ADVANCEDCHECKER_H
 #define ADVANCEDCHECKER_H
 
-#include "if/icheck.h"
+#include "if/jpeg/icheck.h"
 
-class AdvancedChecker : public ICheck
+class AdvancedChecker : public Jpeg::ICheck
 {
 public:
     AdvancedChecker();

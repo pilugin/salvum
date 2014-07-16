@@ -7,6 +7,7 @@
 #include <QtDebug>
 
 using namespace Log;
+using namespace Jpeg;
 
 PicoJpegDecodr::PicoJpegDecodr()
 {    

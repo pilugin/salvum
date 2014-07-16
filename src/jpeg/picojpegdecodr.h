@@ -9,7 +9,11 @@
 
 #include <QImage>
 
+namespace Jpeg {
+
 class ICheck;
+
+}
 
 struct PicoJpegDecodContext
 {
@@ -45,7 +49,7 @@ public:
 private:
 
     IFetch *mFetch;
-    ICheck *mCheck;
+    Jpeg::ICheck *mCheck;
     QImage mImage;
 
     PicoJpegDecodContext mContext;
