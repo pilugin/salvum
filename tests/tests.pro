@@ -3,4 +3,5 @@ SUBDIRS= \
     devicemapfetch \
     salv \
     ipc \
-    ipcfetch 
+    ipcfetch \
+    jpegcheckbench

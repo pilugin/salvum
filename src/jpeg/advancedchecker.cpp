@@ -10,7 +10,12 @@ AdvancedChecker::AdvancedChecker()
 {
 }
 
-bool AdvancedChecker::check(const QImage &image, int blockBegin, int blockEnd)
+double AdvancedChecker::minRelevance() const
+{
+    return 0.72;
+}
+
+bool AdvancedChecker::check(const QImage &image, int blockBegin, int blockEnd, double *relevance)
 {
     int blockBeginX = blockBegin % (image.width()/8);
     int blockBeginY = blockBegin / (image.width()/8);
@@ -23,7 +28,7 @@ bool AdvancedChecker::check(const QImage &image, int blockBegin, int blockEnd)
     Msg("[{%d-%d #%d} ", blockBeginX, blockBeginY, blockEnd - blockBegin);
 
     double result = 0.;
-    static const double min = 0.72;
+    static const double min = minRelevance();
 
     if (blockBeginY == blockEndY) {
         result = processRow(image, blockBeginX, blockEndX, blockBeginY);
@@ -43,6 +48,9 @@ bool AdvancedChecker::check(const QImage &image, int blockBegin, int blockEnd)
     }
 
     Msg("=%g]", result);
+
+    if (relevance)
+        *relevance = result;
 
     return (result > min);
 }

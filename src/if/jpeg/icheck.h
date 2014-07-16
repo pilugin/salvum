@@ -13,7 +13,8 @@ class ICheck
 public:
     virtual ~ICheck() {}
 
-    virtual bool check(const QImage &image, int blockBegin, int blockEnd) =0;
+    virtual bool check(const QImage &image, int blockBegin, int blockEnd, double *relevance =nullptr) =0;
+    virtual double minRelevance() const { return 1.0; }
 };
 
 } // eons Jpeg

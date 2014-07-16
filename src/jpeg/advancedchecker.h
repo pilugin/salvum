@@ -7,7 +7,8 @@ class AdvancedChecker : public Jpeg::ICheck
 {
 public:
     AdvancedChecker();
-    bool check(const QImage &image, int blockBegin, int blockEnd);
+    bool check(const QImage &image, int blockBegin, int blockEnd, double *relevance =nullptr);
+    double minRelevance() const;
 
 private:
     double processRow(const QImage &image, int blockBeginX, int blockEndX, int blockY) const;
