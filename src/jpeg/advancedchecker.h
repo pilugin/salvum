@@ -3,7 +3,9 @@
 
 #include "if/jpeg/icheck.h"
 
-class AdvancedChecker : public Jpeg::ICheck
+namespace Jpeg {
+
+class AdvancedChecker : public ICheck
 {
 public:
     AdvancedChecker();
@@ -16,5 +18,7 @@ private:
     double processRow_Xtremum(const QImage &image, int blockBeginX, int blockEndX, int blockY) const;
     double processRow_Colors(const QImage &image, int blockBeginX, int blockEndX, int blockY) const;
 };
+
+} // eons Jpeg
 
 #endif // ADVANCEDCHECKER_H

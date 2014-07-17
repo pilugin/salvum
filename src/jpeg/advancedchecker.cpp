@@ -6,6 +6,8 @@
 
 using namespace Log;
 
+namespace Jpeg {
+
 AdvancedChecker::AdvancedChecker()
 {
 }
@@ -151,8 +153,7 @@ double AdvancedChecker::processRow_Colors(const QImage &image, int blockBeginX, 
     return 1. - (double(badColors)/blocks);
 }
 
-
-
+} // eons Jpeg
 
 
 

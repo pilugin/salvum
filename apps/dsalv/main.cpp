@@ -6,15 +6,17 @@
 #include "filelogger.h"
 #include "rangefileresults.h"
 #include "jpeg/picojpegdecodr.h"
+#include "jpeg/advancedchecker.h"
 
 using namespace Log;
+using namespace Jpeg;
 
 class CustomDecodeCtrl : public DecodeCtrl
 {
 public:
     void decode(QString file, QString map, int clusterNo)
     {
-        PicoJpegDecodr d;
+        PicoJpegDecodr d(new AdvancedChecker);
         DeviceMapFetch f(file, map);
         RangeFileResults r("res");
 

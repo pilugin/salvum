@@ -4,6 +4,8 @@
 #include <QImage>
 #include <QPair>
 
+namespace Jpeg {
+
 class ImageCursor
 {
 public:
@@ -28,5 +30,7 @@ private:
     int mBlockX;
     int mBlockY;
 };
+
+} // eons Jpeg
 
 #endif // IMAGEADAPTOR_H

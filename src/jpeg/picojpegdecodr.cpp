@@ -2,16 +2,17 @@
 #include "if/ifetch.h"
 #include "if/iresults.h"
 #include "if/ilog.h"
-#include "jpeg/advancedchecker.h"
+#include "if/jpeg/icheck.h"
 
 #include <QtDebug>
 
 using namespace Log;
-using namespace Jpeg;
 
-PicoJpegDecodr::PicoJpegDecodr()
+namespace Jpeg {
+
+PicoJpegDecodr::PicoJpegDecodr(ICheck *check)
 {    
-    mCheck = new AdvancedChecker;
+    mCheck = check;
     mFetch = nullptr;
     mDone = false;
     mBlockCount = 0;
@@ -192,3 +193,4 @@ PicoJpegDecodContext::PicoJpegDecodContext()
     pjpegCtxt.resize(pjpeg_ctxt_buffer_size);
 }
 
+} // eons Jpeg

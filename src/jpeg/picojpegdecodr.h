@@ -13,8 +13,6 @@ namespace Jpeg {
 
 class ICheck;
 
-}
-
 struct PicoJpegDecodContext
 {
     PicoJpegDecodContext();
@@ -33,7 +31,7 @@ struct PicoJpegDecodContext
 class PicoJpegDecodr : public IDecod, public Singleton<PicoJpegDecodr>
 {
 public:
-    PicoJpegDecodr();
+    PicoJpegDecodr(ICheck *check);
     ~PicoJpegDecodr();
 
     bool restart(IFetch *fetch);
@@ -49,7 +47,7 @@ public:
 private:
 
     IFetch *mFetch;
-    Jpeg::ICheck *mCheck;
+    ICheck *mCheck;
     QImage mImage;
 
     PicoJpegDecodContext mContext;
@@ -71,5 +69,7 @@ private:
     static unsigned char fetchCallback(unsigned char* pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read, void *param);
     unsigned char fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read);
 };
+
+} // eons Jpeg
 
 #endif // PICOJPEGDECODR_H

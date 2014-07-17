@@ -1,6 +1,8 @@
 #include "imagecursor.h"
 #include <QtDebug>
 
+namespace Jpeg {
+
 ImageCursor::ImageCursor()
     : mCanvas(0)
 {
@@ -70,3 +72,5 @@ void ImageCursor::incBlock()
         ++mBlockY;
     }
 }
+
+} // eons Jpeg
