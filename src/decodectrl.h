@@ -13,9 +13,9 @@ class DecodeCtrl
 public:
     DecodeCtrl();
 
-protected:
     bool decode(IDecod *decodr, IFetch *fetch, IResults *results, int clusterNo);
     bool decode(IDecod *decodr, IFetch *fetch, IResults *results, const QList<QPair<int, int>> &rewinds);
+protected:
 
     bool startDecode(IDecod *decodr, IFetch *fetch, IResults *results);
     bool proceedDecode(IDecod *decodr, IFetch *fetch, IResults *results);

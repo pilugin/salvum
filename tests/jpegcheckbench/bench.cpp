@@ -1,42 +1,76 @@
 #include "bench.h"
-#include "if/jpeg/icheck.h"
-#include "if/ifetch.h"
-#include "if/iresults.h"
-#include "jpeg/picojpegdecodr.h"
 #include "jpeg/advancedchecker.h"
+#include "if/isettings.h"
+#include "if/ilog.h"
 
-class Fetch : public IFetch
+#include <QtDebug>
+
+using namespace Settings;
+using namespace Log;
+
+namespace Jpeg {
+
+Bench::Bench() : mTestee(0)
 {
-public:
-    Fetch(const QVector<ClusterInput> &input) : mInput(input), mCurrent(0) {}
-    bool rewind(int,int) { return true; }
-    void skip(const QVector<int> &) {}
-    void fastfwd() {}
-    
-    bool atEnd() const { return mCurrent>=0 && mCurrent<mInput.size(); }
-    void fetch(int &clusterNo, QByteArray &cluster) 
-    { 
-        if (atEnd()) {
-            clusterNo = InvalidClusterNo;
-            cluster.clear();
-        } else {
-            clusterNo =     mInput[mCurrent].clusterNo;
-            cluster =       mInput[mCurrent].cluster;
-            ++ mCurrent;
-        }
-    }
-  
-private:
-    const QVector<ClusterInput> &mInput;
-    int mCurrent;
-};
-
-
-
-
-
-
-QVector<ClusterCheckInfo> runCheckDecod(const QVector<ClusterInput> &input, Jpeg::ICheck &checkr)
-{
-    return QVector<ClusterCheckInfo>();
 }
+
+bool Bench::init(ICheck *testee, const QString &clustersPath)
+{
+    mTestee = testee;
+    mCheckRelevances.clear();
+    mInput.setFileName(clustersPath);
+    mOffset = 0;
+    if (!mInput.open(QFile::ReadOnly)) {
+        qDebug()<<"ERR:"<<clustersPath<<mInput.errorString();
+        return false;
+    }
+
+    return true;
+}
+
+//////
+
+void Bench::fetch(int &clusterNo, QByteArray &cluster)
+{
+    Msg("\nF");
+
+    if (!mInput.seek(mOffset * Get(ClusterSize).toInt())) {
+        qDebug() << "ERR:"<<mInput.fileName()<<mInput.errorString();
+        clusterNo = InvalidClusterNo;
+        cluster.clear();
+    }
+    cluster = mInput.read(Get(ClusterSize).toInt());
+    clusterNo = mOffset;
+
+    mCheckRelevances.push_back( qMakePair(mOffset, -1.) );
+
+    ++mOffset;
+}
+
+bool Bench::atEnd() const
+{
+    return (mOffset * Get(ClusterSize).toInt()) >= mInput.size();
+}
+
+///////
+
+bool Bench::check(const QImage &image, int blockBegin, int blockEnd, double *relevance)
+{
+    double localRelevance = 0.;
+    bool res = mTestee ? mTestee->check(image, blockBegin, blockEnd, &localRelevance) : false;
+
+    if (relevance)
+        *relevance = localRelevance;
+
+    mCheckRelevances.back().second = localRelevance;
+    return res;
+}
+
+double Bench::minRelevance() const
+{
+    return mTestee ? mTestee->minRelevance() : 1.;
+}
+
+} // eons Jpeg
+
+

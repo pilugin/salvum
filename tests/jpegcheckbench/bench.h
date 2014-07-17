@@ -3,27 +3,43 @@
 
 #include <QVector>
 #include <QByteArray>
+#include <QFile>
+#include <QPair>
+
+#include "if/jpeg/icheck.h"
+#include "if/ifetch.h"
 
 namespace Jpeg {
-    class ICheck;
-}
 
-struct ClusterInput
+class Bench : public IFetch, public ICheck
 {
-    int clusterNo;
-    QByteArray cluster;
-    bool ok;
+public:
+    Bench();
+    
+    bool init(ICheck *testee, const QString &clustersPath);
+    
+    // ifetch impl
+    bool rewind(int,int) { return true; }
+    void skip(const QVector<int> &) {}
+    void fastfwd() {}
+    void fetch(int &clusterNo, QByteArray &cluster);
+    bool atEnd() const;
+    
+
+    // icheck impl
+    bool check(const QImage &image, int blockBegin, int blockEnd, double *relevance =nullptr);
+    double minRelevance() const;
+
+    const QVector<QPair<int,double>> checkRelevances() const { return mCheckRelevances; } 
+
+private:
+    ICheck *mTestee;
+    QFile mInput;
+    QVector<QPair<int, double>> mCheckRelevances;
+    int mOffset;
 };
 
-struct ClusterCheckInfo
-{
-    int clusterNo;
-    double relevance;
-    bool actuallyOk;
-    bool expectedOk;
-};
 
-QVector<ClusterCheckInfo> runCheckDecod(const QVector<ClusterInput> &input, Jpeg::ICheck &checkr);
-
+} // eons Jpeg
 
 #endif
