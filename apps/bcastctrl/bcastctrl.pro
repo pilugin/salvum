@@ -10,7 +10,7 @@ QMAKE_CXXFLAGS += -std=c++0x
 
 INCLUDEPATH += ../../src ../..
 DEPENDPATH += ../../src ../..
-LIBS += -L../../src -lsalv
+LIBS += -L../../src -lsalv -lrt
 #-L../../picojpeg -lpicojpeg
 
 SOURCES += \
