@@ -19,3 +19,5 @@ SOURCES += \
 
 HEADERS += \
     bcastctrl.h
+
+include(../../src/if/dbus/dbus.pri)

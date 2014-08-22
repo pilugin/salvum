@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<node name="/">
+    <interface name="org.salvum.Broadcast">
+        <method name="restart">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+            <arg type="u" name="clusterNo" direction="in" />
+        </method>
+
+        <method name="skip">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVector&lt;int&gt;"/>
+            <arg type="ai" name="clusterNos" direction="in" />
+        </method>
+
+        <method name="emitStatus">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+        </method>
+
+        <!-- Signals -->
+        <signal name="progress">
+            <arg type="i" name="currentClusterNo" direction="out"/>
+            <arg type="i" name="clustersCount" direction="out"/>
+        </signal>
+        <signal name="atEnd"/>
+    </interface>
+</node>
