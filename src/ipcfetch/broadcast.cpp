@@ -79,6 +79,7 @@ bool Broadcast::prepare(BroadcastMessage &message)
 
 void Broadcast::postRead(const BroadcastMessage &message)
 {
+/*
     static const int feedbackTimeout = 1*1000;
 
     // check feedback here
@@ -106,7 +107,7 @@ void Broadcast::postRead(const BroadcastMessage &message)
     }
 
     m.mutex().unlock();
-
+*/
     if (message.status == AtEnd) {
 
         Msg("BCAST:postRead[AtEnd] rewind+fastfwd\n");

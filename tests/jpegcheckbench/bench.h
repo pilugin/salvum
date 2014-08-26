@@ -20,7 +20,7 @@ public:
     
     // ifetch impl
     bool rewind(int,int) { return true; }
-    void skip(const QVector<int> &) {}
+    void skip(int, int) {}
     void fastfwd() {}
     void fetch(int &clusterNo, QByteArray &cluster);
     bool atEnd() const;

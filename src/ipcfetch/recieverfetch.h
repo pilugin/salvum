@@ -19,7 +19,7 @@ public:
     ~RecieverFetch();
 
     bool rewind(int clusterNo, int clusterNoEnd =IFetch::InvalidClusterNo);
-    void skip(const QVector<int> &clusters);
+    void skip(int clusterNo, int length);
     void fetch(int &clusterNo, QByteArray &cluster);
     void fastfwd();
     

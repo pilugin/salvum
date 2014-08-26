@@ -99,7 +99,7 @@ void RecieverFetch::fastfwd()
 {
 }
 
-void RecieverFetch::skip(const QVector<int> &/*clusters*/)
+void RecieverFetch::skip(int /*clusterNo*/, int /*length*/)
 {
 }
 

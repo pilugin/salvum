@@ -13,7 +13,7 @@ public:
 
     virtual bool rewind(int clusterNo =0, int clusterNoEnd =InvalidClusterNo) =0;
 
-    virtual void skip(const QVector<int> &clusters) =0;
+    virtual void skip(int clusterNo, int length) =0;
 
     virtual void fetch(int &clusterNo, QByteArray &cluster) =0;
 

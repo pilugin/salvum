@@ -45,7 +45,7 @@ bool DecodeCtrl::decode(IDecod *decodr, IFetch *fetch, IResults *results, const 
                 break;
             prevClustersFit = clustersFit;
 
-            fetch->skip( results->clusters() );
+//            fetch->skip( results->clusters() );
             rewind(fetch);
 
             afterStart = false;

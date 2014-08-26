@@ -15,7 +15,7 @@ public:
 
     void fetch(int &clusterNo, QByteArray &cluster);
     bool rewind(int clusterNo, int clusterNoEnd =InvalidClusterNo);
-    void skip(const QVector<int> &clusters);
+    void skip(int clusterNo, int length);
     void fastfwd();
     bool atEnd() const;
     QByteArray bitmap() const { return mMap; }
