@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<node name="/">
+    <interface name="org.salvum.DecodrHub">
+    
+	<method name="aquireClient">
+	    <arg type="i" name="clientId" direction="in"/>
+	    <arg type="o" name="clientPath" direction="out"/>
+	</method>
+	
+	<method name="releaseClient">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>	
+	    <arg type="o" name="clientPath" direction="in"/>
+	</method>
+    
+    </interface>
+</node>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+    This interface is inversed: Proxy and Adapter are implemented vise-versa.
+    
+    Such decision was made because each decodr is a separate process, 
+    thus they cannot provide the same DBus service.
+    
+    So each decoder connects to org.salvum.Decodr as a proxy. Each decodr gets a separate object of DecodrCtrl.
+    Signals are used to send message to Decodrs, and method calls are for getting messages from Decodrs.
+-->
+<node name="/">
+    <interface name="org.salvum.DecodrCtrl">
+    
+	<method name="atEnd">
+	    <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="DecodedClusters"/>
+	    <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="Pixmap"/>
+	
+	    <arg type="b" name="complete" direction="in"/>
+	    <arg type="a(iii)" name="decodedClusters" direction="in"/>
+	    <arg type="(iiai)" name="pixmap" direction="in"/>
+	</method>
+	
+	<signal name="start">
+	    <arg type="i" name="clusterNo" direction="out"/>	    
+	</signal>
+	
+	<signal name="resume"/>	
+	
+	<signal name="baseline">
+	    <arg type="i" name="clusterNo" direction="out"/>
+	</signal>
+    
+    </interface>
+</node>

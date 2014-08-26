@@ -1,11 +1,14 @@
 QT += dbus
 
-HEADERS += $$PWD/declareDBusMetatypes.h
+HEADERS += $$PWD/declareDBusMetatypes.h \
+	    $$PWD/dbustypes.h
 SOURCES += $$PWD/declareDBusMetatypes.cpp
+
+DBUSFILES = $$PWD/org.salvum.Broadcast.xml \
+	    $$PWD/org.salvum.DecodrCtrl.xml
 
 INCLUDEPATH+= $$OUT_PWD $$PWD
 
-DBUSFILES=$$PWD/org.salvum.Broadcast.xml
 
 genproxies.input = DBUSFILES
 genproxies.commands = qdbusxml2cpp ${QMAKE_FILE_NAME} -p ${QMAKE_FILE_BASE} -i "declareDBusMetatypes.h"
