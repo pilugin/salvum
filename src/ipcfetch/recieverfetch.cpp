@@ -62,7 +62,7 @@ bool RecieverFetch::isValid() const
     return mFeedback != nullptr && Reader<BroadcastMessage>::isValid();
 }
 
-bool RecieverFetch::rewind(int clusterNo, int)
+bool RecieverFetch::rewind(int clusterNo)
 {
     QMutexLocker l( &mInternMtx );
 

@@ -19,11 +19,9 @@ class Broadcast : public RdWr::Writer<BroadcastMessage>
 {
     typedef RdWr::Writer<BroadcastMessage> Super;
 public:
-    Broadcast(const char *shmemName, const char *shmemNameFeedback, IFetch *fetch);
+    Broadcast(const char *shmemName, IFetch *fetch);
     ~Broadcast();
     
-    bool isValid() const;       
-
     void write();
 
     QByteArray dumpStats();

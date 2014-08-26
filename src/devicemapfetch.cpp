@@ -59,15 +59,13 @@ void DeviceMapFetch::postfetch()
     static const QByteArray goodClusters(Get(GoodClusters).toByteArray());
 
     ++mCurrentCluster;
-    if (mClusterEnd == InvalidClusterNo
-                && !goodClusters.contains(mMap[mCurrentCluster]) ) //< not guided. if next section is invalid - skip it
+    if (!goodClusters.contains(mMap[mCurrentCluster]) ) //< not guided. if next section is invalid - skip it
         fastfwd();
 }
 
-bool DeviceMapFetch::rewind(int clusterNo, int clusterNoEnd)
+bool DeviceMapFetch::rewind(int clusterNo)
 {
     mCurrentCluster = clusterNo;
-    mClusterEnd = clusterNoEnd;
     return !atEnd()     && !mMap.isEmpty()      && mFile.isOpen();
 }
 
@@ -91,10 +89,7 @@ void DeviceMapFetch::fastfwd()
 
 bool DeviceMapFetch::atEnd() const
 {
-    if (mClusterEnd == InvalidClusterNo)
-        return mCurrentCluster >= mMap.size();
-    else
-        return mCurrentCluster >= mClusterEnd;
+    return mCurrentCluster >= mMap.size();
 }
 
 void DeviceMapFetch::skip(int clusterNo, int length)

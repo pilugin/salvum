@@ -11,7 +11,7 @@ public:
 
     virtual ~IFetch() {}
 
-    virtual bool rewind(int clusterNo =0, int clusterNoEnd =InvalidClusterNo) =0;
+    virtual bool rewind(int clusterNo =0) =0;
 
     virtual void skip(int clusterNo, int length) =0;
 

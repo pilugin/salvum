@@ -19,19 +19,11 @@ DecodeCtrl::DecodeCtrl()
 
 bool DecodeCtrl::decode(IDecod *decodr, IFetch *fetch, IResults *results, int clusterNo)
 {
-    return decode(decodr, fetch, results, QList<QPair<int, int>>() << qMakePair(clusterNo, (int)IFetch::InvalidClusterNo) );
-}
-
-bool DecodeCtrl::decode(IDecod *decodr, IFetch *fetch, IResults *results, const QList<QPair<int, int>> &rewinds)
-{
-    int clusterNo = rewinds.isEmpty() ? IFetch::InvalidClusterNo : rewinds.front().first;
     Session( QString::number(clusterNo, 16) );
     results->restart( QString::number(clusterNo, 16) );
 
-    mRewinds = rewinds;
-
     qDebug("%08X start", clusterNo);
-    if (rewind(fetch)   &&  startDecode(decodr, fetch, results) ) {
+    if (rewind(fetch, clusterNo)   &&  startDecode(decodr, fetch, results) ) {
         bool afterStart = true;
         int prevClustersFit = results->clusters().size();
 
@@ -58,21 +50,18 @@ bool DecodeCtrl::decode(IDecod *decodr, IFetch *fetch, IResults *results, const 
     return decodr->done();
 }
 
-bool DecodeCtrl::rewind(IFetch *fetch)
+bool DecodeCtrl::rewind(IFetch *fetch, int clusterNo)
 {
     qDebug("rewind");
     bool rv = true;
-    if (mRewinds.isEmpty()) {
-        fetch->rewind(0);
-        fetch->fastfwd();
 
-        Msg("Fetch rewind(0) + ffwd()\n");
-    } else {
-        rv = fetch->rewind(mRewinds.front().first, mRewinds.front().second);
+    rv = fetch->rewind(clusterNo);
+    if (rv) {
+	if (clusterNo == 0) 
+    	    fetch->fastfwd();
 
-        Msg("Fetch rewind(%X, %X): %s\n", mRewinds.front().first, mRewinds.front().second, rv ? "OK" : "Fail");
-        mRewinds.pop_front();
-    }
+        Msg("Fetch rewind(%d) %s\n", clusterNo, clusterNo==0 ? "+ ffwd()" : "");
+    } 
 
     return rv;
 }

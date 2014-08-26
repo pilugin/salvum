@@ -1,7 +1,7 @@
 TEMPLATE=subdirs
 SUBDIRS= \
-    devicemapfetch \
+#    devicemapfetch \
     salv \
     ipc \
     ipcfetch \
-    jpegcheckbench
+#    jpegcheckbench

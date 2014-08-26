@@ -14,7 +14,7 @@ public:
     DeviceMapFetch(const QString &file, const QByteArray &map, bool brute=false);
 
     void fetch(int &clusterNo, QByteArray &cluster);
-    bool rewind(int clusterNo, int clusterNoEnd =InvalidClusterNo);
+    bool rewind(int clusterNo);
     void skip(int clusterNo, int length);
     void fastfwd();
     bool atEnd() const;
@@ -25,7 +25,6 @@ public:
 protected:
     QByteArray mMap;
     int mCurrentCluster;
-    int mClusterEnd;
 
     QFile mFile;
 

@@ -4,7 +4,6 @@
     <interface name="org.salvum.Broadcast">
         <method name="start">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
-            <arg type="u" name="clusterNo" direction="in" />
         </method>
 
         <method name="skip">
@@ -17,7 +16,7 @@
     	    <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
 	</method>
 
-        <method name="emitStatus">
+        <method name="emitProgress">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
         </method>
 
