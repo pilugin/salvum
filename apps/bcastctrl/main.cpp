@@ -25,13 +25,7 @@ int main(int argc, char **argv)
     qDebug("Ack");
 
     QString command = argv[2];
-    if ( command == "pause" ) {
-        ctrl.request().command = Pause;
-
-    } else if ( command == "resume" ) {
-        ctrl.request().command = Resume;
-
-    } else if ( command == "exit" || command == "stop" ) {
+    if ( command == "exit" || command == "stop" ) {
         ctrl.request().command = Exit;
 
     } else if ( command == "brute" ) {

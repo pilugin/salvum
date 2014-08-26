@@ -104,18 +104,6 @@ void Writer<T>::stop()
 }
 
 template <class T>
-void Writer<T>::pause()
-{
-    interrupt(Pause);  
-}
-
-template <class T>
-void Writer<T>::resume()
-{
-    mInternalCnd.signal();
-}
-
-template <class T>
 void Writer<T>::interrupt(int msg)
 {
     IPC::Conds<2> &c = mMem->conds();
@@ -154,11 +142,6 @@ template <class T>
 bool Writer<T>::processInternalMsg(int internalMsg)
 {
     switch (internalMsg) {
-    case Pause:
-        mInternalCnd.signal();
-        mInternalCnd.wait( mInternalMtx );
-        return mInternalMsg != Exit;
-
     case Exit:
         return false;
     default:

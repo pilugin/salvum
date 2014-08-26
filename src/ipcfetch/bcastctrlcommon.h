@@ -9,8 +9,6 @@ namespace IPCFetch {
 enum BcastCtrlCommand
 {
     Noop,
-    Pause,
-    Resume,
     Exit,
     Brute,
     DumpStats,

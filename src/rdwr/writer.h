@@ -19,11 +19,9 @@ public:
     virtual void write();
 
     void stop();
-    void pause();
-    void resume();
 
 protected:
-    enum InternalOperation { Noop, Pause, Resume, Exit, Custom };
+    enum InternalOperation { Noop, Exit, Custom };
 
     virtual bool prepare(T &data) =0; //< Mutexes: REG=unlocked, READ=locked
     virtual void postRead(const T &data); //< empty method. called after all registered clients read. Mutexes: REG=locked, READ=locked

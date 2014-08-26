@@ -91,16 +91,7 @@ bool BcastCtrl::processRq( const BcastCtrlRequest &rq, BcastCtrlResponse &rs )
 
     switch ( rq.command ) {
     case Noop: break;
-    case Pause:
-        qDebug("Pause");
-        mThread->bcast()->pause();
-        break;
-
-    case Resume:
-        qDebug("Resume");
-        mThread->bcast()->resume();
-        break;
-
+    
     case Exit:
         qDebug("Exit");
         mThread->bcast()->stop();
