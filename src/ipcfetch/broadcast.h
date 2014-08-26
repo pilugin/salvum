@@ -30,7 +30,7 @@ public:
     QPair<bool, QString> saveBitmap(const QString &filename);
 protected:   
     enum InternalOperation { 
-        DumpStats = RdWr::Writer<BroadcastMessage>::Custom, 
+        DumpStats = Super::Custom,
         SaveBitmap,
         Custom
     };
