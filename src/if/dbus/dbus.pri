@@ -22,6 +22,22 @@ genproxies_cpp.variable_out = SOURCES
 genproxies_cpp.depends = ${QMAKE_FILE_BASE}.h
 
 
-QMAKE_EXTRA_COMPILERS += genproxies genproxies_cpp
+
+
+genadaptors.input = DBUSFILES
+genadaptors.commands = qdbusxml2cpp ${QMAKE_FILE_NAME} -a ${QMAKE_FILE_BASE}Adp -i "declareDBusMetatypes.h"
+genadaptors.output = ${QMAKE_FILE_BASE}Adp.h
+genadaptors.variable_out = HEADERS
+
+genadaptors_cpp.input = DBUSFILES
+genadaptors_cpp.commands = echo "dbusxml2cpp-adp-dummy:" ${QMAKE_FILE_BASE}Adp.cpp
+genadaptors_cpp.output = ${QMAKE_FILE_BASE}Adp.cpp
+genadaptors_cpp.variable_out = SOURCES
+genadaptors_cpp.depends = ${QMAKE_FILE_BASE}Adp.h
+
+
+
+
+QMAKE_EXTRA_COMPILERS += genproxies genproxies_cpp   genadaptors genadaptors_cpp
 
 OTHER_FILES = $$DBUSFILES
