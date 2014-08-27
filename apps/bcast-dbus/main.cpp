@@ -3,9 +3,15 @@
 #include <QtDBus>
 #include <QtDebug>
 
+#include <filelogger.h>
+#include <defaultsettings.h>
+
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
+    
+    FileLogger l("res");
+    DefaultSettings s;
 
     if (argc != 3) {
 	QTextStream(stdout) << "usage:" << argv[0] << " <mediafile> <bitmapfile>\n";
@@ -34,7 +40,7 @@ int main(int argc, char **argv)
 	return -3;
     }
     
-    if (! conn.registerObject( "/broadcast", &app )) {
+    if (! conn.registerObject( "/broadcast", &bcast )) {
 	qDebug()<<"Failed to register DBus object";
 	return -4;
     }

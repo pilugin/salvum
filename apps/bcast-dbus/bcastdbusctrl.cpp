@@ -131,7 +131,10 @@ void BcastDbusCtrl::start()
 
 void BcastDbusCtrl::skip(int clusterNo, int length)
 {
-    m_d->bcast.skip(clusterNo, length);
+    qDebug()<<"dbus:SKIP -> ";
+    
+    if (m_d->thread.isRunning())
+	m_d->bcast.skip(clusterNo, length);
 }
 
 void BcastDbusCtrl::stop()
@@ -143,7 +146,12 @@ void BcastDbusCtrl::stop()
 
 void BcastDbusCtrl::emitProgress()
 {
-    m_d->bcast.emitProgress();
+    qDebug()<<"dbus:EMIT_PROGRESS -> ";
+    
+    if (m_d->thread.isRunning())
+        m_d->bcast.emitProgress();
+    else
+	emit progress(-1, -1);
 }
 
 bool BcastDbusCtrl::isValid() const
