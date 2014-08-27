@@ -22,6 +22,7 @@ public:
     bool atEnd() const;
 
     int currentBlockIndex() const;
+    QImage *canvas() const { return mCanvas; }
 private:
     bool isBlockValid() const;
     void incBlock();

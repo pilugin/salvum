@@ -13,7 +13,10 @@ namespace Jpeg {
 
 class ICheck;
 
-struct PicoJpegDecodContext
+// This struct incapsulates the whole decoding context,
+// it is used for save/restore functionality.
+// Note: FFD9 = End-Of-Image marker 
+struct PicoJpegDecodContext : public IDecod::Context
 {
     PicoJpegDecodContext();
 
@@ -27,7 +30,8 @@ struct PicoJpegDecodContext
     ImageCursor cursor;
 };
 
-
+// Note: Signleton pattern is used to guarantee that only one instance is created.
+// Such limitation comes with picojpeg library, as it uses lots of global variables :(
 class PicoJpegDecodr : public IDecod, public Singleton<PicoJpegDecodr>
 {
 public:
@@ -36,33 +40,30 @@ public:
 
     bool restart(IFetch *fetch);
     bool decodeCluster();
-    void revert();
+    void revert(int steps);
 
     bool done() const;
-    QVector<int> usedClusters() const   { return mUsedClusters; }
-
-    int latestBlock() const;
-    QImage &image();
+    
+    int historyLength() const { return mHistory.size(); }
+    PicoJpegDecodContext *historyFrame(int frameNo) const;
 
 private:
+    int latestBlock() const;
 
     IFetch *mFetch;
     ICheck *mCheck;
     QImage mImage;
 
-    PicoJpegDecodContext mContext;
-    PicoJpegDecodContext save() const;
-    void restore(const PicoJpegDecodContext &ctxt);
-    PicoJpegDecodContext mBackupContext;
-
+    PicoJpegDecodContext &context() 	{ return mHistory.top(); }
+    QStack<PicoJpegDecodContext> 	mHistory;
+    
+    void saveContext();
+    
     bool checkFFD9() const;
 
     int mBlockCount;
-
     bool mWasFetched;
-    QVector<int> mUsedClusters;
-    void clearUsedClusters();
-
+    
     bool mDone;
 
 

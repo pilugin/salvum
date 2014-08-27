@@ -5,7 +5,8 @@ HEADERS += $$PWD/declareDBusMetatypes.h \
 SOURCES += $$PWD/declareDBusMetatypes.cpp
 
 DBUSFILES = $$PWD/org.salvum.Broadcast.xml \
-	    $$PWD/org.salvum.DecodrCtrl.xml
+	    $$PWD/org.salvum.DecodrCtrl.xml \
+	    $$PWD/org.salvum.DecodrHub.xml
 
 INCLUDEPATH+= $$OUT_PWD $$PWD
 

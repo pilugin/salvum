@@ -1,4 +1,4 @@
-TARGET = bcast
+TARGET = salv
 
 TEMPLATE = app
 
@@ -11,8 +11,7 @@ LIBS += -L../../src -lsalv
 include(../../src/if/dbus/dbus.pri)
 
 SOURCES += \
-    bcastdbusctrl.cpp \
     main.cpp 
 
 HEADERS += \
-    bcastdbusctrl.h
+
