@@ -20,6 +20,7 @@ HEADERS += \
     util/singleton.h \
     util/ipc.h \
     util/private/ipc_private.h \
+    util/slotclosure.h \
     rdwr/common.h \
     rdwr/reader.h \
     rdwr/writer.h \
@@ -47,6 +48,7 @@ SOURCES += \
     decodectrl.cpp \
     devicemapfetch.cpp \
     util/private/ipc_private.cpp \
+    util/private/slotclosure.cpp \
     ipcfetch/broadcast.cpp \
     ipcfetch/recieverfetch.cpp \
     ipcfetch/feedbackresults.cpp \

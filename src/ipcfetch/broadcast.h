@@ -36,9 +36,9 @@ protected:
 
     bool prepare(BroadcastMessage &message);
     void postRead(const BroadcastMessage &message);
+    
+    IFetch *fetch() { return mFetch; }
 private:
-    const std::string mFeedbackName;
-    SharedFeedback  *mFeedback;
     IFetch          *mFetch;
 
     QByteArray      mStats;

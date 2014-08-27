@@ -7,8 +7,12 @@ class BcastDbusCtrl : public QObject
 {
     Q_OBJECT
 public:    
-    BcastDbusCtrl(const char *shmem);
+    static const char *shmemPath() { return "salv_broadcast"; }
+
+    BcastDbusCtrl(const char *mediaPath, const char *bitmapPath);
     ~BcastDbusCtrl();
+    
+    bool isValid() const;
     
 public slots:
     void start();
@@ -18,6 +22,7 @@ public slots:
     
 signals:
     void progress(int currentClusterNo, int clustersCount);
+    void stopped();
     
 private:    
     class Private;
