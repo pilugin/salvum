@@ -13,9 +13,13 @@ include(../../src/if/dbus/dbus.pri)
 SOURCES += \
     main.cpp \
     decodrdbushub.cpp \
-    decodrdbusctrl.cpp
+    decodrdbusctrl.cpp \
+    salvjpegmodel.cpp \
+    salvjpegobject.cpp
 
 HEADERS += \
     decodrdbushub.h \
-    decodrdbusctrl.h
+    decodrdbusctrl.h \
+    salvjpegmodel.h \
+    salvjpegobject.h
 

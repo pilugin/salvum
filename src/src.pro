@@ -17,6 +17,7 @@ HEADERS += \
     jpeg/imagecursor.h \
     jpeg/picojpegdecodr.h \
     jpeg/advancedchecker.h \
+    jpeg/imagehelpers.h \
     util/singleton.h \
     util/ipc.h \
     util/private/ipc_private.h \
@@ -41,6 +42,7 @@ SOURCES += \
     jpeg/advancedchecker.cpp \
     jpeg/picojpegdecodr.cpp \
     jpeg/imagecursor.cpp \
+    jpeg/imagehelpers.cpp \
     filelogger.cpp \
     simplelogger.cpp \
     defaultsettings.cpp \

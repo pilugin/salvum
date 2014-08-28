@@ -9,6 +9,10 @@ public:
         qDBusRegisterMetaType<QVector<int>>();
         qDBusRegisterMetaType<Pixmap>();
         qDBusRegisterMetaType<DecodedClusters>();
+        
+        qRegisterMetaType<QVector<int>>();
+        qRegisterMetaType<Pixmap>();
+        qRegisterMetaType<DecodedClusters>();
     }
 };
 
@@ -33,7 +37,7 @@ const QDBusArgument &operator>>(const QDBusArgument &stream, DecodedClusters &de
 const QDBusArgument &operator>>(const QDBusArgument &stream, Pixmap &pixmap)
 {
     stream.beginStructure();
-    stream >> std::get<0>(pixmap) >> std::get<1>(pixmap);;
+    stream >> std::get<0>(pixmap) >> std::get<1>(pixmap);
     stream.beginArray();
     while (!stream.atEnd()) {
 	int pixel;
