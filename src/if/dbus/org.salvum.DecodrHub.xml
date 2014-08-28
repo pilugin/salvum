@@ -10,7 +10,7 @@
 	
 	<method name="releaseClient">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>	
-	    <arg type="o" name="clientPath" direction="in"/>
+	    <arg type="i" name="clientId" direction="in"/>
 	</method>
     
     </interface>

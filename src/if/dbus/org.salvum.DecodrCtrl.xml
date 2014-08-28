@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- 
-    This interface is inversed: Proxy and Adapter are implemented vise-versa.
+    This interface is inverted: Proxy and Adapter are implemented vise-versa.
     
     Such decision was made because each decodr is a separate process, 
     thus they cannot provide the same DBus service.
