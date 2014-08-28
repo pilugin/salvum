@@ -75,7 +75,7 @@ bool DecodeCtrl::startDecode(IDecod *decodr, IFetch *fetch, IResults *results)
     Msg("Decodr restart()=%s\n", rv ? "OK" : "Fail");
     if (!rv)
         return false;
-    results->addClusters( decodr->usedClusters() );
+//    results->addClusters( decodr->usedClusters() );
 
     return true;
 }
@@ -85,7 +85,7 @@ bool DecodeCtrl::proceedDecode(IDecod *decodr, IFetch *fetch, IResults *results)
     qDebug("proceedDecode");
     do {
         if ( decodr->decodeCluster() )
-            results->addClusters( decodr->usedClusters() );
+;//            results->addClusters( decodr->usedClusters() );
 
         else {
             decodr->revert();

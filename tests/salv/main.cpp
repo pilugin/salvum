@@ -29,7 +29,7 @@ public:
         qDebug() << "RES:"<< rv;
         qDebug() << r.clusters();
 
-        d.image().save("0.jpg", "jpg");
+//        d.image().save("0.jpg", "jpg");
     }
 };
 

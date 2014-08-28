@@ -31,19 +31,19 @@ bool PicoJpegDecodr::restart(IFetch *fetch)
 
     // reset history & context
     mHistory.clear();
-    mHistory.push(PicoJpegDecodContext());
     
-    context().bufferPos = 0;
-    context().buffer.clear();    
+    mPjpgContext.bufferPos = 0;
+    mPjpgContext.bytesRead = 0;
+    mPjpgContext.buffer.clear();
+    mPjpgContext.lastWasFF = false;
+    mPjpgContext.cursor.setCanvas(&mImage);
+    mPjpgContext.cursor.restart();
 
-    context().cursor.setCanvas(&mImage);
-    context().cursor.restart();
-
-    uchar rv = pjpeg_decode_init(&context().imgInfo, &PicoJpegDecodr::fetchCallback, this, 0);
+    uchar rv = pjpeg_decode_init(&mPjpgContext.imgInfo, &PicoJpegDecodr::fetchCallback, this, 0);
     if (rv != 0) 
         Msg("PicoJpegDecodr::restart() picojpeg err: %d\n", rv);
 
-    context().cursor.initCanvas(QSize(context().imgInfo.m_width, context().imgInfo.m_height));
+    mPjpgContext.cursor.initCanvas(QSize(mPjpgContext.imgInfo.m_width, mPjpgContext.imgInfo.m_height));
     mDone = false;
 
     return rv == 0;
@@ -51,7 +51,7 @@ bool PicoJpegDecodr::restart(IFetch *fetch)
 
 bool PicoJpegDecodr::decodeCluster()
 {
-    saveContext();
+    savePjpgContext();
 
     bool retval = true;
     mWasFetched = false;
@@ -59,12 +59,12 @@ bool PicoJpegDecodr::decodeCluster()
     for (rv=pjpeg_decode_mcu(); rv==0; rv=pjpeg_decode_mcu()) {
 
         for (int i=0; i<2; ++i, ++mBlockCount) { //< copy pixels
-            mContext.cursor.addBlock(   mContext.imgInfo.m_pMCUBufR +i*64,
-                                        mContext.imgInfo.m_pMCUBufG +i*64,
-                                        mContext.imgInfo.m_pMCUBufB +i*64);
+            mPjpgContext.cursor.addBlock(   mPjpgContext.imgInfo.m_pMCUBufR +i*64,
+                                            mPjpgContext.imgInfo.m_pMCUBufG +i*64,
+                                            mPjpgContext.imgInfo.m_pMCUBufB +i*64  );
         }
 
-        if (context().cursor.atEnd() && checkFFD9()) {
+        if (mPjpgContext.cursor.atEnd() && checkFFD9()) {
             Msg("END+FFD9");
             mDone = true;
             return true;
@@ -77,7 +77,7 @@ bool PicoJpegDecodr::decodeCluster()
             break;
         }
 
-        if (mWasFetched && ((context().buffer.size() - context().bufferPos)<252) ) {
+        if (mWasFetched && ((mPjpgContext.buffer.size() - mPjpgContext.bufferPos)<252) ) {
             Msg("[Decod Ok]");
 
             bool ch = mCheck->check(mImage, latestBlock() - mBlockCount, latestBlock());
@@ -102,8 +102,9 @@ bool PicoJpegDecodr::decodeCluster()
 
 void PicoJpegDecodr::revert(int frameNo)
 {
-    while ((frameNo-- + 1) > 0 && mHistory.size() > 1)
-	mHistory.pop();
+    while (frameNo--> 0 && mHistory.size() > 1)
+        mHistory.pop();
+    mPjpgContext = mHistory.pop().pjpgContext;
 }
 
 
@@ -111,24 +112,29 @@ void PicoJpegDecodr::revert(int frameNo)
 
 
 
-
-
-void PicoJpegDecodr::saveContext()
+void PicoJpegDecodr::savePjpgContext()
 {
-    pjpeg_save_ctxt(context().pjpegCtxt.data());
-    mHistory.push( context() );
+    pjpeg_save_ctxt(mPjpgContext.pjpegCtxt.data());
+    mHistory.push(JpegContext(mPjpgContext));
 }
+
+void PicoJpegDecodr::addClusterToHistory(int clusterNo)
+{    
+    mHistory.top().clusterNos.push_back(clusterNo);
+}
+
+
 
 bool PicoJpegDecodr::checkFFD9() const
 {
-    if (context().bufferPos == context().bytesRead 
-    		&& context().lastWasFF 
-		&& context().buffer[0] == (char)0xD9)
+    if (mPjpgContext.bufferPos == mPjpgContext.bytesRead
+        && mPjpgContext.lastWasFF
+        && mPjpgContext.buffer[0] == (char)0xD9)
         return true;
 
-    for (int i=context().bufferPos - context().bytesRead; i<context().bufferPos; ++i) { // find D9
-        if (context().buffer[i] == (char)0xD9) { // check FF
-            if (i != 0 && context().buffer[i-1] == (char)0xFF)
+    for (int i=mPjpgContext.bufferPos - mPjpgContext.bytesRead; i<mPjpgContext.bufferPos; ++i) { // find D9
+        if (mPjpgContext.buffer[i] == (char)0xD9) { // check FF
+            if (i != 0 && mPjpgContext.buffer[i-1] == (char)0xFF)
                 return true;
         }
     }
@@ -141,9 +147,14 @@ bool PicoJpegDecodr::done() const
     return mDone;
 }
 
+const IDecod::Context *PicoJpegDecodr::historyFrame(int frameNo) const
+{
+    return &mHistory[mHistory.size() -1 -frameNo];
+}
+
 int PicoJpegDecodr::latestBlock() const
 {
-    return context().cursor.currentBlockIndex() -1;
+    return mPjpgContext.cursor.currentBlockIndex() -1;
 }
 
 unsigned char PicoJpegDecodr::fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read, void *param)
@@ -155,15 +166,15 @@ unsigned char PicoJpegDecodr::fetchCallback(unsigned char *pBuf, unsigned char b
 {
 //    Msg("FETCH %d %d\n", buf_size, mContext.buffer.size() - mContext.bufferPos);
 
-    if (context().bufferPos == context().buffer.size()) { 
-	// call fetch.
-        context().lastWasFF = context().buffer.size() ? context().buffer[0] == (char)0xFF : false;
+    if (mPjpgContext.bufferPos == mPjpgContext.buffer.size()) {
+        // call fetch.
+        mPjpgContext.lastWasFF = mPjpgContext.buffer.size() ? mPjpgContext.buffer[ mPjpgContext.buffer.size()-1 ] == (char)0xFF : false;
 
         int clusterNo;
-        mFetch->fetch(clusterNo, context().buffer);
-        if (context().buffer.size() > 0) {
-            context().bufferPos = 0;
-            context().usedClusters.push_back(clusterNo);
+        mFetch->fetch(clusterNo, mPjpgContext.buffer);
+        if (mPjpgContext.buffer.size() > 0) {
+            mPjpgContext.bufferPos = 0;
+            addClusterToHistory(clusterNo);
 
             mBlockCount = 0;
             mWasFetched = true;
@@ -172,9 +183,9 @@ unsigned char PicoJpegDecodr::fetchCallback(unsigned char *pBuf, unsigned char b
             return PJPG_NO_MORE_BLOCKS;
     }
 
-    context().bytesRead = *pBytes_actually_read = qMin( context().buffer.size() - context().bufferPos, (int)buf_size);
-    memcpy( pBuf, context().buffer.data() + context().bufferPos, *pBytes_actually_read);
-    context().bufferPos += *pBytes_actually_read;
+    mPjpgContext.bytesRead = *pBytes_actually_read = qMin( mPjpgContext.buffer.size() - mPjpgContext.bufferPos, (int)buf_size);
+    memcpy( pBuf, mPjpgContext.buffer.data() + mPjpgContext.bufferPos, *pBytes_actually_read);
+    mPjpgContext.bufferPos += *pBytes_actually_read;
 
     return 0;
 }
@@ -184,7 +195,11 @@ unsigned char PicoJpegDecodr::fetchCallback(unsigned char *pBuf, unsigned char b
 PicoJpegDecodContext::PicoJpegDecodContext()
 {
     pjpegCtxt.resize(pjpeg_ctxt_buffer_size);
-    imagePtr = nullptr;
+}
+
+PicoJpegDecodr::JpegContext::JpegContext(const PicoJpegDecodContext &pjpgContext_)
+    : pjpgContext(pjpgContext_)
+{
 }
 
 } // eons Jpeg

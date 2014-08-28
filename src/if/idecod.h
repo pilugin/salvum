@@ -19,13 +19,13 @@ public:
     
     struct Context
     {
-	QVector<int> usedClusters;
+        QVector<int> clusterNos;
     };
     
     /** returns decode-context of the frame.
-	frameNo=0 - latest frame. Top of the stack
+        frameNo=0 - latest frame. Top of the stack
     */
-    virtual Context *historyFrame(int frameNo =0) const =0; 
+    virtual const Context *historyFrame(int frameNo =0) const =0;
 
     virtual bool done() const =0; //< true on EOI (no error)
 

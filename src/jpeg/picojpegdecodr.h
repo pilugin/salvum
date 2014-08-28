@@ -8,6 +8,7 @@
 #include "util/singleton.h"
 
 #include <QImage>
+#include <QStack>
 
 namespace Jpeg {
 
@@ -16,7 +17,7 @@ class ICheck;
 // This struct incapsulates the whole decoding context,
 // it is used for save/restore functionality.
 // Note: FFD9 = End-Of-Image marker 
-struct PicoJpegDecodContext : public IDecod::Context
+struct PicoJpegDecodContext
 {
     PicoJpegDecodContext();
 
@@ -44,20 +45,27 @@ public:
 
     bool done() const;
     
+    struct JpegContext : public IDecod::Context
+    {
+        JpegContext(const PicoJpegDecodContext &pjpgContext=PicoJpegDecodContext());
+        PicoJpegDecodContext pjpgContext;
+    };
+
+    const Context *historyFrame(int frameNo) const;
     int historyLength() const { return mHistory.size(); }
-    PicoJpegDecodContext *historyFrame(int frameNo) const;
 
 private:
     int latestBlock() const;
 
     IFetch *mFetch;
     ICheck *mCheck;
-    QImage mImage;
+    QImage mImage;        
 
-    PicoJpegDecodContext &context() 	{ return mHistory.top(); }
-    QStack<PicoJpegDecodContext> 	mHistory;
+    PicoJpegDecodContext mPjpgContext;
+    QStack<JpegContext> mHistory;
     
-    void saveContext();
+    void savePjpgContext();
+    void addClusterToHistory(int clusterNo);
     
     bool checkFFD9() const;
 
