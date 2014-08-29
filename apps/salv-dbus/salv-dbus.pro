@@ -15,3 +15,5 @@ SOURCES += \
 
 HEADERS += \
 
+RESOURCES +=
+

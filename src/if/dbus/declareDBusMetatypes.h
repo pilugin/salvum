@@ -4,9 +4,9 @@
 #include <QtCore/QMetaType>
 #include "dbustypes.h"
 
-Q_DECLARE_METATYPE(QVector<int>)
-Q_DECLARE_METATYPE(DecodedClusters)
-Q_DECLARE_METATYPE(Pixmap)
+//Q_DECLARE_METATYPE(QVector<int>)
+//Q_DECLARE_METATYPE(DecodedClusters)
+//Q_DECLARE_METATYPE(Pixmap)
 
 #include <QDBusArgument>
 

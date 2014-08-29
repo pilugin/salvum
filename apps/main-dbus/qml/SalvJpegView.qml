@@ -6,23 +6,31 @@ Rectangle {
 
     color: "#C0C0C0"
 
-
-    Component {
-        id: salvJpegDelegate
-
-        Rectangle {
-            color: "black"
-            width: 100
-            height: 100
-        }
-    }
-
     GridView {
+        id: theView
+
         anchors.fill: parent
         cellWidth: 110
         cellHeight: 110
 
+        signal clicked(int row, variant clusters);
+
         model: salvJpegModel
-        delegate: salvJpegDelegate
+        delegate: Rectangle {
+            color: "black"
+            width: 100
+            height: 100
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: theView.clicked(index, decodedClusters);
+            }
+        }
+
+    }
+
+    Connections {
+        target: theView
+        onClicked: console.log("HERE" + row + "  " + clusters);
     }
 }
