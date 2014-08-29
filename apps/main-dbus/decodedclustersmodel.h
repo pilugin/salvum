@@ -26,10 +26,12 @@ public:
 
 public slots:
     void setCurrentCluster(int row);
+    void baseline();
     
 signals:
     void currentClusterChanged(int row);
     void currentClusterParamsChanged(int clusterNo, int blockBegin, int blockEnd);
+    void baselineSelected(int clusterNo);
     
 private:
     enum 

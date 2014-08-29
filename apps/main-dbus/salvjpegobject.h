@@ -37,11 +37,13 @@ signals:
     void shadeChanged(QString);
     void decodedClustersChanged(QObject *);
 
+    void baseline(int clusterNo);
 
 public slots:    
     void decodrInProgress();
     void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap);
     void currentClusterChanged(int clusterNo, int blockBegin, int blockEnd);
+    void baselineSelected(int clusterNo);
 
 private:
     const int mId;

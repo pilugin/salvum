@@ -1,6 +1,7 @@
 TARGET = salvum-main
-
 TEMPLATE = app
+
+QT += declarative
 
 QMAKE_CXXFLAGS += -std=c++0x
 
@@ -16,12 +17,20 @@ SOURCES += \
     decodrdbusctrl.cpp \
     salvjpegmodel.cpp \
     salvjpegobject.cpp \
-    decodedclustersmodel.cpp
+    decodedclustersmodel.cpp \
+    salvjpegimageprovider.cpp 
 
 HEADERS += \
     decodrdbushub.h \
     decodrdbusctrl.h \
     salvjpegmodel.h \
     salvjpegobject.h \
-    decodedclustersmodel.h
+    decodedclustersmodel.h \
+    salvjpegimageprovider.h
+
+OTHER_FILES += \
+    qml/SalvJpegView.qml
+
+RESOURCES += \
+    resources.qrc
 

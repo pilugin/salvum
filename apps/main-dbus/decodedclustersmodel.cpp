@@ -2,6 +2,7 @@
 
 DecodedClustersModel::DecodedClustersModel(QObject *parent)
 : QAbstractListModel(parent)
+, mCurrentCluster(-1)
 {
 
 #if QT_VERSION < 0x050000
@@ -57,6 +58,7 @@ void DecodedClustersModel::reset(const DecodedClusters &decodedClusters)
 {
     beginResetModel();
     mDecodedClusters = decodedClusters;
+    mCurrentCluster = -1;
     endResetModel();
 }
 
@@ -66,6 +68,13 @@ void DecodedClustersModel::setCurrentCluster(int row)
         emit currentClusterChanged(mCurrentCluster = row);
         const DecodedClusters::value_type &v = mDecodedClusters[row];
         emit currentClusterParamsChanged( std::get<0>(v), std::get<1>(v), std::get<2>(v) );
+    }
+}
+
+void DecodedClustersModel::baseline()
+{
+    if ( mCurrentCluster>=0 && mCurrentCluster<mDecodedClusters.size() ) {	
+	emit baselineSelected( std::get<0>(mDecodedClusters[mCurrentCluster]) );
     }
 }
 

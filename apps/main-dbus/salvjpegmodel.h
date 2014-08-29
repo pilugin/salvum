@@ -17,10 +17,13 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     
-    
 #if QT_VERSION >= 0x050000
     QHash<int, QByteArray> roleNames() const { return roleNames_internal(); }
 #endif
+
+    SalvJpegObject *getSalvJpeg(int id) const;
+
+    static QString imageProviderName();
 
 public slots:
     void decodrClientAdded(int clientId, QDBusObjectPath, DecodrDbusCtrl *client);
@@ -41,7 +44,6 @@ private:
     };
     static QHash<int, QByteArray> roleNames_internal();
     
-    static QString imageProviderName();
     static QString imageProviderPrefix();
     
     QList<SalvJpegObject *> mList;

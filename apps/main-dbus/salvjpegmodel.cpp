@@ -70,7 +70,8 @@ void SalvJpegModel::decodrClientAdded(int clientId, QDBusObjectPath, DecodrDbusC
     connect(client, SIGNAL(resume()),   o, SLOT(decodrInProgress()) );
     connect(client, SIGNAL(start(int)), o, SLOT(decodrInProgress()) );
     connect(client, SIGNAL(atEndRecv(bool,DecodedClusters,Pixmap)), 
-                o,  SLOT(decodrAtEnd(bool,DecodedClusters,Pixmap))  );
+            o,      SLOT(decodrAtEnd(bool,DecodedClusters,Pixmap))  );
+    connect(o,      SIGNAL(baseline(int)),  client, SLOT(sendBaseline(int)) );
     
     connect(o, SIGNAL(inProgressChanged(bool)), this, SLOT(itemUpdated()) );
     
@@ -105,6 +106,14 @@ void SalvJpegModel::itemUpdated()
         }
 }
     
+SalvJpegObject *SalvJpegModel::getSalvJpeg(int id) const
+{
+    for (SalvJpegObject *o: mList)
+	if (o->id() == id)
+	    return o;
+    return nullptr;
+}    
+    
 QString SalvJpegModel::imageProviderName()
 {
     return "salv-image";
@@ -114,3 +123,4 @@ QString SalvJpegModel::imageProviderPrefix()
 {
     return QString("image://%1").arg(imageProviderName());
 }
+

@@ -13,7 +13,7 @@ SalvJpegObject::SalvJpegObject(int id_, const QString &imageProviderPrefix, QObj
 , mSubmodel(new DecodedClustersModel(this))
 {
     connect(mSubmodel,  SIGNAL(currentClusterParamsChanged(int,int,int)),   this,   SLOT(currentClusterChanged(int,int,int)) );
-
+    connect(mSubmodel,  SIGNAL(baselineSelected(int)),                      this,   SLOT(baselineSelected(int)) );
 }
 
 void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap)
@@ -50,4 +50,12 @@ QImage SalvJpegObject::shade(int blockEnd) const
     }
     
     return mShade.image;
+}
+
+void SalvJpegObject::baselineSelected(int clusterNo)
+{
+    emit baseline(clusterNo);
+    
+    // prepare data for IFetch::skip call
+    ;
 }
