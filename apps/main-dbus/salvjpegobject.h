@@ -5,6 +5,8 @@
 #include <QtCore/QObject>
 #include <QImage>
 
+class DecodedClustersModel;
+
 class SalvJpegObject : public QObject
 {
     Q_OBJECT
@@ -24,6 +26,8 @@ public:
     QString shadeId() const	{ return mShadeId; }
     QObject *decodedClusters() const;
     
+    QImage image() const { return mImage; } 
+    QImage shade(int blockEnd) const;
     
 signals:
     void idChanged(int); //< never emitted, as id = const
@@ -37,6 +41,7 @@ signals:
 public slots:    
     void decodrInProgress();
     void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap);
+    void currentClusterChanged(int clusterNo, int blockBegin, int blockEnd);
 
 private:
     const int mId;
@@ -49,6 +54,12 @@ private:
     bool mComplete;
     DecodedClusters mDecodedClusters;
     QImage mImage;
+    mutable struct {
+        QImage image;
+        int blockEnd;
+    } mShade;
+    
+    DecodedClustersModel *mSubmodel;
 };
 
 #endif

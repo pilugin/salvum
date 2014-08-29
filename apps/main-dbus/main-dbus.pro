@@ -15,11 +15,13 @@ SOURCES += \
     decodrdbushub.cpp \
     decodrdbusctrl.cpp \
     salvjpegmodel.cpp \
-    salvjpegobject.cpp
+    salvjpegobject.cpp \
+    decodedclustersmodel.cpp
 
 HEADERS += \
     decodrdbushub.h \
     decodrdbusctrl.h \
     salvjpegmodel.h \
-    salvjpegobject.h
+    salvjpegobject.h \
+    decodedclustersmodel.h
 
