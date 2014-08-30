@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     for (int i=0; i<1000; ++i)
         dc.push_back(std::make_tuple(i, i*2, i*3));
 
-    QImage img(":/1.jpg");
+    QImage img("1.jpg");
     if (img.isNull()) {
         qDebug()<<"Failed to load image:";
         return -4;
