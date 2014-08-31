@@ -22,7 +22,7 @@ public:
     int id() const		{ return mId; }
     bool inProgress() const	{ return mInProgress; }
     bool complete() const	{ return mComplete; }
-    QString imageId() const	{ return mImageId; }
+    QString imageId() const;
     QString shadeId() const	{ return mShadeId; }
     QObject *decodedClusters() const;
     

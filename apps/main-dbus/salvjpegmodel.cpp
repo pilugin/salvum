@@ -74,6 +74,7 @@ void SalvJpegModel::decodrClientAdded(int clientId, QDBusObjectPath, DecodrDbusC
     connect(o,      SIGNAL(baseline(int)),  client, SLOT(sendBaseline(int)) );
     
     connect(o, SIGNAL(inProgressChanged(bool)), this, SLOT(itemUpdated()) );
+    connect(o, SIGNAL(imageChanged(QString)),   this, SLOT(itemUpdated()) );
     
     
     beginInsertRows(QModelIndex(), mList.size(), mList.size());

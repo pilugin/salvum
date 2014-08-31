@@ -3,6 +3,8 @@
 
 #include "org.salvum.DecodrCtrlAdp.h"
 
+class QTimer;
+
 class DecodrDbusCtrl : public QObject
 {
     Q_OBJECT
@@ -17,15 +19,20 @@ public slots:
     void sendBaseline(int clusterNo)    { emit baseline(clusterNo); }
 signals:
     void atEndRecv(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap);
+    void noHeartbeat();
     
 private slots:
     void atEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap)
 					{ emit atEndRecv(complete, decodedClusters, pixmap); }
+    void heartbeat();
         
 signals:    
     void start(int clusterNo);
     void resume();
     void baseline(int clusterNo);
+
+private:
+    QTimer *mHeartbeatTimer;
 };
 
 #endif

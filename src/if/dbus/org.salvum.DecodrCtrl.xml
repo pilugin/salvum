@@ -12,24 +12,30 @@
 <node name="/">
     <interface name="org.salvum.DecodrCtrl">
     
-	<method name="atEnd">
-	    <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="DecodedClusters"/>
-	    <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="Pixmap"/>
-	
-	    <arg type="b" name="complete" direction="in"/>
-	    <arg type="a(iii)" name="decodedClusters" direction="in"/>
-	    <arg type="(iiai)" name="pixmap" direction="in"/>
-	</method>
-	
-	<signal name="start">
-	    <arg type="i" name="clusterNo" direction="out"/>	    
-	</signal>
-	
-	<signal name="resume"/>	
-	
-	<signal name="baseline">
-	    <arg type="i" name="clusterNo" direction="out"/>
-	</signal>
+        <method name="atEnd">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>	
+
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="DecodedClusters"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="Pixmap"/>
+
+            <arg type="b" name="complete" direction="in"/>
+            <arg type="a(iii)" name="decodedClusters" direction="in"/>
+            <arg type="(iiai)" name="pixmap" direction="in"/>
+        </method>
+
+        <method name="heartbeat">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/> 
+        </method>
+
+        <signal name="start">
+            <arg type="i" name="clusterNo" direction="out"/>	    
+        </signal>
+
+        <signal name="resume"/>	
+
+        <signal name="baseline">
+            <arg type="i" name="clusterNo" direction="out"/>
+        </signal>
     
     </interface>
 </node>

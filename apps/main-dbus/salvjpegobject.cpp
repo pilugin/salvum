@@ -1,6 +1,7 @@
 #include "salvjpegobject.h"
 #include "jpeg/imagehelpers.h"
 #include "decodedclustersmodel.h"
+#include <QtDebug>
 
 SalvJpegObject::SalvJpegObject(int id_, const QString &imageProviderPrefix, QObject *parent)
 : QObject(parent)
@@ -25,6 +26,11 @@ void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedCl
     emit imageChanged(mImageId);
     
     mSubmodel->reset(decodedClusters);
+}
+
+QString SalvJpegObject::imageId() const
+{
+    return mImage.isNull() ? QString() : mImageId; 
 }
 
 void SalvJpegObject::decodrInProgress()

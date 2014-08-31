@@ -20,6 +20,11 @@ Rectangle {
             color: "black"
             width: 100
             height: 100
+            
+            Image {
+                anchors.fill: parent
+                source: image
+            }
 
             MouseArea {
                 anchors.fill: parent

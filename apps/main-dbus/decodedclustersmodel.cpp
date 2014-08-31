@@ -44,11 +44,11 @@ QVariant DecodedClustersModel::data(const QModelIndex &index, int role) const
     
     switch (role) {
     case Role_ClusterNo:
-        return std::get<0>(v);
+        return v.clusterNo;
     case Role_BlockBegin:
-        return std::get<1>(v);
+        return v.blockBegin;
     case Role_BlockEnd:
-        return std::get<2>(v);
+        return v.blockEnd;
     default:
         return QVariant();
     }
@@ -67,14 +67,14 @@ void DecodedClustersModel::setCurrentCluster(int row)
     if (row < mDecodedClusters.size() && row>0) {
         emit currentClusterChanged(mCurrentCluster = row);
         const DecodedClusters::value_type &v = mDecodedClusters[row];
-        emit currentClusterParamsChanged( std::get<0>(v), std::get<1>(v), std::get<2>(v) );
+        emit currentClusterParamsChanged( v.clusterNo, v.blockBegin, v.blockEnd );
     }
 }
 
 void DecodedClustersModel::baseline()
 {
     if ( mCurrentCluster>=0 && mCurrentCluster<mDecodedClusters.size() ) {	
-	emit baselineSelected( std::get<0>(mDecodedClusters[mCurrentCluster]) );
+	emit baselineSelected( mDecodedClusters[mCurrentCluster].clusterNo );
     }
 }
 

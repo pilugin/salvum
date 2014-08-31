@@ -6,6 +6,8 @@
 #include <QPair>
 #include <QMap>
 
+class QSignalMapper;
+
 Q_DECLARE_METATYPE(DecodrDbusCtrl *);
 
 class DecodrDbusHub : public QObject
@@ -25,6 +27,7 @@ signals:
     
 private:    
     QMap<int, QPair<QDBusObjectPath, DecodrDbusCtrl *>> mClients;
+    QSignalMapper *mHeartbeatMapper;
 };
 
 #endif

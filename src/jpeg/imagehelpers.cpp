@@ -4,13 +4,12 @@ namespace Jpeg {
 
 QImage image(const Pixmap &pixmap)
 {
-    QImage res( std::get<0>(pixmap), std::get<1>(pixmap), QImage::Format_RGB888);
-    const QVector<int> &pixels = std::get<2>(pixmap);
+    QImage res( pixmap.width, pixmap.height, QImage::Format_RGB888);
     
     int i=0;
     for (int y=0; y<res.height(); ++y)
         for (int x=0; x<res.width(); ++x)
-	    res.setPixel(x, y, pixels[i++]);
+	    res.setPixel(x, y, pixmap.pixels[i++]);
     
     return res;
 }
@@ -18,11 +17,11 @@ QImage image(const Pixmap &pixmap)
 Pixmap dbusPixmap(const QImage &image)
 {
     Pixmap res;
-    std::get<0>(res) = image.width();
-    std::get<1>(res) = image.height();
+    res.width = image.width();
+    res.height = image.height();
     for (int y=0; y<image.height(); ++y)
         for (int x=0; x<image.width(); ++x)
-    	    std::get<2>(res).push_back(image.pixel(x, y));
+    	    res.pixels.push_back(image.pixel(x, y));
     
     return res;
 }

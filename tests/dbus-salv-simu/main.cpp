@@ -36,8 +36,10 @@ int main(int argc, char *argv[])
     }
 
     DecodedClusters dc;
-    for (int i=0; i<1000; ++i)
-        dc.push_back(std::make_tuple(i, i*2, i*3));
+    for (int i=0; i<1000; ++i) {
+        DecodedClusterInfo dci = { i, i*2, i*3 };
+        dc.push_back(dci);
+    }
 
     QImage img("1.jpg");
     if (img.isNull()) {
@@ -46,6 +48,11 @@ int main(int argc, char *argv[])
     }
 
     ctrl.atEnd(false, dc, Jpeg::dbusPixmap(img));
+    
+    QTimer timer;
+    timer.setInterval(2000);
+    QObject::connect(&timer, SIGNAL(timeout()), &ctrl, SLOT(heartbeat()) );
+    timer.start();
 
     return app.exec();
 }

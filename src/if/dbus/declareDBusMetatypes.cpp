@@ -6,72 +6,46 @@ static struct DBusMetatypesRegistrer
 {
     DBusMetatypesRegistrer()
     {
-        qDebug("DECLARED DBUS TYPES");
-
-        qRegisterMetaType<QVector<int>>("QVector<int>");
         qRegisterMetaType<Pixmap>("Pixmap");
+        qRegisterMetaType<DecodedClusterInfo>("DecodedClusterInfo");
         qRegisterMetaType<DecodedClusters>("DecodedClusters");
 
-        qDBusRegisterMetaType<QVector<int>>();
         qDBusRegisterMetaType<Pixmap>();
+        qDBusRegisterMetaType<DecodedClusterInfo>();
         qDBusRegisterMetaType<DecodedClusters>();
-        
     }
 } theDBusMetatypesRegistrer;
 
 ///////////////// << & >>
 
-const QDBusArgument &operator>>(const QDBusArgument &stream, DecodedClusters &decodedClusters)
+const QDBusArgument &operator>>(const QDBusArgument &stream, DecodedClusterInfo &dc)
 {
-    stream.beginArray();
-    while (!stream.atEnd()) {
-        stream.beginStructure();
-        DecodedClusters::value_type v;
-        stream >> std::get<0>(v) >> std::get<1>(v) >> std::get<2>(v);        
-        stream.endStructure();
-        decodedClusters.push_back(v);
-    }
-    stream.endArray();
+    stream.beginStructure();
+    stream >> dc.clusterNo >> dc.blockBegin >> dc.blockEnd;        
+    stream.endStructure();
     return stream;
 }
 
 const QDBusArgument &operator>>(const QDBusArgument &stream, Pixmap &pixmap)
 {
     stream.beginStructure();
-    stream >> std::get<0>(pixmap) >> std::get<1>(pixmap);
-    stream.beginArray();
-    while (!stream.atEnd()) {
-	int pixel;
-        stream >> pixel;
-        std::get<2>(pixmap).push_back(pixel);
-    }
-    stream.endArray();
+    stream >> pixmap.width >> pixmap.height >> pixmap.pixels;
     stream.endStructure();
     return stream;
 }
 
-QDBusArgument &operator<<(QDBusArgument &stream, const DecodedClusters &decodedClusters)
+QDBusArgument &operator<<(QDBusArgument &stream, const DecodedClusterInfo &dc)
 {
-    stream.beginArray(decodedClusters.size());
-    for (int i=0; i<decodedClusters.size(); ++i) {
-        stream.beginStructure();
-        stream << std::get<0>(decodedClusters[i]) << std::get<1>(decodedClusters[i]) << std::get<2>(decodedClusters[i]);        
-        stream.endStructure();
-    }
-    stream.endArray();
-    qDebug()<<"!!!"<<stream.currentSignature();
+    stream.beginStructure();
+    stream << dc.clusterNo << dc.blockBegin << dc.blockEnd;        
+    stream.endStructure();
     return stream;
 }
 
 QDBusArgument &operator<<(QDBusArgument &stream, const Pixmap &pixmap)
 {
     stream.beginStructure();
-    stream << std::get<0>(pixmap) << std::get<1>(pixmap);
-    stream.beginArray( std::get<2>(pixmap).size() );
-    for (int i=0; i<std::get<2>(pixmap).size(); ++i) 
-        stream << std::get<2>(pixmap)[i];
-    stream.endArray();
+    stream << pixmap.width << pixmap.height << pixmap.pixels;
     stream.endStructure();
-    qDebug()<<"!!2"<<stream.currentSignature();
     return stream;
 }
