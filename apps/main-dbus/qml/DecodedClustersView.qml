@@ -12,7 +12,7 @@ ListView {
     }
 
     highlightFollowsCurrentItem: true
-    highlightMoveSpeed: 4000
+    highlightMoveSpeed: 4000000
 
     delegate: Text {
         text: clusterNo + "\t | " + blockBegin + "\t | " + blockEnd
