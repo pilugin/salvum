@@ -3,6 +3,7 @@
 
 SalvJpegModel::SalvJpegModel(QObject *parent)
 : QAbstractListModel(parent)
+, mCurrentSalvIndex(-1)
 {
 
 #if QT_VERSION < 0x050000
@@ -75,6 +76,7 @@ void SalvJpegModel::decodrClientAdded(int clientId, QDBusObjectPath, DecodrDbusC
     
     connect(o, SIGNAL(inProgressChanged(bool)), this, SLOT(itemUpdated()) );
     connect(o, SIGNAL(imageChanged(QString)),   this, SLOT(itemUpdated()) );
+    connect(o, SIGNAL(shadeChanged(QString)),   this, SLOT(itemUpdated()) );
     
     
     beginInsertRows(QModelIndex(), mList.size(), mList.size());
@@ -113,11 +115,22 @@ SalvJpegObject *SalvJpegModel::getSalvJpeg(int id) const
 	if (o->id() == id)
 	    return o;
     return nullptr;
-}    
+}
+
+QObject *SalvJpegModel::currentSalv() const
+{
+    return (mCurrentSalvIndex <0 || mCurrentSalvIndex>=mList.size()) ? nullptr : mList[mCurrentSalvIndex];
+}
     
 QString SalvJpegModel::imageProviderName()
 {
     return "salv-image";
+}
+
+void SalvJpegModel::setCurrentSalvIndex(int index)
+{
+    mCurrentSalvIndex = index;
+    emit currentSalvChanged(currentSalv());
 }
 
 QString SalvJpegModel::imageProviderPrefix()

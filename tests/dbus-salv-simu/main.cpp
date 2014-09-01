@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
+    qsrand(getpid());
+
     org::salvum::DecodrHub hub("org.salvum.Decodr", "/hub", QDBusConnection::sessionBus());
     qDebug("HUB connect");
     if (!hub.isValid()) {
@@ -35,16 +37,20 @@ int main(int argc, char *argv[])
         return -3;
     }
 
-    DecodedClusters dc;
-    for (int i=0; i<1000; ++i) {
-        DecodedClusterInfo dci = { i, i*2, i*3 };
-        dc.push_back(dci);
-    }
-
     QImage img("1.jpg");
     if (img.isNull()) {
         qDebug()<<"Failed to load image:";
         return -4;
+    }
+    
+    DecodedClusters dc;
+    int nblocks = img.width()*img.height()/8/8;
+   
+    for (int i=0, c=0, previ=0; i<nblocks; ++c) {
+        i += (155+qrand()%155);
+        DecodedClusterInfo dci = { c, previ, qMin(nblocks-1, i) };
+        dc.push_back( dci );
+        previ = i + 1;
     }
 
     ctrl.atEnd(false, dc, Jpeg::dbusPixmap(img));

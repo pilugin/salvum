@@ -23,7 +23,7 @@ public:
     bool inProgress() const	{ return mInProgress; }
     bool complete() const	{ return mComplete; }
     QString imageId() const;
-    QString shadeId() const	{ return mShadeId; }
+    QString shadeId() const;
     QObject *decodedClusters() const;
     
     QImage image() const { return mImage; } 

@@ -29,7 +29,9 @@ HEADERS += \
     salvjpegimageprovider.h
 
 OTHER_FILES += \
-    qml/SalvJpegView.qml
+    qml/SalvJpegView.qml \
+    qml/DecodedClustersView.qml \
+    qml/Main.qml
 
 RESOURCES += \
     resources.qrc

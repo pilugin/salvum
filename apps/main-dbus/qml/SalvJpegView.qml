@@ -1,41 +1,49 @@
 import QtQuick 1.1
 
-Rectangle {
-    width: 500
-    height: 300
+GridView {
+    id: theView
 
-    color: "#C0C0C0"
+    property double imageSize: 300
 
-    GridView {
-        id: theView
+    anchors.fill: parent
+    cellWidth: imageSize * 1.1
+    cellHeight: imageSize * 1.1
 
-        anchors.fill: parent
-        cellWidth: 110
-        cellHeight: 110
+    signal clicked(int row, variant clusters);
 
-        signal clicked(int row, variant clusters);
+    focus: true
 
-        model: salvJpegModel
-        delegate: Rectangle {
-            color: "black"
-            width: 100
-            height: 100
-            
-            Image {
-                anchors.fill: parent
-                source: image
-            }
+    highlight: Rectangle {
+        border.color: "red"
+        z: 10
+        color: "#00000000"
+    }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: theView.clicked(index, decodedClusters);
-            }
+    highlightFollowsCurrentItem: true
+
+    onCurrentIndexChanged: model.currentSalvIndex = currentIndex
+
+    delegate: Rectangle {
+        id: theDelegate
+
+        width: theView.imageSize
+        height: theView.imageSize
+        z: 5
+
+        Image {
+            anchors.fill: parent
+            source: image
+        }
+        Image {
+            //visible: false
+            anchors.fill: parent
+            source: shade
         }
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: theView.currentIndex = index
+        }
     }
 
-    Connections {
-        target: theView
-        onClicked: console.log("HERE" + row + "  " + clusters);
-    }
 }

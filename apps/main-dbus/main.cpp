@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     view.engine()->rootContext()->setContextProperty("salvJpegModel", &model);
     view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
 
-    view.setSource(QUrl(/*"qrc:/"*/ "qml/SalvJpegView.qml"));
+    view.setSource(QUrl(/*"qrc:/"*/ "qml/Main.qml"));
     view.show();
     return app.exec();
 }

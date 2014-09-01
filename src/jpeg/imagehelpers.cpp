@@ -1,4 +1,5 @@
 #include "imagehelpers.h"
+#include <QtDebug>
 
 namespace Jpeg {
 
@@ -31,20 +32,23 @@ QImage highlight(const QImage &base, int blockEnd)
     QImage res( base.width(), base.height(), QImage::Format_ARGB32 );
     res.fill(qRgba(0,0,0,0));
     
-    QRgb shadePixel = qRgba(0xff,0xff,0xff,0x80);
+    QVector<QRgb> shadePixel = { qRgba(0x00,0x00,0x00,0x80), qRgba(0x80, 0x80, 0x80, 0x80) };
     int shadedBlock = blockEnd +1;
     int blockCount = (res.width() * res.height() / 64);
     
     for (; shadedBlock<blockCount; ++shadedBlock) {
-    
-	int blockX = shadedBlock % (res.width() / 8);
-	int blockY = shadedBlock / (res.width() / 8);
-	int baseX = blockX * 8;
-	int baseY = blockY * 8;
-    
-	for (int x=0; x<8; ++x)
-	    for (int y=0; y<8; ++y)
-		res.setPixel(baseX +x, baseY +y, shadePixel);
+        int blockX = shadedBlock % (res.width() / 8);
+        int blockY = shadedBlock / (res.width() / 8);
+        int baseX = blockX * 8;
+        int baseY = blockY * 8;
+            
+        for (int y=0; y<8; ++y) {
+            if ((baseY +y) >= res.height()) {
+                break;
+            }
+            for (int x=0; x<8; ++x)
+                res.setPixel(baseX +x, baseY +y, shadePixel[ shadedBlock%shadePixel.size() ]);
+        }
     }
     
     return res;

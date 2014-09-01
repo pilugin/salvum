@@ -9,6 +9,8 @@ class SalvJpegObject;
 class SalvJpegModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(QObject *currentSalv READ currentSalv NOTIFY currentSalvChanged)
+    Q_PROPERTY(int currentSalvIndex WRITE setCurrentSalvIndex)
 public:
     
     SalvJpegModel(QObject *parent =nullptr);
@@ -22,8 +24,14 @@ public:
 #endif
 
     SalvJpegObject *getSalvJpeg(int id) const;
+    QObject *currentSalv() const;
 
     static QString imageProviderName();
+
+    void setCurrentSalvIndex(int index);
+
+signals:
+    void currentSalvChanged(QObject *salv);
 
 public slots:
     void decodrClientAdded(int clientId, QDBusObjectPath, DecodrDbusCtrl *client);
@@ -47,7 +55,7 @@ private:
     static QString imageProviderPrefix();
     
     QList<SalvJpegObject *> mList;
-
+    int mCurrentSalvIndex;
 };
 
 #endif

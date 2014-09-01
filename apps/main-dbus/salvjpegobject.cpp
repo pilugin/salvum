@@ -24,6 +24,7 @@ void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedCl
     
     mImage = Jpeg::image(pixmap);
     emit imageChanged(mImageId);
+    emit shadeChanged(mShadeId);
     
     mSubmodel->reset(decodedClusters);
 }
@@ -31,6 +32,11 @@ void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedCl
 QString SalvJpegObject::imageId() const
 {
     return mImage.isNull() ? QString() : mImageId; 
+}
+
+QString SalvJpegObject::shadeId() const
+{
+    return mImage.isNull() ? QString() : mShadeId;
 }
 
 void SalvJpegObject::decodrInProgress()
@@ -44,7 +50,7 @@ QObject *SalvJpegObject::decodedClusters() const
 }
 
 void SalvJpegObject::currentClusterChanged(int clusterNo, int blockBegin, int blockEnd)
-{
+{    
     emit shadeChanged(mShadeId = QString("%1/shade/%2/%3").arg(mImageProviderPrefix).arg(mId).arg(blockEnd) );
 }
 
