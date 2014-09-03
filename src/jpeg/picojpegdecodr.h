@@ -1,11 +1,11 @@
 #ifndef PICOJPEGDECODR_H
 #define PICOJPEGDECODR_H
 
-#include "if/idecod.h"
-#include "if/ilog.h"
-#include "picojpeg/picojpeg.h"
-#include "jpeg/imagecursor.h"
-#include "util/singleton.h"
+#include <core/decodr.h>
+#include <util/ilog.h>
+#include <picojpeg/picojpeg.h>
+#include <jpeg/imagecursor.h>
+#include <util/singleton.h>
 
 #include <QImage>
 #include <QStack>
@@ -33,31 +33,31 @@ struct PicoJpegDecodContext
 
 // Note: Signleton pattern is used to guarantee that only one instance is created.
 // Such limitation comes with picojpeg library, as it uses lots of global variables :(
-class PicoJpegDecodr : public IDecod, public Singleton<PicoJpegDecodr>
+class PicoJpegDecodr : public Decodr, public Singleton<PicoJpegDecodr>
 {
 public:
-    PicoJpegDecodr(ICheck *check);
+    PicoJpegDecodr(ICheck *check, QObject *parent =nullptr);
     ~PicoJpegDecodr();
 
-    bool restart(IFetch *fetch);
-    bool decodeCluster();
-    void revert(int steps);
-
-    bool done() const;
+    void restart(Fetch *fetch);
+    void resume();
+    void loadFrame(const DecodrFrame &frame);
     
-    struct JpegContext : public IDecod::Context
+bool decodeCluster();
+void revert(int steps);
+
+    bool isDone() const;
+    
+    struct JpegContext : public DecodrFrame
     {
         JpegContext(const PicoJpegDecodContext &pjpgContext=PicoJpegDecodContext());
         PicoJpegDecodContext pjpgContext;
     };
 
-    const Context *historyFrame(int frameNo) const;
-    int historyLength() const { return mHistory.size(); }
-
 private:
     int latestBlock() const;
 
-    IFetch *mFetch;
+    Fetch *mFetch;
     ICheck *mCheck;
     QImage mImage;        
 

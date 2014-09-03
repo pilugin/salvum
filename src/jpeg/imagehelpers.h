@@ -1,7 +1,7 @@
 #ifndef IMAGEHELPERS_H
 #define IMAGEHELPERS_H
 
-#include "if/dbus/dbustypes.h"
+#include <dbus/dbustypes.h>
 #include <QImage>
 
 namespace Jpeg {

@@ -1,4 +1,4 @@
-#include "imagehelpers.h"
+#include <jpeg/imagehelpers.h>
 #include <QtDebug>
 
 namespace Jpeg {

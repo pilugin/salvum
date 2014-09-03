@@ -1,7 +1,7 @@
 #ifndef ADVANCEDCHECKER_H
 #define ADVANCEDCHECKER_H
 
-#include "if/jpeg/icheck.h"
+#include <jpeg/icheck.h>
 
 namespace Jpeg {
 

@@ -1,8 +1,7 @@
-#include "jpeg/picojpegdecodr.h"
-#include "if/ifetch.h"
-#include "if/iresults.h"
-#include "if/ilog.h"
-#include "if/jpeg/icheck.h"
+#include <jpeg/picojpegdecodr.h>
+#include <core/fetch.h>
+#include <util/ilog.h>
+#include <jpeg/icheck.h>
 
 #include <QtDebug>
 
@@ -25,7 +24,7 @@ PicoJpegDecodr::~PicoJpegDecodr()
     delete mCheck;
 }
 
-bool PicoJpegDecodr::restart(IFetch *fetch)
+bool PicoJpegDecodr::restart(Fetch *fetch)
 {
     mFetch = fetch;
 

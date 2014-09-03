@@ -1,8 +1,8 @@
-#include "advancedchecker.h"
+#include <jpeg/advancedchecker.h>
 #include <QImage>
 #include <QtDebug>
 #include <QString>
-#include <if/ilog.h>
+#include <util/ilog.h>
 
 using namespace Log;
 
