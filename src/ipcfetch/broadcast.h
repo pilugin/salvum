@@ -19,7 +19,7 @@ class Broadcast : public RdWr::Writer<BroadcastMessage>
 {
     typedef RdWr::Writer<BroadcastMessage> Super;
 public:
-    Broadcast(const char *shmemName, IFetch *fetch);
+    Broadcast(const char *shmemName, Fetch *fetch);
     ~Broadcast();
     
     void write();
@@ -37,9 +37,9 @@ protected:
     bool prepare(BroadcastMessage &message);
     void postRead(const BroadcastMessage &message);
     
-    IFetch *fetch() { return mFetch; }
+    Fetch *fetch() { return mFetch; }
 private:
-    IFetch          *mFetch;
+    Fetch          *mFetch;
 
     QByteArray      mStats;
     bool            mSaveBitmapSuccess;

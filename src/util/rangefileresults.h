@@ -7,24 +7,16 @@
 class RangeFileResults : public Result
 {
 public:
-    RangeFileResults(const QString &dir =".");
+    RangeFileResults(const QString &dir =".", QObject *parent =nullptr);
 
-    bool restart(const QString &name);
-    void addClusters(const QVector<int> &clusterNos);
-
+    void restart(const QString &name);
+    void addClusters(int clusterNo, int length);
     void finilize(bool success);
 
-    QVector<int> clusters() const;
-
 private:
-    void addCluster(int clusterNo);
-
     const QString mDir;
     QString mName;
     QFile mFile;
-    QVector<int> mClusters;
-    int mLastAddedCluster;
-    static const int sEmptyLastAddedCluster = -1;
 };
 
 #endif // RANGEFILERESULTS_H

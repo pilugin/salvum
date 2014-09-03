@@ -7,11 +7,12 @@
 #include <QPair>
 #include <QFile>
 
-class DeviceMapFetch : public IFetch
+class DeviceMapFetch : public Fetch
 {
 public:
-    DeviceMapFetch(const QString &file, const QString &mapFile, bool brute=false);
-    DeviceMapFetch(const QString &file, const QByteArray &map, bool brute=false);
+    DeviceMapFetch(QObject *parent =nullptr);    
+    void init(const QString &file, const QString &mapFile, bool brute=false);
+    void init(const QString &file, const QByteArray &map, bool brute=false);
 
     void fetch(int &clusterNo, QByteArray &cluster);
     bool rewind(int clusterNo);

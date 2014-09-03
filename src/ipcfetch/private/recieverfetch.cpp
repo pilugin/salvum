@@ -32,9 +32,10 @@ protected:
     Reader<BroadcastMessage> &mReader;
 };
 
-RecieverFetch::RecieverFetch(const char *shmemName)
-: Reader<BroadcastMessage>(shmemName)
-, mWaitForCluster(IFetch::InvalidClusterNo)
+RecieverFetch::RecieverFetch(const char *shmemName, QObject *parent)
+: Fetch(parent)
+, Reader<BroadcastMessage>(shmemName)
+, mWaitForCluster(Fetch::InvalidClusterNo)
 , mRegistered(false)
 , mAtEnd(true)
 , mExiting(false)
@@ -84,7 +85,7 @@ void RecieverFetch::duringReg()
 
     mRegistered = true;
 
-    if (sharedMem().regCount == 1 && sharedData().rewind == IFetch::InvalidClusterNo) 
+    if (sharedMem().regCount == 1 && sharedData().rewind == Fetch::InvalidClusterNo) 
         sharedData().rewind = mWaitForCluster;
 }
 
@@ -128,10 +129,15 @@ void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
     clusterNo = mRecvClusters.head().first;
     cluster = mRecvClusters.head().second;
     mRecvClusters.dequeue();
+    
+    emit fetched(clusterNo);
 
-    if (clusterNo == IFetch::InvalidClusterNo) {
+    if (clusterNo == Fetch::InvalidClusterNo) {
         cluster.clear();
         mAtEnd = true;
+        
+        emit end();
+        
         Msg("[AtEnd]");
     } else {
         mAtEnd = false;
@@ -155,11 +161,11 @@ bool RecieverFetch::process(const BroadcastMessage &message)
 
     // process
     if (message.status == AtEnd) {     
-        mRecvClusters.enqueue( qMakePair((int)IFetch::InvalidClusterNo, QByteArray() ) );
+        mRecvClusters.enqueue( qMakePair((int)Fetch::InvalidClusterNo, QByteArray() ) );
         Msg("BCAST:AtEnd");
         
     } else if (message.status == About2Quit) {
-        mRecvClusters.enqueue( qMakePair((int)IFetch::InvalidClusterNo, QByteArray() ) );
+        mRecvClusters.enqueue( qMakePair((int)Fetch::InvalidClusterNo, QByteArray() ) );
         Msg("BCAST:About2Quit");
         mExiting = true;
 
@@ -168,11 +174,11 @@ bool RecieverFetch::process(const BroadcastMessage &message)
         int i=0;
 
         // if rewind was called, skip bad clusters
-        if (mWaitForCluster != IFetch::InvalidClusterNo) {
+        if (mWaitForCluster != Fetch::InvalidClusterNo) {
             Msg("skip until %08X", mWaitForCluster);
             for (; i<message.clusters.size(); ++i) 
                 if (message.clusters[i].clusterNo == mWaitForCluster) {
-                    mWaitForCluster = IFetch::InvalidClusterNo;
+                    mWaitForCluster = Fetch::InvalidClusterNo;
                     break;
                 }
         }

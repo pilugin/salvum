@@ -5,7 +5,11 @@
 using namespace Log;
 using namespace Settings;
 
-DeviceMapFetch::DeviceMapFetch(const QString &file, const QByteArray &map, bool brute)
+DeviceMapFetch::DeviceMapFetch(QObject *parent) : Fetch(parent)
+{
+}
+
+void DeviceMapFetch::init(const QString &file, const QByteArray &map, bool brute)
 {
     mFile.setFileName(file);
     if (!mFile.open(QFile::ReadOnly))
@@ -15,7 +19,7 @@ DeviceMapFetch::DeviceMapFetch(const QString &file, const QByteArray &map, bool 
     mBrute = brute;
 }
 
-DeviceMapFetch::DeviceMapFetch(const QString &file, const QString &mapFile, bool brute)
+void DeviceMapFetch::init(const QString &file, const QString &mapFile, bool brute)
 {
     mFile.setFileName(file);
     if (!mFile.open(QFile::ReadOnly))
@@ -37,6 +41,9 @@ void DeviceMapFetch::fetch(int &clusterNo, QByteArray &cluster)
     cluster.clear();
     if (atEnd()) {
         Msg("[Fetch End]");
+        
+        emit end();
+        
         return;
     }
 
@@ -49,7 +56,9 @@ void DeviceMapFetch::fetch(int &clusterNo, QByteArray &cluster)
         cluster = mFile.read(Get(ClusterSize).toInt());
         clusterNo = mCurrentCluster;
         Msg("]");
-
+        
+        emit fetched(clusterNo);
+        
         postfetch();
     }
 }

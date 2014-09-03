@@ -1,6 +1,7 @@
 #include <ipcfetch/broadcast.h>
 #include <util/ilog.h>
 
+#include <QVector>
 #include <QByteArray>
 #include <QFile>
 #include <cctype>
@@ -11,11 +12,11 @@ using namespace RdWr;
 
 namespace IPCFetch {
 
-Broadcast::Broadcast(const char *shmemName, IFetch *fetch)
+Broadcast::Broadcast(const char *shmemName, Fetch *fetch)
 : Writer< BroadcastMessage >(shmemName)
 , mFetch(fetch)
 {
-    sharedData().rewind = IFetch::InvalidClusterNo;
+    sharedData().rewind = Fetch::InvalidClusterNo;
 }
 
 Broadcast::~Broadcast()
@@ -33,10 +34,10 @@ void Broadcast::write()
 
 bool Broadcast::prepare(BroadcastMessage &message)
 {
-    if ( message.rewind != IFetch::InvalidClusterNo && sharedMem().regCount == 1) {
+    if ( message.rewind != Fetch::InvalidClusterNo && sharedMem().regCount == 1) {
         Msg("BCAST:prepare rewind(%08X)\n", message.rewind );
         mFetch->rewind( message.rewind );
-        message.rewind = IFetch::InvalidClusterNo;
+        message.rewind = Fetch::InvalidClusterNo;
     }
 
     if ( mFetch->atEnd() ) {
@@ -53,7 +54,7 @@ bool Broadcast::prepare(BroadcastMessage &message)
         while (!message.clusters.full()  && !mFetch->atEnd() ) {
 
             mFetch->fetch(fetchClusterNo, fetchCluster);
-            if (fetchClusterNo == IFetch::InvalidClusterNo || fetchCluster.size() == 0)
+            if (fetchClusterNo == Fetch::InvalidClusterNo || fetchCluster.size() == 0)
                 break;
 
             message.clusters.push_back_empty();
