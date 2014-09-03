@@ -1,6 +1,6 @@
-#include "devicemapfetch.h"
-#include "if/ilog.h"
-#include "if/isettings.h"
+#include "util/devicemapfetch.h"
+#include "util/ilog.h"
+#include "util/isettings.h"
 
 using namespace Log;
 using namespace Settings;

@@ -1,4 +1,4 @@
-#include "defaultsettings.h"
+#include "util/defaultsettings.h"
 #include <QtGlobal>
 
 using namespace Settings;

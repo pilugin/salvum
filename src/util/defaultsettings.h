@@ -1,7 +1,7 @@
 #ifndef DEFAULTSETTINGS_H
 #define DEFAULTSETTINGS_H
 
-#include "if/isettings.h"
+#include <util/isettings.h>
 
 class DefaultSettings : public ISettings
 {

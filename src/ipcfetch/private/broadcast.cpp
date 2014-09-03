@@ -1,5 +1,5 @@
-#include "broadcast.h"
-#include "if/ilog.h"
+#include <ipcfetch/broadcast.h>
+#include <util/ilog.h>
 
 #include <QByteArray>
 #include <QFile>

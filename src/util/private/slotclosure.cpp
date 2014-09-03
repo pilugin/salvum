@@ -1,4 +1,4 @@
-#include "../slotclosure.h"
+#include "util/slotclosure.h"
 
 SlotClosure::SlotClosure(QObject *object, const char *slot) :
     mObject(slot ? object : 0)

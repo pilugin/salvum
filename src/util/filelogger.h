@@ -1,7 +1,7 @@
 #ifndef FILELOGGER_H
 #define FILELOGGER_H
 
-#include "if/ilog.h"
+#include <util/ilog.h>
 #include <QFile>
 
 class FileLogger : public ILog

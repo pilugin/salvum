@@ -1,7 +1,7 @@
 #ifndef IPCFETCH_RECIEVERFETCH_H
 #define IPCFETCH_RECIEVERFETCH_H
 
-#include <if/ifetch.h>
+#include <core/fetch.h>
 #include <rdwr/reader.h>
 #include <ipcfetch/common.h>
 

@@ -1,7 +1,7 @@
 #ifndef DEVICEMAPFETCH_H
 #define DEVICEMAPFETCH_H
 
-#include "if/ifetch.h"
+#include <core/fetch.h>
 #include <QByteArray>
 #include <QQueue>
 #include <QPair>

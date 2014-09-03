@@ -1,5 +1,5 @@
-#include "rangefileresults.h"
-#include "if/ilog.h"
+#include "util/rangefileresults.h"
+#include "util/ilog.h"
 #include <QDir>
 
 RangeFileResults::RangeFileResults(const QString &dir) : mDir(dir)

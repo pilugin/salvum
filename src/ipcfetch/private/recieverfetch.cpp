@@ -1,6 +1,6 @@
-#include "recieverfetch.h"
+#include <ipcfetch/recieverfetch.h>
+#include <util/ilog.h>
 #include <QThread>
-#include <if/ilog.h>
 #include <QMutexLocker>
 
 using namespace Log;

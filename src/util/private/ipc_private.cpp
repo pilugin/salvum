@@ -1,4 +1,4 @@
-#include "../ipc.h"
+#include "util/ipc.h"
 #include <cerrno>
 #include <cstring>
 #include <QtDebug>

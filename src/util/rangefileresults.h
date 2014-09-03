@@ -1,10 +1,10 @@
 #ifndef RANGEFILERESULTS_H
 #define RANGEFILERESULTS_H
 
-#include "if/iresults.h"
+#include <core/result.h>
 #include <QFile>
 
-class RangeFileResults : public IResults
+class RangeFileResults : public Result
 {
 public:
     RangeFileResults(const QString &dir =".");

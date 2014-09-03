@@ -1,7 +1,7 @@
 #ifndef IPCFETCH_BROADCAST_H
 #define IPCFETCH_BROADCAST_H
 
-#include <if/ifetch.h>
+#include <core/fetch.h>
 #include <util/ipc.h>
 #include <rdwr/writer.h>
 #include <ipcfetch/common.h>

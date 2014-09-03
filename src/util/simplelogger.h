@@ -1,7 +1,7 @@
 #ifndef SIMPLELOGGER_H
 #define SIMPLELOGGER_H
 
-#include <if/ilog.h>
+#include <util/ilog.h>
 #include <stdio.h>
 
 class SimpleLogger : public ILog
