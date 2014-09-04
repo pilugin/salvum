@@ -1,4 +1,4 @@
-#include "../check.h"
+#include <core/check.h>
 
 Check::Check(QObject *parent) : QObject(parent)
 {

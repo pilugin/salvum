@@ -42,7 +42,7 @@ public:
     virtual bool isDone() const =0;
 
 public slots:
-    virtual void restart(Fetch *fetch) =0;
+    virtual bool restart(Fetch *fetch) =0;
     virtual void resume() =0;
     virtual void loadFrame(const DecodrFrame &frame) =0;
 

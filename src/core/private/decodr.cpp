@@ -1,4 +1,4 @@
-#include "../decodr.h"
+#include <core/decodr.h>
 
 Decodr::Decodr(QObject *parent) : QObject(parent)
 {

@@ -12,7 +12,7 @@ public:
 public slots:
     virtual void restart(const QString &sessionName) =0;
     virtual void addClusters(int clusterNo, int length) =0;
-    virtual void finalize(bool success) =0;    
+    virtual void finalize(bool success) =0;
 };
 
 #endif // CORE_RESULT_H

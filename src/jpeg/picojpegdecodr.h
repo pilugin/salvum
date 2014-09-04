@@ -45,7 +45,7 @@ class PicoJpegDecodr : public Decodr, public Singleton<PicoJpegDecodr>
 public:
     PicoJpegDecodr(ICheck *check, QObject *parent =nullptr);
 
-    void restart(Fetch *fetch);
+    bool restart(Fetch *fetch);
     void resume();
     void loadFrame(const DecodrFrame &frame);
     

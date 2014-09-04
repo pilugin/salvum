@@ -44,7 +44,7 @@ PicoJpegDecodr::PicoJpegDecodr(ICheck *check, QObject *parent)
 }
 
 
-void PicoJpegDecodr::restart(Fetch *fetch)
+bool PicoJpegDecodr::restart(Fetch *fetch)
 {
     mFetch = fetch;
 
@@ -56,13 +56,13 @@ void PicoJpegDecodr::restart(Fetch *fetch)
         Msg("PicoJpegDecodr::restart() picojpeg err: %d\n", rv);
         mDone = true;
         emit rejected();
+        return false;
         
     } else {
         mFrame.cursor.initCanvas(QSize(mFrame.imgInfo.m_width, mFrame.imgInfo.m_height));
         mDone = false;            
         emit accepted(mFrame);        
-        resume();
-        
+        return true;
     }
 }
 
