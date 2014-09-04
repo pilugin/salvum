@@ -3,6 +3,6 @@ SUBDIRS= \
 #    devicemapfetch \
     salv \
     ipc \
-    ipcfetch \
+#    ipcfetch \
 #    jpegcheckbench
     dbus-salv-simu
