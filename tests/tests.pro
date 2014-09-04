@@ -5,4 +5,4 @@ SUBDIRS= \
     ipc \
 #    ipcfetch \
 #    jpegcheckbench
-    dbus-salv-simu
+#    dbus-salv-simu

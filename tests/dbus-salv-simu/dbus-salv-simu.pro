@@ -16,6 +16,3 @@ LIBS += -L../../src -lsalv
 SOURCES += main.cpp
 
 include(../../src/if/dbus/dbus.pri)
-
-RESOURCES += \
-    pics.qrc
