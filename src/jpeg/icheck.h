@@ -2,15 +2,17 @@
 #define ICHECK_H
 
 /// used by jpeg decoder only
+#include <QObject>
 
 class QImage;
 
 namespace Jpeg 
 {
 
-class ICheck
+class ICheck : public QObject
 {
 public:
+    ICheck(QObject *parent =nullptr) : QObject(parent) {}
     virtual ~ICheck() {}
 
     virtual bool check(const QImage &image, int blockBegin, int blockEnd, double *relevance =nullptr) =0;

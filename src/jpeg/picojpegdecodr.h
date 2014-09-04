@@ -17,9 +17,12 @@ class ICheck;
 // This struct incapsulates the whole decoding context,
 // it is used for save/restore functionality.
 // Note: FFD9 = End-Of-Image marker 
-struct PicoJpegDecodContext
+class PicoJpegDecodFrame : public DecodrFrame
 {
-    PicoJpegDecodContext();
+public:
+    enum { JpegContextType = DecodrFrame::CustomType +42 };
+
+    PicoJpegDecodFrame(QImage *image =nullptr);
 
     bool lastWasFF; //< used to find FFD9 splitted in 2 clusters. This param is set inside fetchCallback
     QByteArray buffer;
@@ -29,6 +32,10 @@ struct PicoJpegDecodContext
     QByteArray pjpegCtxt;
     pjpeg_image_info_t imgInfo;
     ImageCursor cursor;
+    
+    PicoJpegDecodFrame *clone() const;
+private:
+    static int id_gen;    
 };
 
 // Note: Signleton pattern is used to guarantee that only one instance is created.
@@ -37,43 +44,29 @@ class PicoJpegDecodr : public Decodr, public Singleton<PicoJpegDecodr>
 {
 public:
     PicoJpegDecodr(ICheck *check, QObject *parent =nullptr);
-    ~PicoJpegDecodr();
 
     void restart(Fetch *fetch);
     void resume();
     void loadFrame(const DecodrFrame &frame);
     
-bool decodeCluster();
-void revert(int steps);
 
     bool isDone() const;
     
-    struct JpegContext : public DecodrFrame
-    {
-        JpegContext(const PicoJpegDecodContext &pjpgContext=PicoJpegDecodContext());
-        PicoJpegDecodContext pjpgContext;
-    };
-
 private:
-    int latestBlock() const;
-
-    Fetch *mFetch;
-    ICheck *mCheck;
-    QImage mImage;        
-
-    PicoJpegDecodContext mPjpgContext;
-    QStack<JpegContext> mHistory;
-    
-    void savePjpgContext();
-    void addClusterToHistory(int clusterNo);
+    bool decodeCluster();
+    void saveFrame(PicoJpegDecodFrame &outFrame);
     
     bool checkFFD9() const;
-
+    int latestBlock() const;
+    
+    Fetch *mFetch;
+    ICheck *mCheck;
+    QImage mImage;
+    PicoJpegDecodFrame mFrame;
+    
     int mBlockCount;
     bool mWasFetched;
-    
     bool mDone;
-
 
     static unsigned char fetchCallback(unsigned char* pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read, void *param);
     unsigned char fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read);

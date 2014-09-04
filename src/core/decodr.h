@@ -29,6 +29,10 @@ private:
 
 Q_DECLARE_METATYPE(DecodrFrame)
 
+
+
+
+
 class Decodr : public QObject
 {
     Q_OBJECT

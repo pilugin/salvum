@@ -9,7 +9,32 @@ using namespace Log;
 
 namespace Jpeg {
 
-PicoJpegDecodr::PicoJpegDecodr(ICheck *check)
+int PicoJpegDecodFrame::id_gen = 1;
+
+PicoJpegDecodFrame::PicoJpegDecodFrame(QImage *image)
+: DecodrFrame(id_gen++, JpegContextType)
+{
+    pjpegCtxt.resize(pjpeg_ctxt_buffer_size);
+
+    bufferPos = 0;
+    bytesRead = 0;
+    buffer.clear();
+    lastWasFF = false;
+    if (image) {
+        cursor.setCanvas(image);
+        cursor.restart();
+    }
+}
+
+PicoJpegDecodFrame *PicoJpegDecodFrame::clone() const
+{
+    return new PicoJpegDecodFrame( *this );
+}
+
+///////////////////////////////////
+
+PicoJpegDecodr::PicoJpegDecodr(ICheck *check, QObject *parent)
+: Decodr(parent)
 {    
     mCheck = check;
     mFetch = nullptr;
@@ -19,51 +44,62 @@ PicoJpegDecodr::PicoJpegDecodr(ICheck *check)
 }
 
 
-PicoJpegDecodr::~PicoJpegDecodr()
-{
-    delete mCheck;
-}
-
-bool PicoJpegDecodr::restart(Fetch *fetch)
+void PicoJpegDecodr::restart(Fetch *fetch)
 {
     mFetch = fetch;
 
-    // reset history & context
-    mHistory.clear();
-    
-    mPjpgContext.bufferPos = 0;
-    mPjpgContext.bytesRead = 0;
-    mPjpgContext.buffer.clear();
-    mPjpgContext.lastWasFF = false;
-    mPjpgContext.cursor.setCanvas(&mImage);
-    mPjpgContext.cursor.restart();
+    // reset context
+    mFrame = PicoJpegDecodFrame(&mImage);
 
-    uchar rv = pjpeg_decode_init(&mPjpgContext.imgInfo, &PicoJpegDecodr::fetchCallback, this, 0);
-    if (rv != 0) 
+    uchar rv = pjpeg_decode_init(&mFrame.imgInfo, &PicoJpegDecodr::fetchCallback, this, 0);
+    if (rv != 0) {
         Msg("PicoJpegDecodr::restart() picojpeg err: %d\n", rv);
+        mDone = true;
+        emit rejected();
+        
+    } else {
+        mFrame.cursor.initCanvas(QSize(mFrame.imgInfo.m_width, mFrame.imgInfo.m_height));
+        mDone = false;            
+        emit accepted(mFrame);        
+        resume();
+        
+    }
+}
 
-    mPjpgContext.cursor.initCanvas(QSize(mPjpgContext.imgInfo.m_width, mPjpgContext.imgInfo.m_height));
-    mDone = false;
+void PicoJpegDecodr::resume()
+{
+    PicoJpegDecodFrame prevFrame;
 
-    return rv == 0;
+    while ( !mFetch->atEnd() && !isDone()) {
+        saveFrame(prevFrame);
+        
+        if (decodeCluster()) {
+            emit accepted(mFrame);
+            
+        } else {
+            emit rejected();
+            loadFrame(prevFrame);        
+        }        
+    }
+    
+    if (isDone())
+        emit done();
 }
 
 bool PicoJpegDecodr::decodeCluster()
 {
-    savePjpgContext();
-
     bool retval = true;
     mWasFetched = false;
     uchar rv = 0;
     for (rv=pjpeg_decode_mcu(); rv==0; rv=pjpeg_decode_mcu()) {
 
         for (int i=0; i<2; ++i, ++mBlockCount) { //< copy pixels
-            mPjpgContext.cursor.addBlock(   mPjpgContext.imgInfo.m_pMCUBufR +i*64,
-                                            mPjpgContext.imgInfo.m_pMCUBufG +i*64,
-                                            mPjpgContext.imgInfo.m_pMCUBufB +i*64  );
+            mFrame.cursor.addBlock( mFrame.imgInfo.m_pMCUBufR +i*64,
+                                    mFrame.imgInfo.m_pMCUBufG +i*64,
+                                    mFrame.imgInfo.m_pMCUBufB +i*64  );
         }
 
-        if (mPjpgContext.cursor.atEnd() && checkFFD9()) {
+        if (mFrame.cursor.atEnd() && checkFFD9()) {
             Msg("END+FFD9");
             mDone = true;
             return true;
@@ -76,7 +112,7 @@ bool PicoJpegDecodr::decodeCluster()
             break;
         }
 
-        if (mWasFetched && ((mPjpgContext.buffer.size() - mPjpgContext.bufferPos)<252) ) {
+        if (mWasFetched && ((mFrame.buffer.size() - mFrame.bufferPos)<252) ) {
             Msg("[Decod Ok]");
 
             bool ch = mCheck->check(mImage, latestBlock() - mBlockCount, latestBlock());
@@ -99,61 +135,42 @@ bool PicoJpegDecodr::decodeCluster()
     return retval;
 }
 
-void PicoJpegDecodr::revert(int frameNo)
+void PicoJpegDecodr::saveFrame(PicoJpegDecodFrame &outFrame)
 {
-    while (frameNo--> 0 && mHistory.size() > 1)
-        mHistory.pop();
-    mPjpgContext = mHistory.pop().pjpgContext;
+    outFrame = mFrame;
 }
 
-
-
-
-
-
-void PicoJpegDecodr::savePjpgContext()
+void PicoJpegDecodr::loadFrame(const DecodrFrame &frame)
 {
-    pjpeg_save_ctxt(mPjpgContext.pjpegCtxt.data());
-    mHistory.push(JpegContext(mPjpgContext));
+    if (frame.type() == PicoJpegDecodFrame::JpegContextType) 
+        mFrame = static_cast<const PicoJpegDecodFrame &>(frame);
+    else
+        Msg("loadFrame error. frame.type != PicoJpegDecodFrame\n");    
 }
-
-void PicoJpegDecodr::addClusterToHistory(int clusterNo)
-{    
-    mHistory.top().clusterNos.push_back(clusterNo);
-}
-
-
 
 bool PicoJpegDecodr::checkFFD9() const
 {
-    if (mPjpgContext.bufferPos == mPjpgContext.bytesRead
-        && mPjpgContext.lastWasFF
-        && mPjpgContext.buffer[0] == (char)0xD9)
-        return true;
+    if (mFrame.bufferPos == mFrame.bytesRead
+        && mFrame.lastWasFF
+        && mFrame.buffer[0] == (char)0xD9)      
+                                            return true;
 
-    for (int i=mPjpgContext.bufferPos - mPjpgContext.bytesRead; i<mPjpgContext.bufferPos; ++i) { // find D9
-        if (mPjpgContext.buffer[i] == (char)0xD9) { // check FF
-            if (i != 0 && mPjpgContext.buffer[i-1] == (char)0xFF)
+    for (int i=mFrame.bufferPos - mFrame.bytesRead; i<mFrame.bufferPos; ++i) // find D9
+        if (mFrame.buffer[i] == (char)0xD9) // check FF
+            if (i != 0 && mFrame.buffer[i-1] == (char)0xFF)
                 return true;
-        }
-    }
 
     return false;
 }
 
-bool PicoJpegDecodr::done() const
+bool PicoJpegDecodr::isDone() const
 {
     return mDone;
 }
 
-const IDecod::Context *PicoJpegDecodr::historyFrame(int frameNo) const
-{
-    return &mHistory[mHistory.size() -1 -frameNo];
-}
-
 int PicoJpegDecodr::latestBlock() const
 {
-    return mPjpgContext.cursor.currentBlockIndex() -1;
+    return mFrame.cursor.currentBlockIndex() -1;
 }
 
 unsigned char PicoJpegDecodr::fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read, void *param)
@@ -165,16 +182,14 @@ unsigned char PicoJpegDecodr::fetchCallback(unsigned char *pBuf, unsigned char b
 {
 //    Msg("FETCH %d %d\n", buf_size, mContext.buffer.size() - mContext.bufferPos);
 
-    if (mPjpgContext.bufferPos == mPjpgContext.buffer.size()) {
+    if (mFrame.bufferPos == mFrame.buffer.size()) {
         // call fetch.
-        mPjpgContext.lastWasFF = mPjpgContext.buffer.size() ? mPjpgContext.buffer[ mPjpgContext.buffer.size()-1 ] == (char)0xFF : false;
+        mFrame.lastWasFF = mFrame.buffer.isEmpty() ? false : mFrame.buffer.endsWith( (char)0xFF );
 
         int clusterNo;
-        mFetch->fetch(clusterNo, mPjpgContext.buffer);
-        if (mPjpgContext.buffer.size() > 0) {
-            mPjpgContext.bufferPos = 0;
-            addClusterToHistory(clusterNo);
-
+        mFetch->fetch(clusterNo, mFrame.buffer);
+        if (mFrame.buffer.size() > 0) {
+            mFrame.bufferPos = 0;
             mBlockCount = 0;
             mWasFetched = true;
 
@@ -182,23 +197,15 @@ unsigned char PicoJpegDecodr::fetchCallback(unsigned char *pBuf, unsigned char b
             return PJPG_NO_MORE_BLOCKS;
     }
 
-    mPjpgContext.bytesRead = *pBytes_actually_read = qMin( mPjpgContext.buffer.size() - mPjpgContext.bufferPos, (int)buf_size);
-    memcpy( pBuf, mPjpgContext.buffer.data() + mPjpgContext.bufferPos, *pBytes_actually_read);
-    mPjpgContext.bufferPos += *pBytes_actually_read;
+    // copy bytes to picojpeg buffer
+    mFrame.bytesRead = *pBytes_actually_read = qMin( mFrame.buffer.size() - mFrame.bufferPos, (int)buf_size);
+    memcpy( pBuf, mFrame.buffer.data() + mFrame.bufferPos, *pBytes_actually_read);
+    mFrame.bufferPos += *pBytes_actually_read;
 
     return 0;
 }
 
 
 
-PicoJpegDecodContext::PicoJpegDecodContext()
-{
-    pjpegCtxt.resize(pjpeg_ctxt_buffer_size);
-}
-
-PicoJpegDecodr::JpegContext::JpegContext(const PicoJpegDecodContext &pjpgContext_)
-    : pjpgContext(pjpgContext_)
-{
-}
 
 } // eons Jpeg
