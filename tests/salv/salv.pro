@@ -1,4 +1,4 @@
-QT       += core
+QT       += core gui
 
 TARGET = salv
 CONFIG   += console debug
@@ -10,7 +10,6 @@ QMAKE_CXXFLAGS += -std=c++0x
 
 INCLUDEPATH += ../../src ../..
 DEPENDPATH += ../../src ../..
-LIBS += -L../../src -lsalv
-#-L../../picojpeg -lpicojpeg
+LIBS += -L$$OUT_PWD/../../lib -lsalv
 
 SOURCES += main.cpp

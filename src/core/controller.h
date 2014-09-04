@@ -17,7 +17,8 @@ public:
     void setEverybody(Fetch *fetch, Check *check, Decodr *decodr);
     void addResult(Result *result);
 
-    void run(int clusterNo);
+    bool run(int clusterNo);
+    bool success() const    { return mSuccess; }
 
 signals:
     void end(bool success);
@@ -35,6 +36,7 @@ private:
 
     bool mDecodrAccepted;
     bool mRunning;
+    bool mSuccess;
 };
 
 #endif // CORE_CONTROLLER_H

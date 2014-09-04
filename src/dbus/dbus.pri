@@ -8,11 +8,11 @@ DBUSFILES = $$PWD/org.salvum.Broadcast.xml \
 	    $$PWD/org.salvum.DecodrCtrl.xml \
 	    $$PWD/org.salvum.DecodrHub.xml
 
-INCLUDEPATH+= $$OUT_PWD $$PWD
+INCLUDEPATH+= $$OUT_PWD/.. $$PWD/..
 
 
 genproxies.input = DBUSFILES
-genproxies.commands = qdbusxml2cpp ${QMAKE_FILE_NAME} -p ${QMAKE_FILE_BASE} -i "declareDBusMetatypes.h"
+genproxies.commands = qdbusxml2cpp ${QMAKE_FILE_NAME} -p ${QMAKE_FILE_BASE} -i "dbus/declareDBusMetatypes.h"
 genproxies.output = ${QMAKE_FILE_BASE}.h
 genproxies.variable_out = HEADERS
 
@@ -26,7 +26,7 @@ genproxies_cpp.depends = ${QMAKE_FILE_BASE}.h
 
 
 genadaptors.input = DBUSFILES
-genadaptors.commands = qdbusxml2cpp ${QMAKE_FILE_NAME} -a ${QMAKE_FILE_BASE}Adp -i "declareDBusMetatypes.h"
+genadaptors.commands = qdbusxml2cpp ${QMAKE_FILE_NAME} -a ${QMAKE_FILE_BASE}Adp -i "dbus/declareDBusMetatypes.h"
 genadaptors.output = ${QMAKE_FILE_BASE}Adp.h
 genadaptors.variable_out = HEADERS
 

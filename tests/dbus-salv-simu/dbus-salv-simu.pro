@@ -9,10 +9,11 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++11
 
-INCLUDEPATH += ../../src ../..
+INCLUDEPATH += ../../src ../.. $$OUT_PWD/../../src
 DEPENDPATH += ../../src ../..
-LIBS += -L../../src -lsalv
+LIBS += -L../../lib -lsalv
 
 SOURCES += main.cpp
 
-include(../../src/if/dbus/dbus.pri)
+QT += dbus
+

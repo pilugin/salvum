@@ -52,7 +52,7 @@ public:
 
     bool isDone() const;
     
-private:
+protected:
     bool decodeCluster();
     void saveFrame(PicoJpegDecodFrame &outFrame);
     

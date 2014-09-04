@@ -44,18 +44,20 @@ void Controller::addResult(Result *result)
     connect(this,       SIGNAL(end(bool)),                  result,     SLOT(finalize(bool))            );
 }
 
-void Controller::run(int clusterNo)
+bool Controller::run(int clusterNo)
 {
+    mSuccess = false;
+
     if (! mFetch->rewind(clusterNo)) {
         Msg("ERR: fetch.rewind(%08X) failed\n", clusterNo);
-        return;
+        return success();
     }
 
     mDecodrAccepted = false;
 
     if (! mDecodr->restart(mFetch)) {
         Msg("ERR: decodr.restart() failed\n");
-        return;
+        return success();
     }
 
     mRunning = true;
@@ -64,12 +66,15 @@ void Controller::run(int clusterNo)
         mDecodr->resume();
 
     }
+    
+    emit end(success());
+    return success();
 }
 
 void Controller::decodrDone()
 {
     mRunning = false;
-    emit end(true);
+    mSuccess = true;
 }
 
 void Controller::fetchEnd()
@@ -79,7 +84,7 @@ void Controller::fetchEnd()
 
     } else { // exit
         mRunning = false;
-        emit end(false);
+        mSuccess = false;
 
     }
 

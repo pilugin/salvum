@@ -1,4 +1,4 @@
-#include "imagecursor.h"
+#include <jpeg/imagecursor.h>
 #include <QtDebug>
 
 namespace Jpeg {

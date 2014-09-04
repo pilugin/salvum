@@ -1,4 +1,4 @@
-#include "declareDBusMetatypes.h"
+#include <dbus/declareDBusMetatypes.h>
 #include <QtDBus>
 #include <QtDebug>
 

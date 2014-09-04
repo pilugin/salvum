@@ -45,11 +45,11 @@ void Check::onFetchEnd()
     }
     
     // call it
-    auto itr = chooseBaseline( frames );
+    const FrameDescription &chosenOne = chooseBaseline( frames );
     
     // interpret result; emit skipClusters & baselineFrame
     beginItr = mAcceptedClusters.begin();
-    endItr = (itr == frames.end()) ? mAcceptedClusters.constEnd() : itr->clustersEnd;
+    endItr = chosenOne.clustersEnd;
 
     while (beginItr != endItr) {
         int clusterNo = *beginItr;
@@ -64,7 +64,7 @@ void Check::onFetchEnd()
         emit skipClusters(clusterNo, length);
     }
     
-    emit baselineFrame(*itr->frame);
+    emit baselineFrame(*chosenOne.frame);
     
     // clear all
     for (auto pair : mFrames)

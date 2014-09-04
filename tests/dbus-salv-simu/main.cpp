@@ -4,8 +4,8 @@
 
 #include <unistd.h>
 
-#include "org.salvum.DecodrHub.h"
-#include "org.salvum.DecodrCtrl.h"
+#include <dbus/org.salvum.DecodrHub.h>
+#include <dbus/org.salvum.DecodrCtrl.h>
 
 #include "jpeg/imagehelpers.h"
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
         return -3;
     }
 
-    QImage img("1.jpg");
+    QImage img("shared_resources/1.jpg");
     if (img.isNull()) {
         qDebug()<<"Failed to load image:";
         return -4;

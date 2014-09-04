@@ -40,7 +40,7 @@ protected:
     typedef QVector<FrameDescription> FrameDescription_v;
     typedef FrameDescription_v::const_iterator FrameDescription_itr;
     
-    virtual FrameDescription_itr chooseBaseline(const FrameDescription_v &frames) =0;
+    virtual const FrameDescription &chooseBaseline(const FrameDescription_v &frames) =0;
    
 private:
     QVector<int> mPendingClusters;

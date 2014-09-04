@@ -1,7 +1,7 @@
 #ifndef DECLARE_DBUS_METATYPES_H
 #define DECLARE_DBUS_METATYPES_H
 
-#include "dbustypes.h"
+#include <dbus/dbustypes.h>
 
 #include <QDBusArgument>
 

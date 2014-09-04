@@ -11,8 +11,8 @@ class DeviceMapFetch : public Fetch
 {
 public:
     DeviceMapFetch(QObject *parent =nullptr);    
-    void init(const QString &file, const QString &mapFile, bool brute=false);
-    void init(const QString &file, const QByteArray &map, bool brute=false);
+    bool init(const QString &file, const QString &mapFile, bool brute=false);
+    bool init(const QString &file, const QByteArray &map, bool brute=false);
 
     void fetch(int &clusterNo, QByteArray &cluster);
     bool rewind(int clusterNo);

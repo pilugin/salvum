@@ -3,7 +3,7 @@ TEMPLATE = app
 INCLUDEPATH += ../../src
 DEPENDPATH += ../../src
 
-LIBS += -L ../../src -lsalv -lrt
+LIBS += -L$$OUT_PWD/../../lib -lsalv -lrt
 
 QMAKE_CXXFLAGS += -std=c++0x
 

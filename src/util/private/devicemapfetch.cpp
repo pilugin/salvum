@@ -9,21 +9,27 @@ DeviceMapFetch::DeviceMapFetch(QObject *parent) : Fetch(parent)
 {
 }
 
-void DeviceMapFetch::init(const QString &file, const QByteArray &map, bool brute)
+bool DeviceMapFetch::init(const QString &file, const QByteArray &map, bool brute)
 {
     mFile.setFileName(file);
-    if (!mFile.open(QFile::ReadOnly))
+    if (!mFile.open(QFile::ReadOnly)) {
         Msg("Failed to open file %s '%s'", file.toAscii().data(), mFile.errorString().toAscii().data());
+        return false;
+    }
 
     mMap = map;
     mBrute = brute;
+    
+    return true;
 }
 
-void DeviceMapFetch::init(const QString &file, const QString &mapFile, bool brute)
+bool DeviceMapFetch::init(const QString &file, const QString &mapFile, bool brute)
 {
     mFile.setFileName(file);
-    if (!mFile.open(QFile::ReadOnly))
+    if (!mFile.open(QFile::ReadOnly)) {
         Msg("Failed to open file %s '%s'", file.toAscii().data(), mFile.errorString().toAscii().data());
+        return false;
+    }
 
     QFile map(mapFile);
     if (!map.open(QFile::ReadOnly))
@@ -31,6 +37,8 @@ void DeviceMapFetch::init(const QString &file, const QString &mapFile, bool brut
 
     mMap = map.readAll();
     mBrute = brute;
+    
+    return true;
 }
 
 

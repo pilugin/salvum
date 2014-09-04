@@ -4,14 +4,14 @@
 #include <core/result.h>
 #include <QFile>
 
-class RangeFileResults : public Result
+class RangeFileResult : public Result
 {
 public:
-    RangeFileResults(const QString &dir =".", QObject *parent =nullptr);
+    RangeFileResult(const QString &dir =".", QObject *parent =nullptr);
 
     void restart(const QString &name);
     void addClusters(int clusterNo, int length);
-    void finilize(bool success);
+    void finalize(bool success);
 
 private:
     const QString mDir;
