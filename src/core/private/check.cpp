@@ -53,7 +53,7 @@ void Check::onFetchEnd()
 
     while (beginItr != endItr) {
         int clusterNo = *beginItr;
-        int length = 1;
+        int length = 0;
         
         while ( beginItr != endItr
                 && (*beginItr == (clusterNo + length))  ) {

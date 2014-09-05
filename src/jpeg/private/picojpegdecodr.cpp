@@ -137,14 +137,17 @@ bool PicoJpegDecodr::decodeCluster()
 
 void PicoJpegDecodr::saveFrame(PicoJpegDecodFrame &outFrame)
 {
+    pjpeg_save_ctxt(mFrame.pjpegCtxt.data());
     outFrame = mFrame;
 }
 
 void PicoJpegDecodr::loadFrame(const DecodrFrame &frame)
 {
-    if (frame.type() == PicoJpegDecodFrame::JpegContextType) 
+    if (frame.type() == PicoJpegDecodFrame::JpegContextType) {
         mFrame = static_cast<const PicoJpegDecodFrame &>(frame);
-    else
+        pjpeg_load_ctxt(mFrame.pjpegCtxt.data());
+
+    } else
         Msg("loadFrame error. frame.type != PicoJpegDecodFrame\n");    
 }
 

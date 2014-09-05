@@ -1,4 +1,9 @@
 #!/bin/sh
+
+#
+# Usage: ./mesh.sh jpg-file junk-file out-file
+# 
+
 clusterSize=4096
 clusterOffset=0
 step=100

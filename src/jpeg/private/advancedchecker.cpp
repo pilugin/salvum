@@ -128,6 +128,8 @@ double AdvancedChecker::processRow_Colors(const QImage &image, int blockBeginX, 
     if (blockY == 0)
         return 1.0;
 
+    static const int maxDelta = 45;
+
     int badColors =0;
     int blocks = (blockEndX - blockBeginX +1)*8;
 
@@ -146,9 +148,9 @@ double AdvancedChecker::processRow_Colors(const QImage &image, int blockBeginX, 
         int bl=qBlue(l);
 
         int delta = qAbs(ru-rl) + qAbs(gu-gl) + qAbs(bu-bl);
-        if (delta > 30) {
+        if (delta > maxDelta) {
             ++badColors;
-            Msg("BAD color d=%d n=%d\t%06X %06X\n", delta, badColors, u, l);
+//            Msg("BAD color d=%d n=%d\t%06X %06X\n", delta, badColors, u, l);
         }
     }
 

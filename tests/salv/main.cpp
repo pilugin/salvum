@@ -32,6 +32,7 @@ int main(int argc, char **argv)
         qDebug( "Failed to init the Fetch");
         return -1;
     }
+    result.restart(argv[3]);
         
     Controller salv;
     salv.setEverybody( &fetch, &check, &decodr );
