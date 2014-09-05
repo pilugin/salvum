@@ -24,7 +24,7 @@ const Check::FrameDescription &SimpleCheck::chooseBaseline(const Check::FrameDes
     if (mVerbose) {
         qDebug()<<"Check::chooseBaseline:";
         for (int i=0; i<frames.size(); ++i)
-            qDebug()<<"\t"<<i<<"-{"<<*frames[i].clustersBegin<<" ~ "<<*(frames[i].clustersEnd -1)<<"}";
+            qDebug("\t%X-{ %08X ~ %08X}", i, *frames[i].clustersBegin, *(frames[i].clustersEnd -1) );
 
         qDebug()<<"\t\tsize="<<frames.size();
     }

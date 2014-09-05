@@ -50,7 +50,7 @@ void DeviceMapFetch::fetch(int &clusterNo, QByteArray &cluster)
     if (atEnd()) {
         Msg("[Fetch End]");
         
-        emit end();
+//        emit end();
         
         return;
     }

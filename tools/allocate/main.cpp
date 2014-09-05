@@ -1,5 +1,7 @@
 #include <QtCore>
 #include <QtDebug>
+#include <stdio.h>
+#include <unistd.h>
 
 const int N = 4*1024;
 

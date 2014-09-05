@@ -3,7 +3,8 @@ HEADERS += \
     $$PWD/imagecursor.h \
     $$PWD/imagehelpers.h \
     $$PWD/advancedchecker.h \
-    $$PWD/picojpegdecodr.h
+    $$PWD/picojpegdecodr.h \
+    $$PWD/phlegmaticchecker.h
     
 SOURCES += \
     $$PWD/private/imagecursor.cpp \

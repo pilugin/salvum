@@ -13,7 +13,6 @@ class ICheck : public QObject
 {
 public:
     ICheck(QObject *parent =nullptr) : QObject(parent) {}
-    virtual ~ICheck() {}
 
     virtual bool check(const QImage &image, int blockBegin, int blockEnd, double *relevance =nullptr) =0;
     virtual double minRelevance() const { return 1.0; }

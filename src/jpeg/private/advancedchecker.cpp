@@ -27,7 +27,7 @@ bool AdvancedChecker::check(const QImage &image, int blockBegin, int blockEnd, d
 
     const int maxBlockX = (image.width()/8) -1;
 
-    Msg("[{%d-%d #%d} ", blockBeginX, blockBeginY, blockEnd - blockBegin);
+    Msg("[");
 
     double result = 0.;
     static const double min = minRelevance();
@@ -49,7 +49,7 @@ bool AdvancedChecker::check(const QImage &image, int blockBegin, int blockEnd, d
 
     }
 
-    Msg("=%g]", result);
+    Msg(" R=%g]", result);
 
     if (relevance)
         *relevance = result;
@@ -59,12 +59,15 @@ bool AdvancedChecker::check(const QImage &image, int blockBegin, int blockEnd, d
 
 double AdvancedChecker::processRow(const QImage &image, int blockBeginX, int blockEndX, int blockY) const
 {
+    Msg("{%d-%d #%d", blockBeginX, blockY, blockEndX - blockBeginX);
+
     static const double colorsLimit = .4;
     double colors = processRow_Colors(image, blockBeginX, blockEndX, blockY);
     if (colors < colorsLimit) {
-        Msg("Colors-%g", colors);
+        Msg(" C=%g}", colors);
         return 0.;
     }
+    Msg("}");
 
     double xtremum = processRow_Xtremum(image, blockBeginX, blockEndX, blockY);
 
