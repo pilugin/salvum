@@ -70,6 +70,7 @@ void PicoJpegDecodr::resume()
 {
     PicoJpegDecodFrame prevFrame;
 
+    qDebug("RESUME");
     while ( !mFetch->atEnd() && !isDone()) {
         saveFrame(prevFrame);
         
@@ -88,6 +89,7 @@ void PicoJpegDecodr::resume()
 
 bool PicoJpegDecodr::decodeCluster()
 {
+    qDebug("DECODE_CLUSTER");
     bool retval = true;
     mWasFetched = false;
     uchar rv = 0;
@@ -143,6 +145,7 @@ void PicoJpegDecodr::saveFrame(PicoJpegDecodFrame &outFrame)
 
 void PicoJpegDecodr::loadFrame(const DecodrFrame &frame)
 {
+    qDebug("LOAD_FRAME");
     if (frame.type() == PicoJpegDecodFrame::JpegContextType) {
         mFrame = static_cast<const PicoJpegDecodFrame &>(frame);
         pjpeg_load_ctxt(mFrame.pjpegCtxt.data());

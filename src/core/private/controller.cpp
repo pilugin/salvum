@@ -27,6 +27,7 @@ void Controller::setEverybody(Fetch *fetch, Check *check, Decodr *decodr)
 
     connect(mFetch,     SIGNAL(fetched(int)),               mCheck,     SLOT(onFetch(int))              );
     connect(mFetch,     SIGNAL(end()),                      mCheck,     SLOT(onFetchEnd())              );
+    connect(mFetch,     SIGNAL(end()),                      this,       SLOT(fetchEnd())                );
 
     connect(mDecodr,    SIGNAL(accepted(DecodrFrame)),      mCheck,     SLOT(onAccept(DecodrFrame))     );
     connect(mDecodr,    SIGNAL(rejected()),                 mCheck,     SLOT(onReject())                );
@@ -80,6 +81,7 @@ void Controller::decodrDone()
 
 void Controller::fetchEnd()
 {
+    qDebug("CTRL__FETCH_END");
     if (mDecodrAccepted) { // can resume
 
 
