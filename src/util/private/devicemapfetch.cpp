@@ -48,10 +48,8 @@ void DeviceMapFetch::fetch(int &clusterNo, QByteArray &cluster)
 
     cluster.clear();
     if (atEnd()) {
-        Msg("[Fetch End]");
-        
-//        emit end();
-        
+        Msg("[Fetch End]");        
+        emit end();
         return;
     }
 
@@ -78,8 +76,6 @@ void DeviceMapFetch::postfetch()
     ++mCurrentCluster;
     if (!goodClusters.contains(mMap[mCurrentCluster]) ) //< not guided. if next section is invalid - skip it
         fastfwd();
-    if (atEnd())
-        emit end();
 }
 
 bool DeviceMapFetch::rewind(int clusterNo)
