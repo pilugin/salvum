@@ -1,3 +1,7 @@
+#
+# After make install it creates SalvUi module (TBD)
+#
+
 include(ui.pri)
 include(../dbus/dbus.pri)
 

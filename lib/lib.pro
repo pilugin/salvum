@@ -9,3 +9,5 @@ include(../src/rdwr/rdwr.pri)
 include(../src/util/util.pri)
 include(../src/jpeg/jpeg.pri)
 include(../src/ipcfetch/ipcfetch.pri)
+
+include(../src/common/colorgcc.pri)

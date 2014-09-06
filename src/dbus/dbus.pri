@@ -8,7 +8,10 @@ DBUSFILES = $$PWD/org.salvum.Broadcast.xml \
 	    $$PWD/org.salvum.DecodrCtrl.xml \
 	    $$PWD/org.salvum.DecodrHub.xml
 
-INCLUDEPATH+= $$OUT_PWD/.. $$PWD/..
+INCLUDEPATH *= \
+    $$OUT_PWD/.. \
+    $$PWD/.. \
+    $$PWD
 
 
 genproxies.input = DBUSFILES
@@ -41,4 +44,4 @@ genadaptors_cpp.depends = ${QMAKE_FILE_BASE}Adp.h
 
 QMAKE_EXTRA_COMPILERS += genproxies genproxies_cpp   genadaptors genadaptors_cpp
 
-OTHER_FILES = $$DBUSFILES
+OTHER_FILES += $$DBUSFILES

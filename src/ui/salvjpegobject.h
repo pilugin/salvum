@@ -10,18 +10,20 @@ class DecodedClustersModel;
 class SalvJpegObject : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int id 		READ id 	NOTIFY idChanged)
-    Q_PROPERTY(bool inProgress 	READ inProgress NOTIFY inProgressChanged)
-    Q_PROPERTY(bool complete 	READ complete	NOTIFY completeChanged)
-    Q_PROPERTY(QString image	READ imageId	NOTIFY imageChanged)
-    Q_PROPERTY(QString shade	READ shadeId	NOTIFY shadeChanged)
-    Q_PROPERTY(QObject *decodedClusters	READ decodedClusters	NOTIFY decodedClustersChanged)
+    Q_PROPERTY(int id                       READ id                 NOTIFY idChanged)
+    Q_PROPERTY(bool inProgress              READ inProgress         NOTIFY inProgressChanged)
+    Q_PROPERTY(bool complete                READ complete           NOTIFY completeChanged)
+    Q_PROPERTY(QString image                READ imageId            NOTIFY imageChanged)    
+    Q_PROPERTY(QString shade                READ shadeId            NOTIFY shadeChanged)
+//    Q_PROPERTY(int imageWidth               READ imageWidth         NOTIFY imageWidthChanged)
+//    Q_PROPERTY(int imageHeight              READ imageHeight        NOTIFY imageHeight)
+    Q_PROPERTY(QObject *decodedClusters     READ decodedClusters    NOTIFY decodedClustersChanged)
 public:
     SalvJpegObject(int id_, const QString &imageProviderPrefix, QObject *parent =nullptr);
     
-    int id() const		{ return mId; }
-    bool inProgress() const	{ return mInProgress; }
-    bool complete() const	{ return mComplete; }
+    int id() const          { return mId; }
+    bool inProgress() const { return mInProgress; }
+    bool complete() const   { return mComplete; }
     QString imageId() const;
     QString shadeId() const;
     QObject *decodedClusters() const;
@@ -42,6 +44,7 @@ signals:
 public slots:    
     void decodrInProgress();
     void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap);
+    void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const QImage &image);
     void currentClusterChanged(int clusterNo, int blockBegin, int blockEnd);
     void baselineSelected(int clusterNo);
 

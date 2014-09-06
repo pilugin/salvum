@@ -6,3 +6,4 @@ TARGET = salv-core
 
 DESTDIR = $$OUT_PWD/..
 
+include(../common/colorgcc.pri)

@@ -52,6 +52,7 @@ public:
 
     bool isDone() const;
     
+    QImage image() const { return mImage; }
 protected:
     bool decodeCluster();
     void saveFrame(PicoJpegDecodFrame &outFrame);

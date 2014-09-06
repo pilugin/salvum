@@ -17,16 +17,21 @@ SalvJpegObject::SalvJpegObject(int id_, const QString &imageProviderPrefix, QObj
     connect(mSubmodel,  SIGNAL(baselineSelected(int)),                      this,   SLOT(baselineSelected(int)) );
 }
 
-void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap)
+void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const QImage &image)
 {
     emit inProgressChanged(mInProgress = false);
     emit completeChanged(mComplete = complete);
-    
-    mImage = Jpeg::image(pixmap);
+
+    mImage = image;
     emit imageChanged(mImageId);
     emit shadeChanged(mShadeId);
-    
+
     mSubmodel->reset(decodedClusters);
+}
+
+void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap)
+{
+    decodrAtEnd(complete, decodedClusters, Jpeg::image(pixmap));
 }
 
 QString SalvJpegObject::imageId() const

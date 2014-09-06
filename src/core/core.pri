@@ -12,6 +12,6 @@ SOURCES += \
     $$PWD/private/result.cpp \
     $$PWD/private/controller.cpp
     
-INCLUDEPATH += $$PWD/..
+INCLUDEPATH *= $$PWD/..
     
 QMAKE_CXXFLAGS *= -std=c++11        

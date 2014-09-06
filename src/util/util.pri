@@ -27,4 +27,4 @@ SOURCES += \
     
 QMAKE_CXXFLAGS *= -std=c++11
     
-INCLUDEPATH += $$PWD/..    
+INCLUDEPATH *= $$PWD/..

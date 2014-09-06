@@ -13,4 +13,4 @@ QML_FILES += \
     
 OTHER_FILES += $$QML_FILES
 
-INCLUDEPATH += $$PWD/.. $$/PWD/../..    
+INCLUDEPATH *= $$PWD/.. $$PWD/../..

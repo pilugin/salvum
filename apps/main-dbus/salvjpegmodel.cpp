@@ -1,5 +1,5 @@
 #include "salvjpegmodel.h"
-#include "salvjpegobject.h"
+#include <ui/salvjpegobject.h>
 
 SalvJpegModel::SalvJpegModel(QObject *parent)
 : QAbstractListModel(parent)
