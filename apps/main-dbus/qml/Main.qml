@@ -1,4 +1,5 @@
 import QtQuick 1.1
+import SalvUi 1.0
 
 Rectangle {
     width: 1200

@@ -1,7 +1,7 @@
 #ifndef DECODEDCLUSTERSMODEL_H
 #define DECODEDCLUSTERSMODEL_H
 
-#include "if/dbus/dbustypes.h"
+#include <dbus/dbustypes.h>
 #include <QAbstractListModel>
 
 class DecodedClustersModel : public QAbstractListModel

@@ -1,7 +1,7 @@
 #ifndef SALVJPEGOBJECT_H
 #define SALVJPEGOBJECT_H
 
-#include "if/dbus/declareDBusMetatypes.h"
+#include <dbus/declareDBusMetatypes.h>
 #include <QtCore/QObject>
 #include <QImage>
 

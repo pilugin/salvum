@@ -1,6 +1,6 @@
-#include "salvjpegobject.h"
-#include "jpeg/imagehelpers.h"
-#include "decodedclustersmodel.h"
+#include <ui/salvjpegobject.h>
+#include <ui/decodedclustersmodel.h>
+#include <jpeg/imagehelpers.h>
 #include <QtDebug>
 
 SalvJpegObject::SalvJpegObject(int id_, const QString &imageProviderPrefix, QObject *parent)

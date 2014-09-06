@@ -1,4 +1,4 @@
-#include "decodedclustersmodel.h"
+#include <ui/decodedclustersmodel.h>
 
 DecodedClustersModel::DecodedClustersModel(QObject *parent)
 : QAbstractListModel(parent)
