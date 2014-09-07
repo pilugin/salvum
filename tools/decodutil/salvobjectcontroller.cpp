@@ -39,11 +39,11 @@ void SalvObjectController::processDecode(QString filename, QString clusterList)
 
     mController = new Controller(this);
     Jpeg::PicoJpegDecodr *decodr = new Jpeg::PicoJpegDecodr(new Jpeg::PhlegmaticChecker(mController), mController);
-
+    LoggingCheck *check = new LoggingCheck(mController);
 
     mController->setEverybody(
                 new GuidedFetch(filename, clusters, mController),
-                new SimpleCheck(true, mController),
+                check,
                 decodr
                 );
 
@@ -52,9 +52,11 @@ void SalvObjectController::processDecode(QString filename, QString clusterList)
     qApp->processEvents();
 
     bool success = mController->run(0);
+    
+    qDebug()<<"Check results: ";
+    for (const auto &i : check->res()) 
+        qDebug() << "\t"<<i.clusterNo<<"     "<<i.blockBegin<<"~"<<i.blockEnd;
 
-
-    DecodedClusters decodedClusters;
-    decodrAtEnd(success, decodedClusters, decodr->image());
+    decodrAtEnd(success, check->res(), decodr->image());
     emit processEnd();
 }

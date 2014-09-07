@@ -38,6 +38,8 @@ void GuidedFetch::fetch(int &clusterNo, QByteArray &cluster)
 
     clusterNo = curClusterNo;
     cluster = mFile.read( clusterSize );
+    
+    emit fetched( clusterNo );
 }
 
 bool GuidedFetch::rewind(int)

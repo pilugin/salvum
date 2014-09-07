@@ -10,8 +10,6 @@ class LoggingCheck : public Check
 public:
     explicit LoggingCheck(QObject *parent = 0);
 
-    void doAcceptFrame(const QVector<int> &pendingClusters, const DecodrFrame &frame);
-
     const DecodedClusters &res() const { return mRes; }
 protected:
     const FrameDescription &chooseBaseline(const FrameDescription_v &frames);

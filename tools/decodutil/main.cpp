@@ -11,6 +11,8 @@
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
+    SimpleLogger l;
+    DefaultSettings s;
 
     QDeclarativeView view;
     SalvObjectController ctrl;

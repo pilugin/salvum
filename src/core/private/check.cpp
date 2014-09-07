@@ -12,10 +12,11 @@ void Check::onFetch(int clusterNo)
 void Check::onAccept(const DecodrFrame &frame)
 {
     doAcceptFrame(mPendingClusters, frame);
-    
+
     mAcceptedClusters += mPendingClusters;
-    mFrames.push_back( qMakePair<int,DecodrFrame*>(mAcceptedClusters.back(), frame.clone()) );
-    
+    if (mAcceptedClusters.size() > 0)
+        mFrames.push_back( qMakePair<int,DecodrFrame*>(mAcceptedClusters.back(), frame.clone()) );
+
     mPendingClusters.clear();    
 }
 

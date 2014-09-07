@@ -25,3 +25,5 @@ HEADERS += \
     loggingcheck.h
 
 include(../../src/common/colorgcc.pri)
+
+CONFIG += debug
