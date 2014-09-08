@@ -134,6 +134,7 @@ bool PicoJpegDecodr::decodeCluster()
         retval = false;
     }
 
+    qDebug("DECOD_CLUSTER EXIT");
     return retval;
 }
 

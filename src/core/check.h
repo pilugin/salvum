@@ -43,6 +43,8 @@ protected:
     virtual const FrameDescription &chooseBaseline(const FrameDescription_v &frames) =0;
    
 private:
+    void processFetchEnd();
+
     QVector<int> mPendingClusters;
     
     /*
@@ -57,6 +59,7 @@ private:
     */
     QVector<int> mAcceptedClusters;
     QVector<QPair<int /*clusterNo*/, DecodrFrame *>> mFrames;
+    bool mFetchEnd;
 };
 
 #endif // CORE_CHECK_H

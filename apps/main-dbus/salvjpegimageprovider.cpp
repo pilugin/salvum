@@ -1,6 +1,6 @@
 #include "salvjpegimageprovider.h"
 #include "salvjpegmodel.h"
-#include "salvjpegobject.h"
+#include <ui/salvjpegobject.h>
 #include <QtDebug>
 
 SalvJpegImageProvider::SalvJpegImageProvider(SalvJpegModel *model)

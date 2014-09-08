@@ -8,6 +8,8 @@ LoggingCheck::LoggingCheck(QObject *parent) :
 
 const Check::FrameDescription &LoggingCheck::chooseBaseline(const Check::FrameDescription_v &frames)
 {
+    qDebug("CHECK CHOOSE_BASELINE");
+
     for (const Check::FrameDescription &d: frames) {
         //fill res
         if (d.clustersBegin == d.clustersEnd || d.frame==nullptr || d.frame->type() != Jpeg::PicoJpegDecodFrame::JpegContextType )

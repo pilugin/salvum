@@ -49,6 +49,7 @@ public slots:
     void baselineSelected(int clusterNo);
 
 private:
+protected:
     const int mId;
     const QString mImageProviderPrefix;
     const QString mImageId;

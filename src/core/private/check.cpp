@@ -7,6 +7,7 @@ Check::Check(QObject *parent) : QObject(parent)
 void Check::onFetch(int clusterNo)
 {
     mPendingClusters.push_back(clusterNo);    
+    mFetchEnd = false;
 }
 
 void Check::onAccept(const DecodrFrame &frame)
@@ -18,15 +19,26 @@ void Check::onAccept(const DecodrFrame &frame)
         mFrames.push_back( qMakePair<int,DecodrFrame*>(mAcceptedClusters.back(), frame.clone()) );
 
     mPendingClusters.clear();    
+    
+    if (mFetchEnd)
+        processFetchEnd();
 }
 
 void Check::onReject()
 {
     doRejectFrame(mPendingClusters);
     mPendingClusters.clear();
+    
+    if (mFetchEnd)
+        processFetchEnd();
 }
 
 void Check::onFetchEnd()
+{
+    mFetchEnd = true;
+}
+
+void Check::processFetchEnd()
 {
     // prepare params for chooseBaseline
     QVector<FrameDescription> frames;

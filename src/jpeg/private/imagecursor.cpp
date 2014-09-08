@@ -45,6 +45,8 @@ void ImageCursor::addBlock(const uchar *r, const uchar *g, const uchar *b)
     for (int y=0; y<8; ++y)
         for (int x=0; x<8; ++x)
             mCanvas->setPixel(baseX + x, baseY + y, qRgb(*r++, *g++, *b++));
+            
+//    qDebug("BLOCK ADDED  %d %d      %d", mBlockX, mBlockY, (mBlockY*(mCanvas->width()/8) +mBlockX));
 
     incBlock();
 }
@@ -71,6 +73,13 @@ void ImageCursor::incBlock()
         mBlockX = 0;
         ++mBlockY;
     }
+    
+    if (isBlockValid()) 
+        for (int i=0; i<8; ++i) {
+            mCanvas->setPixel(mBlockX * 8 +7-i, mBlockY * 8 +i, qRgb(0xFF,0,0));
+            mCanvas->setPixel(mBlockX * 8 +i, mBlockY * 8 +i, qRgb(0xFF,0,0));
+            mCanvas->setPixel(mBlockX * 8, mBlockY * 8 +i, qRgb(0xFF,0,0));
+        }
 }
 
 } // eons Jpeg

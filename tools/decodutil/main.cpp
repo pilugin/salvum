@@ -3,6 +3,7 @@
 #include <QtDebug>
 
 #include "salvobjectcontroller.h"
+#include "salvobjectimageprovider.h"
 
 #include <util/simplelogger.h>
 #include <util/defaultsettings.h>
@@ -18,7 +19,7 @@ int main(int argc, char **argv)
     SalvObjectController ctrl;
 
     view.engine()->rootContext()->setContextProperty("ctrl", &ctrl);
-//    view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
+    view.engine()->addImageProvider(SalvObjectController::imageProviderName(), new SalvObjectImageProvider(&ctrl));
 
     view.setSource(QUrl("qml/Main.qml"));
     view.setGeometry(0, 0, 600, 600);

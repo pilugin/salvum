@@ -3,22 +3,52 @@ import SalvUi 1.0
 
 Rectangle {
 
-    Image {
-        id: image
-        anchors.left: parent.left
+    Flickable {
+        id: imageView
+        anchors.left: parent.left        
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.right: controls.left
-        fillMode: Image.PreserveAspectFit
-        source: ctrl.image
-        z: 1
+        contentWidth:  1000000//image.width * image.scale 
+        contentHeight: 1000000//image.height * image.scale 
+        clip:true
+        
+        Image {
+            id: image
+            fillMode: Image.PreserveAspectFit
+            source: ctrl.image
+            onSourceChanged: console.log("source == " + source);
+            scale: 0.25
+            Image {
+                id: shade
+                anchors.fill: parent
+//                source: ctrl.shade
+            }
+          
+        }        
+    }        
+        
+    Rectangle {
+        color: "blue"
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        width: 30
+        height: 34
+        
+        MouseArea {
+            acceptedButtons: Qt.LeftButton | Qt.RightButton 
+            onClicked: {
+                if (mouse.button == Qt.LeftButton)
+                    image.scale *= 1.3
+            
+                if (mouse.button == Qt.RightButton)
+                    image.scale /= 1.3
+            } 
+            anchors.fill: parent
+        }
     }
-    Image {
-        id: shade
-        anchors.fill: image
-        z: 2
-        source: ctrl.shade
-    }
+    
+
 
     Column {
         id: controls
@@ -70,5 +100,5 @@ Rectangle {
     
     Component.onCompleted: ctrl.processDecode(filename.text, clustersList.text)
 
-    color: "cyan"
+    color: "white"
 }

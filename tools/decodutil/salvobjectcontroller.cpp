@@ -11,7 +11,7 @@
 #include <QtCore>
 
 SalvObjectController::SalvObjectController(QObject *parent) :
-    SalvJpegObject(1, "salv", parent),
+    SalvJpegObject(1, QString("image://%1").arg(imageProviderName()), parent),
     mController(nullptr)
 {
 }
@@ -20,12 +20,12 @@ void SalvObjectController::processDecode(QString filename, QString clusterList)
 {
     emit processStarted();
     metaObject()->invokeMethod(this, "doProcessDecode", Qt::QueuedConnection, Q_ARG(QString, filename), Q_ARG(QString, clusterList));
+    mImage = QImage();
+    emit imageChanged("");
 }
 
 void SalvObjectController::doProcessDecode(QString filename, QString clusterList)
 {
-    qDebug("YOBA");
-
     delete mController;
     mController = nullptr;
 
@@ -63,7 +63,14 @@ void SalvObjectController::doProcessDecode(QString filename, QString clusterList
     qDebug()<<"Check results: ";
     for (const auto &i : check->res()) 
         qDebug() << "\t"<<i.clusterNo<<"     "<<i.blockBegin<<"~"<<i.blockEnd;
+        
 
     decodrAtEnd(success, check->res(), decodr->image());
     emit processEnd();
+    
+    int lastBlock = check->res().size()>0 ? check->res().back().blockEnd : 0;    
+    qDebug()<<"Image size="<<mImage.size()<<" --- "<<(mImage.size()/8);
+    if (mImage.width()>0)
+        qDebug()<<"lastBlock="<<(lastBlock%(mImage.width()/8))<<","<<(lastBlock/(mImage.width()/8));
+    
 }

@@ -10,6 +10,8 @@ class SalvObjectController : public SalvJpegObject
     Q_OBJECT
 public:
     explicit SalvObjectController(QObject *parent = 0);
+    
+    static QString imageProviderName() { return "salv"; }
 
 signals:
     void error(QString message);

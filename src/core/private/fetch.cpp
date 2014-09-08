@@ -12,6 +12,7 @@ void Fetch::fetch(int &clusterNo, QByteArray &cluster)
     }
 
     clusterNo = InvalidClusterNo;
+    cluster.clear();
     doFetch(clusterNo, cluster);
 
     if (clusterNo != InvalidClusterNo)
