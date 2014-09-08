@@ -14,7 +14,10 @@ const Check::FrameDescription &LoggingCheck::chooseBaseline(const Check::FrameDe
             continue;
             
         Jpeg::PicoJpegDecodFrame *frame = static_cast<Jpeg::PicoJpegDecodFrame *>(d.frame);
-        DecodedClusterInfo clusterInfo = { *d.clustersBegin, 0, frame->cursor.currentBlockIndex() };
+        DecodedClusterInfo clusterInfo = {
+            *d.clustersBegin,
+            mRes.size() > 0 ? mRes.back().blockEnd+1 : 0,
+            frame->cursor.currentBlockIndex() };
         mRes.push_back( clusterInfo );
     }
 

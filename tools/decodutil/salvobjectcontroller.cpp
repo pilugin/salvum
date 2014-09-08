@@ -18,6 +18,14 @@ SalvObjectController::SalvObjectController(QObject *parent) :
 
 void SalvObjectController::processDecode(QString filename, QString clusterList)
 {
+    emit processStarted();
+    metaObject()->invokeMethod(this, "doProcessDecode", Qt::QueuedConnection, Q_ARG(QString, filename), Q_ARG(QString, clusterList));
+}
+
+void SalvObjectController::doProcessDecode(QString filename, QString clusterList)
+{
+    qDebug("YOBA");
+
     delete mController;
     mController = nullptr;
 
@@ -25,8 +33,8 @@ void SalvObjectController::processDecode(QString filename, QString clusterList)
     if (!f.exists()) {
         emit error(QString("%1: file doesn't exist").arg(filename));
         return;
-    }
-
+    }    
+    
     QList<int> clusters;
     foreach (QString c, clusterList.split(" ", QString::SkipEmptyParts)) {
         bool ok;
@@ -48,7 +56,6 @@ void SalvObjectController::processDecode(QString filename, QString clusterList)
                 );
 
     decodrInProgress();
-    emit processStarted();
     qApp->processEvents();
 
     bool success = mController->run(0);

@@ -42,18 +42,11 @@ bool DeviceMapFetch::init(const QString &file, const QString &mapFile, bool brut
 }
 
 
-void DeviceMapFetch::fetch(int &clusterNo, QByteArray &cluster)
+void DeviceMapFetch::doFetch(int &clusterNo, QByteArray &cluster)
 {
-    Msg("\n");
-
     cluster.clear();
-    if (atEnd()) {
-        Msg("[Fetch End]");        
-        emit end();
-        return;
-    }
 
-    Msg("[% 8X", mCurrentCluster);
+    Msg("\n[% 8X", mCurrentCluster);
     if (! mFile.seek(qint64(mCurrentCluster) * Get(ClusterSize).toInt())) {
         Msg(":Failed]");
         clusterNo = InvalidClusterNo;
@@ -62,8 +55,6 @@ void DeviceMapFetch::fetch(int &clusterNo, QByteArray &cluster)
         cluster = mFile.read(Get(ClusterSize).toInt());
         clusterNo = mCurrentCluster;
         Msg("]");
-        
-        emit fetched(clusterNo);
         
         postfetch();
     }

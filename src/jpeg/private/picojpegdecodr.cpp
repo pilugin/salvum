@@ -35,7 +35,7 @@ PicoJpegDecodFrame *PicoJpegDecodFrame::clone() const
 
 PicoJpegDecodr::PicoJpegDecodr(ICheck *check, QObject *parent)
 : Decodr(parent)
-{    
+{
     mCheck = check;
     mFetch = nullptr;
     mDone = false;
@@ -57,11 +57,11 @@ bool PicoJpegDecodr::restart(Fetch *fetch)
         mDone = true;
         emit rejected();
         return false;
-        
+
     } else {
         mFrame.cursor.initCanvas(QSize(mFrame.imgInfo.m_width, mFrame.imgInfo.m_height));
-        mDone = false;            
-        emit accepted(mFrame);        
+        mDone = false;
+        emit accepted(mFrame);
         return true;
     }
 }
@@ -73,16 +73,16 @@ void PicoJpegDecodr::resume()
     qDebug("RESUME");
     while ( !mFetch->atEnd() && !isDone()) {
         saveFrame(prevFrame);
-        
+
         if (decodeCluster()) {
             emit accepted(mFrame);
-            
+
         } else {
             emit rejected();
-            loadFrame(prevFrame);        
-        }        
+            loadFrame(prevFrame);
+        }
     }
-    
+
     if (isDone())
         emit done();
 }

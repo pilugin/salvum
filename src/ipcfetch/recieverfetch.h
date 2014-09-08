@@ -20,14 +20,13 @@ public:
 
     bool rewind(int clusterNo);
     void skip(int clusterNo, int length);
-    void fetch(int &clusterNo, QByteArray &cluster);
     void fastfwd();
-    
     bool atEnd() const;
 
-    bool isValid() const;   
-
+    bool isValid() const;
+    
 protected:
+    void doFetch(int &clusterNo, QByteArray &cluster);
     bool process(const BroadcastMessage &msg);
     void duringReg();
     void duringUnreg();

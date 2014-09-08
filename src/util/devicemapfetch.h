@@ -14,7 +14,6 @@ public:
     bool init(const QString &file, const QString &mapFile, bool brute=false);
     bool init(const QString &file, const QByteArray &map, bool brute=false);
 
-    void fetch(int &clusterNo, QByteArray &cluster);
     bool rewind(int clusterNo);
     void skip(int clusterNo, int length);
     void fastfwd();
@@ -31,6 +30,7 @@ protected:
 
     bool mBrute;
 
+    void doFetch(int &clusterNo, QByteArray &cluster);
     void postfetch();
 };
 

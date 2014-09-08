@@ -18,6 +18,8 @@ signals:
 
 public slots:
     void processDecode(QString filename, QString clusterList);
+private slots:
+    void doProcessDecode(QString filename, QString clusterList);    
 
 private:
     Controller *mController;

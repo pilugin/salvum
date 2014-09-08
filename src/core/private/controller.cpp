@@ -30,6 +30,7 @@ void Controller::setEverybody(Fetch *fetch, Check *check, Decodr *decodr)
     connect(mFetch,     SIGNAL(end()),                      this,       SLOT(fetchEnd())                );
 
     connect(mDecodr,    SIGNAL(accepted(DecodrFrame)),      mCheck,     SLOT(onAccept(DecodrFrame))     );
+    connect(mDecodr,    SIGNAL(accepted(DecodrFrame)),      this,       SLOT(decodrAccepted())          );
     connect(mDecodr,    SIGNAL(rejected()),                 mCheck,     SLOT(onReject())                );
     connect(mDecodr,    SIGNAL(done()),                     this,       SLOT(decodrDone())              );
     connect(mDecodr,    SIGNAL(done()),                     mCheck,     SLOT(onFetchEnd())              );
@@ -64,11 +65,14 @@ bool Controller::run(int clusterNo)
 
     mRunning = true;
     while (mRunning) {
+        qDebug("GO!");
 
         mDecodr->resume();
+        if (!mFetch->rewind())
+            mRunning = false;
 
     }
-    
+
     emit end(success());
     return success();
 }

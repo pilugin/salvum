@@ -67,6 +67,8 @@ Rectangle {
         onProcessStarted: status.text = "Processing.."
         onProcessEnd: status.text = "Idle"
     }
+    
+    Component.onCompleted: ctrl.processDecode(filename.text, clustersList.text)
 
     color: "cyan"
 }

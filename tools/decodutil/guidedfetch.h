@@ -12,11 +12,13 @@ class GuidedFetch : public Fetch
 public:
     explicit GuidedFetch(const QString &filename, const QList<int> &clusters, QObject *parent = 0);
 
-    virtual bool atEnd() const;
-    void fetch(int &clusterNo, QByteArray &cluster);
+    bool atEnd() const;
     bool rewind(int  =0);
     void skip(int , int ) {}
     void fastfwd() {}
+
+protected:
+    void doFetch(int &clusterNo, QByteArray &cluster);
 
 private:
     QFile mFile;

@@ -16,7 +16,7 @@ public:
     virtual QByteArray bitmap() const { return QByteArray(); }
     
 public slots:    
-    virtual void fetch(int &clusterNo, QByteArray &cluster) =0;
+    void fetch(int &clusterNo, QByteArray &cluster);
     virtual bool rewind(int clusterNo =0) =0;
     virtual void skip(int clusterNo, int length) =0;
     virtual void fastfwd() =0;
@@ -24,6 +24,9 @@ public slots:
 signals:
     void fetched(int clusterNo);
     void end();
+    
+protected:
+    virtual void doFetch(int &clusterNo, QByteArray &cluster) =0;
 };
 
 #endif // CORE_FETCH_H

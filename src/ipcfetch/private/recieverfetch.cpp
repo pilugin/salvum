@@ -111,7 +111,7 @@ bool RecieverFetch::atEnd() const
     return mAtEnd;
 }
 
-void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
+void RecieverFetch::doFetch(int &clusterNo, QByteArray &cluster)
 {
     Msg("\n");
 
@@ -130,13 +130,9 @@ void RecieverFetch::fetch(int &clusterNo, QByteArray &cluster)
     cluster = mRecvClusters.head().second;
     mRecvClusters.dequeue();
     
-    emit fetched(clusterNo);
-
     if (clusterNo == Fetch::InvalidClusterNo) {
         cluster.clear();
         mAtEnd = true;
-        
-        emit end();
         
         Msg("[AtEnd]");
     } else {
