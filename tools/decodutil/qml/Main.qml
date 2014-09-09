@@ -22,7 +22,7 @@ Rectangle {
             Image {
                 id: shade
                 anchors.fill: parent
-//                source: ctrl.shade
+                source: ctrl.shade
             }
           
         }        
@@ -63,6 +63,7 @@ Rectangle {
             id: clusters
             width: parent.width
             height: parent.height * 2/3
+            model: ctrl.decodedClusters
         }
         TextInput {
             id: filename
