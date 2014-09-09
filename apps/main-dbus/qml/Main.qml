@@ -31,7 +31,7 @@ Rectangle {
         model: salv ? salv.decodedClusters : null
     }
 
-
+/*
     Rectangle {
         id: theFooter
         anchors.bottom: parent.bottom
@@ -49,4 +49,13 @@ Rectangle {
             }
         }
     }
+*/
+    ProgressBar {
+        id: theFooter
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 15
+        
+    }    
 }
