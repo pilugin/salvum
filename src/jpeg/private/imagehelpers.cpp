@@ -47,7 +47,7 @@ QImage highlight(const QImage &base, int blockEnd)
                 break;
             }
             for (int x=0; x<8; ++x)
-                res.setPixel(baseX +x, baseY +y, shadePixel[ shadedBlock%shadePixel.size() ]);
+                res.setPixel(baseX +x, baseY +y, shadePixel[ (blockX + blockY)%shadePixel.size() ]);
         }
     }
     

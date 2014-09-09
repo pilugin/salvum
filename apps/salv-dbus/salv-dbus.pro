@@ -6,9 +6,10 @@ QMAKE_CXXFLAGS += -std=c++0x
 
 INCLUDEPATH += ../../src ../..
 DEPENDPATH += ../../src ../..
-LIBS += -L../../src -lsalv
+LIBS += -L../../lib -lsalv
 
-include(../../src/if/dbus/dbus.pri)
+include(../../src/dbus/dbus.pri)
+include(../../src/common/colorgcc.pri)
 
 SOURCES += \
     main.cpp 

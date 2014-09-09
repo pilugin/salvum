@@ -3,8 +3,8 @@
 #include <QtDBus>
 #include <QtDebug>
 
-#include <filelogger.h>
-#include <defaultsettings.h>
+#include <util/filelogger.h>
+#include <util/defaultsettings.h>
 
 int main(int argc, char **argv)
 {
