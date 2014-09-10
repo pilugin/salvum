@@ -1,128 +1,68 @@
 #include "bcastdbusctrl.h"
-#include <QtCore/QThread>
-#include <util/devicemapfetch.h>
-#include <ipcfetch/broadcast.h>
+#include "bcastthread.h"
+#include "bcast.h"
+
 #include <util/slotclosure.h>
-#include "org.salvum.BroadcastAdp.h"
+#include <util/devicemapfetch.h>
 
-class Bcast : public IPCFetch::Broadcast
-{
-public:
-    typedef IPCFetch::Broadcast Super;
-
-    Bcast(const char *shmem, Fetch *fetch_, const SlotClosure &progressCallback) 
-    : IPCFetch::Broadcast(shmem, fetch_) 
-    , mProgressCallback(progressCallback)
-    {
-        mProgress.currentCluster = 0;
-        mProgress.clusterCount = fetch_->bitmap().size();
-    }
-
-    void emitProgress()
-    {
-        interrupt(EmitProgress);
-    }
-
-    void skip(int clusterNo, int length)
-    {
-        mSkip.clusterNo = clusterNo;
-        mSkip.length = length;
-        interrupt(Skip);
-    }
-private:
-    enum InternalOperation 
-    {
-        EmitProgress = Super::Custom,
-        Skip,
-        Custom
-    };
-
-    bool processInternalMsg(int internalMsg)
-    {
-        switch (internalMsg) {
-        case EmitProgress:
-            doEmitProgress();
-        return true;
-        case Skip:
-            fetch()->skip(mSkip.clusterNo, mSkip.length);
-            return true;
-        default:
-            return Super::processInternalMsg(internalMsg);
-        }
-    }
-
-    void doEmitProgress()
-    {
-        qDebug("DO_EMIT_PROGRESS");
-        mProgressCallback.call(Q_ARG(int, mProgress.currentCluster), Q_ARG(int, mProgress.clusterCount));
-    }
-
-    void postRead(const IPCFetch::BroadcastMessage &message)
-    {
-        if (message.status == IPCFetch::AtEnd)
-            mProgress.currentCluster = mProgress.clusterCount;
-        else if (message.clusters.empty())
-            mProgress.currentCluster = 0;
-        else
-            mProgress.currentCluster = message.clusters.back().clusterNo;
-
-        doEmitProgress();
-        Super::postRead(message);
-    }
-
-    struct { int clusterNo, length; } mSkip;
-    struct { int currentCluster, clusterCount; } mProgress;
-    SlotClosure mProgressCallback;
-};
-
-class BcastThread : public QThread
-{
-public:
-    BcastThread(Bcast &bcast) : m_bcast(bcast) 
-    {
-    }
-protected:
-    void run()
-    {
-        m_bcast.write();
-    }
-    Bcast &m_bcast;
-};
+#include <QFile>
 
 class BcastDbusCtrl::Private 
 {
 public:
-    Private(const char *shmem, Fetch *fetch, const SlotClosure &progressCallback)
-    : bcast(shmem, fetch, progressCallback)
+    Private(const char *shmem, const SlotClosure &progressCallback, const SlotClosure &bitmapInfoCallback)
+    : bcast(shmem, progressCallback, bitmapInfoCallback, &fetch)
     , thread(bcast)
     {
     }
 
-    Bcast       bcast;
-    BcastThread thread;
+    DeviceMapFetch  fetch;
+    Bcast           bcast;
+    BcastThread     thread;
 };
 
 ///////////////////////////////////////////////
 
-BcastDbusCtrl::BcastDbusCtrl(const char *mediaPath, const char *bitmapPath)
-: m_d(nullptr)
+BcastDbusCtrl::BcastDbusCtrl(QObject *parent)
+: QObject(parent),
+m_d(nullptr)
 {
-    DeviceMapFetch *f = new DeviceMapFetch(this);
-    f->init(QString(mediaPath), QString(bitmapPath));
     m_d = new Private(
         shmemPath(),
-        f,
-        SlotClosure(this, SIGNAL(progress(int,int)))
+        SlotClosure(this, SIGNAL(progress(int,int))),
+        SlotClosure(this, SIGNAL(bitmapProcessed(QList<int>,QList<int>,BitmapInfo)))
     );
     new BroadcastAdaptor(this);
-    
-    connect(&m_d->thread, SIGNAL(finished()), this, SIGNAL(stopped()) );
 }
 
 BcastDbusCtrl::~BcastDbusCtrl()
 {
     delete m_d;
     m_d = nullptr;
+}
+
+bool BcastDbusCtrl::isValid() const
+{
+    return m_d->bcast.isValid();
+}
+
+
+
+
+
+Result BcastDbusCtrl::setSource(const QString &mediaPath, const QString &bitmapPath)
+{
+    Result r;
+    
+    if (m_d->thread.isRunning()) {
+        r.errorCode = -2;
+        r.error = "Bcast is running";
+    } else {
+        r.errorCode = m_d->fetch.init(mediaPath, bitmapPath) ? 0 : -1;
+        if (!r)
+            r.error = "Failed to init Source";
+    }
+    return r;
 }
 
 void BcastDbusCtrl::start()
@@ -142,9 +82,41 @@ void BcastDbusCtrl::skip(int clusterNo, int length)
 
 void BcastDbusCtrl::stop()
 {
+    if (m_d->thread.isRunning()) 
+        m_d->bcast.stop();    
+}
+
+void BcastDbusCtrl::dumpStats()
+{
+    if (m_d->thread.isRunning())
+        qDebug()<<m_d->bcast.dumpStats();
+    else
+        qDebug()<<"not running";
+}
+
+Result BcastDbusCtrl::saveBitmap(const QString &bitmapPath)
+{
+    Result r;
     if (m_d->thread.isRunning()) {
-        m_d->bcast.stop();
+        auto rr = m_d->bcast.saveBitmap(bitmapPath);
+        r.errorCode = rr.first ? 0 : -1;
+        r.error = rr.second;
+    } else {
+        QByteArray bm = m_d->fetch.bitmap();
+        QFile out(bitmapPath);
+        if (! out.open(QFile::WriteOnly | QFile::Truncate) ) {
+            r.errorCode = -2;
+            r.error = out.errorString();
+
+        } else {
+            int written = out.write(bm);
+            r.errorCode = (written == bm.size()) ? 0 : -3;
+            if (!r)
+                r.error.sprintf("Could not write whole bitmap file. Only %d/%d written", written, bm.size() );
+        }
+        
     }
+    return r;
 }
 
 void BcastDbusCtrl::emitProgress()
@@ -157,7 +129,30 @@ void BcastDbusCtrl::emitProgress()
         emit progress(-1, -1);
 }
 
-bool BcastDbusCtrl::isValid() const
+void BcastDbusCtrl::emitBitmapProcessed()
 {
-    return m_d->bcast.isValid();
+    qDebug()<<"dbus:EMIT_BITMAP_PROCESSED -> ";
+    if (m_d->thread.isRunning())
+        m_d->bcast.emitBitmapInfo();
+    else {
+        QList<int> jpegHeads, goodHeads;
+        BitmapInfo info;
+        Bcast::bitmapInfo( m_d->fetch.bitmap(), jpegHeads, goodHeads, info );
+        emit bitmapProcessed( jpegHeads, goodHeads, info );
+    }
 }
+
+void BcastDbusCtrl::quit()
+{
+    qDebug()<<"qdbus:QUIT -> ";
+    
+    if (m_d->thread.isRunning()) {
+        m_d->bcast.stop();
+        m_d->thread.wait();
+    }
+    
+    emit quitted();
+}
+
+
+

@@ -19,10 +19,9 @@ class Broadcast : public RdWr::Writer<BroadcastMessage>
 {
     typedef RdWr::Writer<BroadcastMessage> Super;
 public:
-    Broadcast(const char *shmemName, Fetch *fetch);
-    ~Broadcast();
+    Broadcast(const char *shmemName, Fetch *fetch =nullptr);
     
-    void write();
+    void write(Fetch *fetch =nullptr);
 
     QByteArray dumpStats();
     QPair<bool, QString> saveBitmap(const QString &filename);

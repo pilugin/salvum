@@ -9,10 +9,12 @@ static struct DBusMetatypesRegistrer
         qRegisterMetaType<Pixmap>("Pixmap");
         qRegisterMetaType<DecodedClusterInfo>("DecodedClusterInfo");
         qRegisterMetaType<DecodedClusters>("DecodedClusters");
+        qRegisterMetaType<Result>("Result");
 
         qDBusRegisterMetaType<Pixmap>();
         qDBusRegisterMetaType<DecodedClusterInfo>();
         qDBusRegisterMetaType<DecodedClusters>();
+        qDBusRegisterMetaType<Result>();
     }
 } theDBusMetatypesRegistrer;
 
@@ -34,6 +36,29 @@ const QDBusArgument &operator>>(const QDBusArgument &stream, Pixmap &pixmap)
     return stream;
 }
 
+const QDBusArgument &operator>>(const QDBusArgument &stream, Result &result)
+{
+    stream.beginStructure();
+    stream >> result.errorCode >> result.error;
+    stream.endStructure();
+    return stream;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &stream, BitmapInfo &info)
+{
+    stream.beginStructure();
+    stream  >> info.jpegHeads
+            >> info.goodHeads
+            >> info.zeros
+            >> info.goods
+            >> info.decodable
+            >> info.starts;
+    stream.endStructure();
+    return stream;
+}
+
+//
+
 QDBusArgument &operator<<(QDBusArgument &stream, const DecodedClusterInfo &dc)
 {
     stream.beginStructure();
@@ -49,3 +74,25 @@ QDBusArgument &operator<<(QDBusArgument &stream, const Pixmap &pixmap)
     stream.endStructure();
     return stream;
 }
+
+QDBusArgument &operator<<(QDBusArgument &stream, const Result &result)
+{  
+    stream.beginStructure();
+    stream << result.errorCode << result.error;
+    stream.endStructure();
+    return stream;
+}
+
+QDBusArgument &operator<<(QDBusArgument &stream, const BitmapInfo &info)
+{
+    stream.beginStructure();
+    stream  << info.jpegHeads
+            << info.goodHeads
+            << info.zeros
+            << info.goods
+            << info.decodable
+            << info.starts;
+    stream.endStructure();
+    return stream;
+}
+

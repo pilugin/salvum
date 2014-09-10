@@ -9,20 +9,26 @@ class BcastDbusCtrl : public QObject
 public:    
     static const char *shmemPath() { return "salv_broadcast"; }
 
-    BcastDbusCtrl(const char *mediaPath, const char *bitmapPath);
+    BcastDbusCtrl(QObject *parent =nullptr);
     ~BcastDbusCtrl();
     
     bool isValid() const;
     
 public slots:
+    Result setSource(const QString &mediaPath, const QString &bitmapPath);
     void start();
     void skip(int clusterNo, int length);
     void stop();
+    Result saveBitmap(const QString &bitmapPath);    
+    void dumpStats();
     void emitProgress();
+    void emitBitmapProcessed();
+    void quit();
     
 signals:
     void progress(int currentClusterNo, int clustersCount);
-    void stopped();
+    void bitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, const BitmapInfo &info);
+    void quitted();
     
 private:    
     class Private;

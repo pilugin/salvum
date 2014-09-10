@@ -19,13 +19,11 @@ Broadcast::Broadcast(const char *shmemName, Fetch *fetch)
     sharedData().rewind = Fetch::InvalidClusterNo;
 }
 
-Broadcast::~Broadcast()
+void Broadcast::write(Fetch *fetch)
 {
-    delete mFetch;
-}
+    if (fetch)
+        mFetch = fetch;
 
-void Broadcast::write()
-{
     mFetch->rewind(0);
     mFetch->fastfwd();
 

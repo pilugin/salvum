@@ -2,28 +2,68 @@
 
 <node name="/">
     <interface name="org.salvum.Broadcast">
+    
+        <method name="setSource">        
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="Result"/>        
+        
+            <arg type="s" name="mediaPath" direction="in"/>
+            <arg type="s" name="bitmapPath" direction="in"/>
+            <arg type="(is)" name="result" direction="out"/>
+        </method>
+        
         <method name="start">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
         </method>
 
         <method name="skip">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+            
             <arg type="i" name="clusterNo" direction="in"/>
             <arg type="i" name="length" direction="in"/>
         </method>
         
         <method name="stop">
-    	    <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
-	</method>
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+        </method>
+        
+        <method name="quit">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+        </method>
+        
+        <method name="saveBitmap">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="Result"/>
+        
+            <arg type="s" name="bitmapPath" direction="in"/>
+            <arg type="(is)" name="result" direction="out"/>
+        </method>
+        
+        <method name="dumpStats">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+        </method>
 
         <method name="emitProgress">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
         </method>
+        
+        <method name="emitBitmapProcessed">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+        </method>                        
 
         <!-- Signals -->
         <signal name="progress">
             <arg type="i" name="currentClusterNo" direction="out"/>
             <arg type="i" name="clustersCount" direction="out"/>
         </signal>
+        
+        <signal name="bitmapProcessed">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QList&lt;int&gt;"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QList&lt;int&gt;"/>        
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="BitmapInfo"/>
+        
+            <arg type="ai" name="jpegHeads" direction="out"/>
+            <arg type="ai" name="goodHeads" direction="out"/>
+            <arg type="(iiiiii)" name="info" direction="out"/>                
+        </signal>
+        
     </interface>
 </node>
