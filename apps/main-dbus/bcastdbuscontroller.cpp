@@ -6,9 +6,11 @@
 BcastDbusController::BcastDbusController(QObject *parent)
 : QObject(parent)
 {
-    org::salvum::Broadcast *dbusClient = new org::salvum::Broadcast("org.salvum.Broadcast", "/broadcast", 
+    mBcast = new org::salvum::Broadcast("org.salvum.Broadcast", "/broadcast", 
                                                             QDBusConnection::sessionBus(), this);
-    connect(dbusClient, SIGNAL(bitmapProcessed(QList<int>,QList<int>,BitmapInfo)), this, SLOT(onBitmapProcessed(QList<int>,QList<int>,BitmapInfo)));                                                          
+    connect(mBcast, SIGNAL(bitmapProcessed(QList<int>,QList<int>,BitmapInfo)), this, SLOT(onBitmapProcessed(QList<int>,QList<int>,BitmapInfo)));                                                          
+    
+    mBitmapInfo = new BitmapInfoModel(this);
 }
 
 void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, BitmapInfo info)
@@ -22,6 +24,16 @@ void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const Q
     qDebug("\t%08d - starts", info.starts);
     
     qDebug("\t\t#jpegHeads=%d; #goodHeads=%d", jpegHeads.size(), goodHeads.size() );
+    
+    mBitmapInfo->setInfo(info);
+    mJpegHeads = jpegHeads;
+    mGoodHeads = goodHeads;
+    
+    emit bitmapUpdated();
 }
 
+void BcastDbusController::setSource(const QString &mediaPath, const QString &bitmapPath)
+{
+    mBcast->setSource(mediaPath, bitmapPath);
+}
 

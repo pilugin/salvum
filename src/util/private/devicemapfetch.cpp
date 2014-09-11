@@ -11,6 +11,7 @@ DeviceMapFetch::DeviceMapFetch(QObject *parent) : Fetch(parent)
 
 bool DeviceMapFetch::init(const QString &file, const QByteArray &map, bool brute)
 {
+    clear();
     mFile.setFileName(file);
     if (!mFile.open(QFile::ReadOnly)) {
         Msg("Failed to open file %s '%s'", file.toAscii().data(), mFile.errorString().toAscii().data());
@@ -25,6 +26,7 @@ bool DeviceMapFetch::init(const QString &file, const QByteArray &map, bool brute
 
 bool DeviceMapFetch::init(const QString &file, const QString &mapFile, bool brute)
 {
+    clear();
     mFile.setFileName(file);
     if (!mFile.open(QFile::ReadOnly)) {
         Msg("Failed to open file %s '%s'", file.toAscii().data(), mFile.errorString().toAscii().data());
@@ -41,6 +43,11 @@ bool DeviceMapFetch::init(const QString &file, const QString &mapFile, bool brut
     return true;
 }
 
+void DeviceMapFetch::clear()
+{
+    mFile.close();
+    mMap.clear();    
+}
 
 void DeviceMapFetch::doFetch(int &clusterNo, QByteArray &cluster)
 {

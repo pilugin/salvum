@@ -29,10 +29,14 @@ int main(int argc, char **argv)
     QObject::connect(&hub,      SIGNAL(decodrClientReleased(int,QDBusObjectPath)),
                      &model,    SLOT(decodrClientReleased(int,QDBusObjectPath))                 );
 
+    view.engine()->rootContext()->setContextProperty("bcast", &bcastCtrl);
     view.engine()->rootContext()->setContextProperty("salvJpegModel", &model);
     view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
 
-    view.setSource(QUrl(/*"qrc:/"*/ "qml/Main.qml"));
+    view.setSource(QUrl("qml/Setup.qml"));
+    view.setGeometry(0, 0, 600, 600);
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);    
+    
     view.show();
     return app.exec();
 }

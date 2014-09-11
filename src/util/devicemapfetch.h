@@ -32,6 +32,7 @@ protected:
 
     void doFetch(int &clusterNo, QByteArray &cluster);
     void postfetch();
+    void clear();
 };
 
 #endif // DEVICEMAPFETCH_H
