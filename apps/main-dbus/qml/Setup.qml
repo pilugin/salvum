@@ -70,7 +70,7 @@ Rectangle {
             header: Text { text: "JPEG HEADS" }
             model: bcast.jpegHeads
             delegate: Text { 
-                text: jpegHeadsView.model[index].toString(16)
+                text: ListView.view.model[index].toString(16)
             }            
         }
         
@@ -82,7 +82,7 @@ Rectangle {
             header: Text { text: "GOOD HEADS" }
             model: bcast.goodHeads
             delegate: Text { 
-                text: goodHeadsView.model[index].toString(16)
+                text: ListView.view.model[index].toString(16)
             }            
         }
         
