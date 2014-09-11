@@ -1,6 +1,7 @@
 #include "decodrdbushub.h"
 #include "salvjpegimageprovider.h"
 #include "salvjpegmodel.h"
+#include "bcastdbuscontroller.h"
 
 #include <QtCore>
 #include <QtDeclarative>
@@ -15,6 +16,8 @@ int main(int argc, char **argv)
         qDebug()<<"Failed to register DBus service";
         return -1;
     }
+    
+    BcastDbusController bcastCtrl;
     
     DecodrDbusHub hub;
 

@@ -27,7 +27,7 @@ public slots:
     
 signals:
     void progress(int currentClusterNo, int clustersCount);
-    void bitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, const BitmapInfo &info);
+    void bitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, BitmapInfo info);
     void quitted();
     
 private:    

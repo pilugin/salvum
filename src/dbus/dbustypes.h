@@ -36,7 +36,12 @@ struct BitmapInfo
     int goods;
     int decodable;
     int starts; //< [i-1]!=1 && [i]==1    
+    
+    BitmapInfo();
+    static BitmapInfo processBitmap(const QByteArray &bm, QList<int> &jpegHeads, QList<int> &goodHeads);
+    
 };
+
 
 Q_DECLARE_METATYPE(DecodedClusterInfo)
 Q_DECLARE_METATYPE(DecodedClusters)

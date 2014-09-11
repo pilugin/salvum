@@ -2,7 +2,8 @@ QT += dbus
 
 HEADERS += $$PWD/declareDBusMetatypes.h \
 	    $$PWD/dbustypes.h
-SOURCES += $$PWD/declareDBusMetatypes.cpp
+SOURCES += $$PWD/declareDBusMetatypes.cpp \
+        $$PWD/dbustypes.cpp
 
 DBUSFILES = $$PWD/org.salvum.Broadcast.xml \
 	    $$PWD/org.salvum.DecodrCtrl.xml \
@@ -41,7 +42,7 @@ genadaptors_cpp.depends = ${QMAKE_FILE_BASE}Adp.h
 
 
 
-
+QMAKE_CXXFLAGS += -std=c++11
 QMAKE_EXTRA_COMPILERS += genproxies genproxies_cpp   genadaptors genadaptors_cpp
 
 OTHER_FILES += $$DBUSFILES

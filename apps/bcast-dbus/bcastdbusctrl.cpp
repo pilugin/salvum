@@ -61,6 +61,8 @@ Result BcastDbusCtrl::setSource(const QString &mediaPath, const QString &bitmapP
         r.errorCode = m_d->fetch.init(mediaPath, bitmapPath) ? 0 : -1;
         if (!r)
             r.error = "Failed to init Source";
+        else
+            emitBitmapProcessed();
     }
     return r;
 }

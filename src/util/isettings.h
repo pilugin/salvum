@@ -16,7 +16,11 @@ enum
 {
     ClusterSize,
     GoodClusters,
-    UsedCluster
+    UsedCluster,
+    ZeroCluster,
+    JpegHead,
+    GoodJpegHead,
+    GoodJpegCluster,
 };
 
 inline QVariant Get(int field)

@@ -48,13 +48,11 @@ bool Bcast::processInternalMsg(int internalMsg)
 
 void Bcast::doEmitProgress()
 {
-    qDebug("DO_EMIT_PROGRESS");
     mProgressCallback.call(Q_ARG(int, mProgress.currentCluster), Q_ARG(int, mProgress.clusterCount));
 }
 
 void Bcast::doEmitBitmapInfo()
 {
-    qDebug("DO_EMIT_BITMAP_INFO");
     QList<int> jpegHeads, goodHeads;
     BitmapInfo info;
     bitmapInfo(fetch()->bitmap(), jpegHeads, goodHeads, info);
@@ -78,4 +76,5 @@ void Bcast::postRead(const IPCFetch::BroadcastMessage &message)
 
 void Bcast::bitmapInfo(const QByteArray &bitmap, QList<int> &jpegHeads, QList<int> &goodHeads, BitmapInfo &info)
 {
+   info = BitmapInfo::processBitmap(bitmap, jpegHeads, goodHeads);
 }

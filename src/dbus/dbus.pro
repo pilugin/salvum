@@ -1,4 +1,5 @@
 include(dbus.pri)
+include(../common/colorgcc.pri)
 
 TEMPLATE = lib
 CONFIG += staticlib

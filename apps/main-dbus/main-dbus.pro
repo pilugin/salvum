@@ -17,13 +17,15 @@ SOURCES += \
     decodrdbushub.cpp \
     decodrdbusctrl.cpp \
     salvjpegmodel.cpp \
-    salvjpegimageprovider.cpp 
+    salvjpegimageprovider.cpp \
+    bcastdbuscontroller.cpp
 
 HEADERS += \
     decodrdbushub.h \
     decodrdbusctrl.h \
     salvjpegmodel.h \
-    salvjpegimageprovider.h
+    salvjpegimageprovider.h \
+    bcastdbuscontroller.h
 
 OTHER_FILES += \
     qml/SalvJpegView.qml \

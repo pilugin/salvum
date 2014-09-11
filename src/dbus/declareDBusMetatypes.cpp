@@ -10,11 +10,13 @@ static struct DBusMetatypesRegistrer
         qRegisterMetaType<DecodedClusterInfo>("DecodedClusterInfo");
         qRegisterMetaType<DecodedClusters>("DecodedClusters");
         qRegisterMetaType<Result>("Result");
+        qRegisterMetaType<BitmapInfo>("BitmapInfo");
 
         qDBusRegisterMetaType<Pixmap>();
         qDBusRegisterMetaType<DecodedClusterInfo>();
         qDBusRegisterMetaType<DecodedClusters>();
         qDBusRegisterMetaType<Result>();
+        qDBusRegisterMetaType<BitmapInfo>();
     }
 } theDBusMetatypesRegistrer;
 
