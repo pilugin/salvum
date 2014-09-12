@@ -13,6 +13,15 @@ struct DecodedClusterInfo
 
 typedef QList<DecodedClusterInfo> DecodedClusters;
 
+struct RejectedClusterInfo
+{
+    int clusterNo;
+    int blockBegin; //< offset of @property pixels
+    QList<int> pixels;
+};
+
+typedef QList<RejectedClusterInfo> RejectedClusters;
+
 struct Pixmap
 {
     int width;
@@ -45,6 +54,8 @@ struct BitmapInfo
 
 Q_DECLARE_METATYPE(DecodedClusterInfo)
 Q_DECLARE_METATYPE(DecodedClusters)
+Q_DECLARE_METATYPE(RejectedClusterInfo)
+Q_DECLARE_METATYPE(RejectedClusters)
 Q_DECLARE_METATYPE(Pixmap)
 Q_DECLARE_METATYPE(Result)
 Q_DECLARE_METATYPE(BitmapInfo)

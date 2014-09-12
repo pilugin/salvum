@@ -70,8 +70,8 @@ void SalvJpegModel::decodrClientAdded(int clientId, QDBusObjectPath, DecodrDbusC
     
     connect(client, SIGNAL(resume()),   o, SLOT(decodrInProgress()) );
     connect(client, SIGNAL(start(int)), o, SLOT(decodrInProgress()) );
-    connect(client, SIGNAL(atEndRecv(bool,DecodedClusters,Pixmap)), 
-            o,      SLOT(decodrAtEnd(bool,DecodedClusters,Pixmap))  );
+    connect(client, SIGNAL(atEndRecv(bool,DecodedClusters,RejectedClusters,Pixmap)), 
+            o,      SLOT(decodrAtEnd(bool,DecodedClusters,RejectedClusters,Pixmap))  );
     connect(o,      SIGNAL(baseline(int)),  client, SLOT(sendBaseline(int)) );
     
     connect(o, SIGNAL(inProgressChanged(bool)), this, SLOT(itemUpdated()) );

@@ -17,7 +17,7 @@ SalvJpegObject::SalvJpegObject(int id_, const QString &imageProviderPrefix, QObj
     connect(mSubmodel,  SIGNAL(baselineSelected(int)),                      this,   SLOT(baselineSelected(int)) );
 }
 
-void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const QImage &image)
+void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const QImage &image)
 {
     emit inProgressChanged(mInProgress = false);
     emit completeChanged(mComplete = complete);
@@ -26,12 +26,12 @@ void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedCl
     emit imageChanged(mImageId);
     emit shadeChanged(mShadeId);
 
-    mSubmodel->reset(decodedClusters);
+    mSubmodel->reset(decodedClusters, rejectedClusters);
 }
 
-void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap)
+void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const Pixmap &pixmap)
 {
-    decodrAtEnd(complete, decodedClusters, Jpeg::image(pixmap));
+    decodrAtEnd(complete, decodedClusters, rejectedClusters, Jpeg::image(pixmap));
 }
 
 QString SalvJpegObject::imageId() const

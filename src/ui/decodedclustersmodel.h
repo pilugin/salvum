@@ -16,7 +16,7 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     
-    void reset(const DecodedClusters &decodedClusters);
+    void reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters);
     
 #if QT_VERSION >= 0x050000
     QHash<int, QByteArray> roleNames() const { return roleNames_internal(); }

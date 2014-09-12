@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
         previ = i + 1;
     }
 
-    ctrl.atEnd(false, dc, Jpeg::dbusPixmap(img));
+    ctrl.atEnd(false, dc, RejectedClusters(), Jpeg::dbusPixmap(img));
     
     QTimer timer;
     timer.setInterval(2000);

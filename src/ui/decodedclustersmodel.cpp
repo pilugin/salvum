@@ -54,7 +54,7 @@ QVariant DecodedClustersModel::data(const QModelIndex &index, int role) const
     }
 }
 
-void DecodedClustersModel::reset(const DecodedClusters &decodedClusters)
+void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters)
 {
     beginResetModel();
     mDecodedClusters = decodedClusters;

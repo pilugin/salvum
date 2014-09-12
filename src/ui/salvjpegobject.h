@@ -43,8 +43,8 @@ signals:
 
 public slots:    
     void decodrInProgress();
-    void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const Pixmap &pixmap);
-    void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const QImage &image);
+    void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const Pixmap &pixmap);
+    void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const QImage &image);
     void currentClusterChanged(int clusterNo, int blockBegin, int blockEnd);
     void baselineSelected(int clusterNo);
 

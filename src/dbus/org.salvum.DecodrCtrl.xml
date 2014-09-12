@@ -16,10 +16,12 @@
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>	
 
             <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="DecodedClusters"/>
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="Pixmap"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="RejectedClusters"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In3" value="Pixmap"/>
 
             <arg type="b" name="complete" direction="in"/>
             <arg type="a(iii)" name="decodedClusters" direction="in"/>
+            <arg type="a(iiai)" name="rejectedClusters" direction="in"/>
             <arg type="(iiai)" name="pixmap" direction="in"/>
         </method>
 

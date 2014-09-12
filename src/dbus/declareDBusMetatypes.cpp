@@ -9,12 +9,16 @@ static struct DBusMetatypesRegistrer
         qRegisterMetaType<Pixmap>("Pixmap");
         qRegisterMetaType<DecodedClusterInfo>("DecodedClusterInfo");
         qRegisterMetaType<DecodedClusters>("DecodedClusters");
+        qRegisterMetaType<RejectedClusterInfo>("RejectedClusterInfo");
+        qRegisterMetaType<RejectedClusters>("RejectedClusters");
         qRegisterMetaType<Result>("Result");
         qRegisterMetaType<BitmapInfo>("BitmapInfo");
 
         qDBusRegisterMetaType<Pixmap>();
         qDBusRegisterMetaType<DecodedClusterInfo>();
         qDBusRegisterMetaType<DecodedClusters>();
+        qDBusRegisterMetaType<RejectedClusterInfo>();
+        qDBusRegisterMetaType<RejectedClusters>();
         qDBusRegisterMetaType<Result>();
         qDBusRegisterMetaType<BitmapInfo>();
     }
@@ -26,6 +30,14 @@ const QDBusArgument &operator>>(const QDBusArgument &stream, DecodedClusterInfo 
 {
     stream.beginStructure();
     stream >> dc.clusterNo >> dc.blockBegin >> dc.blockEnd;        
+    stream.endStructure();
+    return stream;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &stream, RejectedClusterInfo &rc)
+{
+    stream.beginStructure();
+    stream >> rc.clusterNo >> rc.blockBegin >> rc.pixels;        
     stream.endStructure();
     return stream;
 }
@@ -65,6 +77,14 @@ QDBusArgument &operator<<(QDBusArgument &stream, const DecodedClusterInfo &dc)
 {
     stream.beginStructure();
     stream << dc.clusterNo << dc.blockBegin << dc.blockEnd;        
+    stream.endStructure();
+    return stream;
+}
+
+QDBusArgument &operator<<(QDBusArgument &stream, const RejectedClusterInfo &rc)
+{
+    stream.beginStructure();
+    stream << rc.clusterNo << rc.blockBegin << rc.pixels;        
     stream.endStructure();
     return stream;
 }
