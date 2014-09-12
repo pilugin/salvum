@@ -50,27 +50,33 @@ Rectangle {
         anchors { right: parent.right; left: parent.left; top: paths.bottom; bottom: parent.bottom } 
         
         Column {
-            id: bitmapInfo
+            id: bitmapInfoView
             width: 190
             anchors { top: parent.top; left: parent.left }
         
-            Text { text: "JpegHeads: " + bcast.bitmapInfo().jpegHeads }
-            Text { text: "GoodHeads: " + bcast.bitmapInfo().goodHeads }
-            Text { text: "Zeros: " + bcast.bitmapInfo().zero }
-            Text { text: "Goods: " + bcast.bitmapInfo().goods }
-            Text { text: "Decodable: " + bcast.bitmapInfo().decodable }
-            Text { text: "Starts: " + bcast.bitmapInfo().starts }            
+            Text { text: "JpegHeads: " + bitmapInfo.jpegHeads }
+            Text { text: "GoodHeads: " + bitmapInfo.goodHeads }
+            Text { text: "Zeros: " + bitmapInfo.zero }
+            Text { text: "Goods: " + bitmapInfo.goods }
+            Text { text: "Decodable: " + bitmapInfo.decodable }
+            Text { text: "Starts: " + bitmapInfo.starts }            
         }
         
         ListView {
             id: jpegHeadsView
-            anchors { left: bitmapInfo.right; top: parent.top; bottom: parent.bottom }
+            anchors { left: bitmapInfoView.right; top: parent.top; bottom: parent.bottom }
             width: 100
         
             header: Text { text: "JPEG HEADS" }
-            model: bcast.jpegHeads
+            model: jpegHeadsModel
             delegate: Text { 
-                text: ListView.view.model[index].toString(16)
+                text: cluster.toString(16)                
+                color: selected ? "green" : "black"
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: jpegHeadsModel.toggleSelected(index)
+                }
             }            
         }
         
@@ -80,9 +86,15 @@ Rectangle {
             width: 100
         
             header: Text { text: "GOOD HEADS" }
-            model: bcast.goodHeads
+            model: goodHeadsModel
             delegate: Text { 
-                text: ListView.view.model[index].toString(16)
+                text: cluster.toString(16)                
+                color: selected ? "green" : "black"
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: goodHeadsModel.toggleSelected(index)
+                }
             }            
         }
         

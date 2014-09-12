@@ -10,7 +10,6 @@ BcastDbusController::BcastDbusController(QObject *parent)
                                                             QDBusConnection::sessionBus(), this);
     connect(mBcast, SIGNAL(bitmapProcessed(QList<int>,QList<int>,BitmapInfo)), this, SLOT(onBitmapProcessed(QList<int>,QList<int>,BitmapInfo)));                                                          
     
-    mBitmapInfo = new BitmapInfoModel(this);
 }
 
 void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, BitmapInfo info)
@@ -25,11 +24,9 @@ void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const Q
     
     qDebug("\t\t#jpegHeads=%d; #goodHeads=%d", jpegHeads.size(), goodHeads.size() );
     
-    mBitmapInfo->setInfo(info);
-    mJpegHeads = jpegHeads;
-    mGoodHeads = goodHeads;
-    
-    emit bitmapUpdated();
+    emit bitmapInfoUpdated(info);
+    emit jpegHeadsUpdated(jpegHeads);
+    emit goodHeadsUpdated(goodHeads);
 }
 
 void BcastDbusController::setSource(const QString &mediaPath, const QString &bitmapPath)

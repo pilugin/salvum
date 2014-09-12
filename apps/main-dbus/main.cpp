@@ -2,6 +2,9 @@
 #include "salvjpegimageprovider.h"
 #include "salvjpegmodel.h"
 #include "bcastdbuscontroller.h"
+#include "jpegheadsmodel.h"
+
+#include <ui/bitmapinfomodel.h>
 
 #include <QtCore>
 #include <QtDeclarative>
@@ -18,6 +21,13 @@ int main(int argc, char **argv)
     }
     
     BcastDbusController bcastCtrl;
+    BitmapInfoModel bitmapInfo;
+    JpegHeadsModel jpegHeadsModel;
+    JpegHeadsModel goodHeadsModel;
+    
+    QObject::connect(&bcastCtrl, SIGNAL(bitmapInfoUpdated(BitmapInfo)), &bitmapInfo, SLOT(setInfo(BitmapInfo)));
+    QObject::connect(&bcastCtrl, SIGNAL(jpegHeadsUpdated(QList<int>)), &jpegHeadsModel, SLOT(setHeads(QList<int>)));
+    QObject::connect(&bcastCtrl, SIGNAL(goodHeadsUpdated(QList<int>)), &goodHeadsModel, SLOT(setHeads(QList<int>)));
     
     DecodrDbusHub hub;
 
@@ -31,6 +41,9 @@ int main(int argc, char **argv)
 
     view.engine()->rootContext()->setContextProperty("bcast", &bcastCtrl);
     view.engine()->rootContext()->setContextProperty("salvJpegModel", &model);
+    view.engine()->rootContext()->setContextProperty("bitmapInfo", &bitmapInfo);    
+    view.engine()->rootContext()->setContextProperty("jpegHeadsModel", &jpegHeadsModel);
+    view.engine()->rootContext()->setContextProperty("goodHeadsModel", &goodHeadsModel);
     view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
 
     view.setSource(QUrl("qml/Setup.qml"));
