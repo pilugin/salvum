@@ -39,10 +39,23 @@ private:
         Role_ClusterNo,
         Role_BlockBegin,
         Role_BlockEnd,
+        Role_IsRejected,
+        Role_RejectedPixels
     };
     static QHash<int, QByteArray> roleNames_internal();
 
-    DecodedClusters mDecodedClusters;    
+    struct ClusterInfo
+    {
+        int clusterNo;
+        int blockBegin;
+        int blockEnd;  //< ignored if rejected==true
+        bool rejected;
+    };
+    typedef QList<ClusterInfo> Clusters;
+    Clusters mClusters;
+    
+    QMap<int /*clusterNo*/, QList<int>/*pixels; order @see dbustypes.h*/> mRejectedPieces;
+
     int mCurrentCluster;
 };
 

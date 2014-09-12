@@ -44,3 +44,20 @@ BitmapInfo BitmapInfo::processBitmap(const QByteArray &bm, QList<int> &jpegHeads
     
     return r;
 }
+
+QList<int>::const_iterator RejectedClusterInfo::block(int blockNumber) const
+{
+    if ((blockNumber *8*8) >= pixels.size())
+        return pixels.end();
+            
+    return pixels.constBegin() + (blockNumber *8*8);
+}
+
+int RejectedClusterInfo::pixel(int blockNumber, int x, int y) const
+{
+    auto itr = block(blockNumber);
+    if (x<0 || y<0 || x>7 || y>7 || itr==pixels.end())
+        return 0; //< assert?
+        
+    return *(itr +x +y*8);
+}

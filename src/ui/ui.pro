@@ -4,6 +4,7 @@
 
 include(ui.pri)
 include(../dbus/dbus.pri)
+include(../common/colorgcc.pri)
 
 TEMPLATE = lib
 CONFIG += qt plugin
