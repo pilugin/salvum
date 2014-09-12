@@ -1,9 +1,9 @@
 #include "salvobjectcontroller.h"
-#include "guidedfetch.h"
 #include "loggingcheck.h"
 
 #include <core/controller.h>
 #include <util/simplecheck.h>
+#include <util/guidedfetch.h>
 #include <jpeg/phlegmaticchecker.h>
 #include <jpeg/picojpegdecodr.h>
 #include <jpeg/advancedchecker.h>

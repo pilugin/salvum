@@ -12,7 +12,8 @@ HEADERS += \
     $$PWD/filelogger.h \
     $$PWD/rangefileresult.h \
     $$PWD/devicemapfetch.h \
-    $$PWD/simplecheck.h
+    $$PWD/simplecheck.h \
+    $$PWD/guidedfetch.h
     
 SOURCES += \
     $$PWD/private/slotclosure.cpp \
@@ -23,7 +24,8 @@ SOURCES += \
     $$PWD/private/simplelogger.cpp \
     $$PWD/private/filelogger.cpp \
     $$PWD/private/rangefileresult.cpp \
-    $$PWD/private/simplecheck.cpp
+    $$PWD/private/simplecheck.cpp \
+    $$PWD/private/guidedfetch.cpp
     
 QMAKE_CXXFLAGS *= -std=c++11
     

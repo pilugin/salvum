@@ -13,7 +13,6 @@ LIBS += -L$$OUT_PWD/../../lib -lsalv
 
 SOURCES += main.cpp \
     salvobjectcontroller.cpp \
-    guidedfetch.cpp \
     loggingcheck.cpp \
     salvobjectimageprovider.cpp
 
@@ -22,7 +21,6 @@ OTHER_FILES += \
 
 HEADERS += \
     salvobjectcontroller.h \
-    guidedfetch.h \
     loggingcheck.h \
     salvobjectimageprovider.h
 
