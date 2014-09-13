@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/SalvJpegView.qml</file>
+        <file>res/icons/clustersmodel/FA.png</file>
+        <file>res/icons/clustersmodel/LA.png</file>
+        <file>res/icons/clustersmodel/LA_R.png</file>
+        <file>res/icons/clustersmodel/LR.png</file>
+        <file>res/icons/clustersmodel/MA.png</file>
+        <file>res/icons/clustersmodel/R.png</file>
     </qresource>
 </RCC>

@@ -11,7 +11,7 @@ DecodedClustersModel::DecodedClustersModel(QObject *parent)
 
 }
 
-QHash<int, QByteArray> DecodedClustersModel::roleNames_internal()
+QHash<int, QByteArray> DecodedClustersModel::roleNames_internal() const
 {
     static QHash<int, QByteArray> rn;
     if (rn.isEmpty()) {

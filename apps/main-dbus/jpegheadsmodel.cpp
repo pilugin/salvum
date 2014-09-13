@@ -77,11 +77,17 @@ void JpegHeadsModel::setHeads(const QList<int> &heads)
     endResetModel();
 }
 
-void JpegHeadsModel::toggleSelected(int index_)
+void JpegHeadsModel::toggleSelected(int cluster)
 {
-    if (index_<0 || index_>=m_d->items.size())
+    int index_=0;
+    for (; index_<m_d->items.size(); ++index_)
+        if (m_d->items[index_].cluster == cluster)
+            break;
+
+    if (index_>=m_d->items.size())
         return;
         
     m_d->items[index_].selected = ! m_d->items[index_].selected;
+    emit headSelected(m_d->items[index_].cluster, m_d->items[index_].selected);
     emit dataChanged(index(index_), index(index_));
 }

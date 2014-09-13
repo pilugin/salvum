@@ -13,7 +13,7 @@ public:
     DecodedClustersModel(QObject *parent =nullptr);
     
     QModelIndex index(int row, int column =0, const QModelIndex &parent =QModelIndex()) const;
-    int rowCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent =QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
     
     void reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters);
@@ -33,16 +33,18 @@ signals:
     void currentClusterParamsChanged(int clusterNo, int blockBegin, int blockEnd);
     void baselineSelected(int clusterNo);
     
-private:
+protected:
     enum 
     {
         Role_ClusterNo,
         Role_BlockBegin,
         Role_BlockEnd,
         Role_IsRejected,
-        Role_RejectedPixels
+        Role_RejectedPixels,
+        
+        Role_Custom
     };
-    static QHash<int, QByteArray> roleNames_internal();
+    virtual QHash<int, QByteArray> roleNames_internal() const;
 
     struct ClusterInfo
     {

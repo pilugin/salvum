@@ -20,7 +20,10 @@ public:
     
 public slots:
     void setHeads(const QList<int> &list);
-    void toggleSelected(int index);
+    void toggleSelected(int cluster);
+    
+signals:
+    void headSelected(int clusterNo, bool isSelected);    
     
 private:
     static QHash<int, QByteArray> roleNames_internal();

@@ -60,8 +60,39 @@ Rectangle {
             Text { text: "Goods: " + bitmapInfo.goods }
             Text { text: "Decodable: " + bitmapInfo.decodable }
             Text { text: "Starts: " + bitmapInfo.starts }            
+            
         }
         
+        ListView {
+            id: selectedHeadsView
+            anchors { left: parent.left; right: jpegHeadsView.left; top: bitmapInfoView.bottom; bottom: parent.bottom  }
+            model: selectedHeadsModel
+            footer: Text { text: "TOTAL#: " + selectedHeadsView.count }
+            
+            delegate: Rectangle {        
+                id: delegate      
+                height: 15
+                width: parent.width
+                Text {
+                    id: caption
+                    width: 70
+                    text: cluster.toString(16) 
+                    color: isGood ? "green" : "red"
+                }               
+                Text {
+                    x: caption.width
+                    text: "INFO HERE"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        goodHeadsModel.toggleSelected(cluster)
+                        jpegHeadsModel.toggleSelected(cluster)
+                    }
+                }
+            }
+        }
+         
         ListView {
             id: jpegHeadsView
             anchors { left: bitmapInfoView.right; top: parent.top; bottom: parent.bottom }
@@ -71,11 +102,11 @@ Rectangle {
             model: jpegHeadsModel
             delegate: Text { 
                 text: cluster.toString(16)                
-                color: selected ? "green" : "black"
+                color: selected ? "red" : "black"
                 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: jpegHeadsModel.toggleSelected(index)
+                    onClicked: jpegHeadsModel.toggleSelected(cluster)
                 }
             }            
         }
@@ -93,7 +124,7 @@ Rectangle {
                 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: goodHeadsModel.toggleSelected(index)
+                    onClicked: goodHeadsModel.toggleSelected(cluster)
                 }
             }            
         }

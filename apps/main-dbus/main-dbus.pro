@@ -11,6 +11,7 @@ LIBS += -L../../lib -lsalv
 
 include(../../src/dbus/dbus.pri)
 include(../../src/ui/ui.pri)
+include(../../src/common/colorgcc.pri)      
 
 SOURCES += \
     main.cpp \
@@ -19,7 +20,9 @@ SOURCES += \
     salvjpegmodel.cpp \
     salvjpegimageprovider.cpp \
     bcastdbuscontroller.cpp \
-    jpegheadsmodel.cpp
+    jpegheadsmodel.cpp \
+    customclustersmodel.cpp \
+    selectedheadsmodel.cpp
 
 HEADERS += \
     decodrdbushub.h \
@@ -27,7 +30,9 @@ HEADERS += \
     salvjpegmodel.h \
     salvjpegimageprovider.h \
     bcastdbuscontroller.h \
-    jpegheadsmodel.h
+    jpegheadsmodel.h \
+    customclustersmodel.h \
+    selectedheadsmodel.h
 
 OTHER_FILES += \
     qml/SalvJpegView.qml \
