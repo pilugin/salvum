@@ -1,5 +1,9 @@
 #include <ui/decodedclustersmodel.h>
 
+using namespace Common;
+
+namespace Ui {
+
 DecodedClustersModel::DecodedClustersModel(QObject *parent)
 : QAbstractListModel(parent)
 , mCurrentCluster(-1)
@@ -104,4 +108,4 @@ void DecodedClustersModel::baseline()
     }
 }
 
-
+}

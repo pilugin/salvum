@@ -5,6 +5,8 @@
 #include <QtCore/QObject>
 #include <QImage>
 
+namespace Ui {
+
 class DecodedClustersModel;
 
 class SalvJpegObject : public QObject
@@ -43,8 +45,8 @@ signals:
 
 public slots:    
     void decodrInProgress();
-    void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const Pixmap &pixmap);
-    void decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const QImage &image);
+    void decodrAtEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
+    void decodrAtEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const QImage &image);
     void currentClusterChanged(int clusterNo, int blockBegin, int blockEnd);
     void baselineSelected(int clusterNo);
 
@@ -58,7 +60,7 @@ protected:
         
     bool mInProgress;
     bool mComplete;
-    DecodedClusters mDecodedClusters;
+    Common::DecodedClusters mDecodedClusters;
     QImage mImage;
     mutable struct {
         QImage image;
@@ -67,5 +69,7 @@ protected:
     
     DecodedClustersModel *mSubmodel;
 };
+
+}
 
 #endif

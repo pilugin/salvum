@@ -1,8 +1,10 @@
 #ifndef UI_BITMAP_INFO_MODEL_H
 #define UI_BITMAP_INFO_MODEL_H
 
-#include <dbus/dbustypes.h>
+#include <common/types.h>
 #include <QObject>
+
+namespace Ui {
 
 class BitmapInfoModel : public QObject
 {
@@ -24,12 +26,14 @@ public:
     int starts() const      { return mInfo.starts; }
     
 public slots:
-    void setInfo(const BitmapInfo &info);
+    void setInfo(const Common::BitmapInfo &info);
 signals:
     void updated();
     
 private:    
-    BitmapInfo mInfo;
+    Common::BitmapInfo mInfo;
 };
+
+}
 
 #endif // UI_BITMAP_INFO_MODEL_H

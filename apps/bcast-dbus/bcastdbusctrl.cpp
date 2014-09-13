@@ -7,6 +7,9 @@
 
 #include <QFile>
 
+using namespace Common;
+using namespace Core;
+
 class BcastDbusCtrl::Private 
 {
 public:

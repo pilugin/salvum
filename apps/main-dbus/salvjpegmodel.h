@@ -4,7 +4,9 @@
 #include <QAbstractListModel>
 #include "decodrdbusctrl.h"
 
+namespace Ui {
 class SalvJpegObject;
+}
 
 class SalvJpegModel : public QAbstractListModel
 {
@@ -23,7 +25,7 @@ public:
     QHash<int, QByteArray> roleNames() const { return roleNames_internal(); }
 #endif
 
-    SalvJpegObject *getSalvJpeg(int id) const;
+    Ui::SalvJpegObject *getSalvJpeg(int id) const;
     QObject *currentSalv() const;
 
     static QString imageProviderName();
@@ -54,7 +56,7 @@ private:
     
     static QString imageProviderPrefix();
     
-    QList<SalvJpegObject *> mList;
+    QList<Ui::SalvJpegObject *> mList;
     int mCurrentSalvIndex;
 };
 

@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS = core dbus util rdwr ipcfetch jpeg ui
+SUBDIRS = common core dbus util rdwr ipcfetch jpeg ui
 

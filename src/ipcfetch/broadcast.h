@@ -19,9 +19,9 @@ class Broadcast : public RdWr::Writer<BroadcastMessage>
 {
     typedef RdWr::Writer<BroadcastMessage> Super;
 public:
-    Broadcast(const char *shmemName, Fetch *fetch =nullptr);
+    Broadcast(const char *shmemName, Core::Fetch *fetch =nullptr);
     
-    void write(Fetch *fetch =nullptr);
+    void write(Core::Fetch *fetch =nullptr);
 
     QByteArray dumpStats();
     QPair<bool, QString> saveBitmap(const QString &filename);
@@ -36,9 +36,9 @@ protected:
     bool prepare(BroadcastMessage &message);
     void postRead(const BroadcastMessage &message);
     
-    Fetch *fetch() { return mFetch; }
+    Core::Fetch *fetch() { return mFetch; }
 private:
-    Fetch          *mFetch;
+    Core::Fetch    *mFetch;
 
     QByteArray      mStats;
     bool            mSaveBitmapSuccess;

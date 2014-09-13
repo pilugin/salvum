@@ -1,15 +1,15 @@
 #ifndef IMAGEHELPERS_H
 #define IMAGEHELPERS_H
 
-#include <dbus/dbustypes.h>
+#include <common/types.h>
 #include <QImage>
 
 namespace Jpeg {
 
-QImage image(const Pixmap &pixmap);
+QImage image(const Common::Pixmap &pixmap);
 QImage highlight(const QImage &base, int blockEnd);
 
-Pixmap dbusPixmap(const QImage &image);
+Common::Pixmap dbusPixmap(const QImage &image);
 
 } // eons Jpeg
 

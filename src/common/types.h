@@ -4,6 +4,8 @@
 #include <QtCore/QList>
 #include <QMetaType>
 
+namespace Common {
+
 struct DecodedClusterInfo
 {
     int clusterNo;
@@ -50,17 +52,17 @@ struct BitmapInfo
     int starts; //< [i-1]!=1 && [i]==1    
     
     BitmapInfo();
-    static BitmapInfo processBitmap(const QByteArray &bm, QList<int> &jpegHeads, QList<int> &goodHeads);
     
 };
 
+}
 
-Q_DECLARE_METATYPE(DecodedClusterInfo)
-Q_DECLARE_METATYPE(DecodedClusters)
-Q_DECLARE_METATYPE(RejectedClusterInfo)
-Q_DECLARE_METATYPE(RejectedClusters)
-Q_DECLARE_METATYPE(Pixmap)
-Q_DECLARE_METATYPE(Result)
-Q_DECLARE_METATYPE(BitmapInfo)
+Q_DECLARE_METATYPE(Common::DecodedClusterInfo)
+Q_DECLARE_METATYPE(Common::DecodedClusters)
+Q_DECLARE_METATYPE(Common::RejectedClusterInfo)
+Q_DECLARE_METATYPE(Common::RejectedClusters)
+Q_DECLARE_METATYPE(Common::Pixmap)
+Q_DECLARE_METATYPE(Common::Result)
+Q_DECLARE_METATYPE(Common::BitmapInfo)
 
 #endif

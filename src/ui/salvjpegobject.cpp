@@ -3,6 +3,10 @@
 #include <jpeg/imagehelpers.h>
 #include <QtDebug>
 
+using namespace Common;
+
+namespace Ui {
+
 SalvJpegObject::SalvJpegObject(int id_, const QString &imageProviderPrefix, QObject *parent)
 : QObject(parent)
 , mId(id_)
@@ -75,4 +79,6 @@ void SalvJpegObject::baselineSelected(int clusterNo)
     
     // prepare data for IFetch::skip call
     ;
+}
+
 }

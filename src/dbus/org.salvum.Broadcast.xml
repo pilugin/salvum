@@ -4,7 +4,7 @@
     <interface name="org.salvum.Broadcast">
     
         <method name="setSource">        
-            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="Result"/>        
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="Common::Result"/>        
         
             <arg type="s" name="mediaPath" direction="in"/>
             <arg type="s" name="bitmapPath" direction="in"/>
@@ -31,7 +31,7 @@
         </method>
         
         <method name="saveBitmap">
-            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="Result"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="Common::Result"/>
         
             <arg type="s" name="bitmapPath" direction="in"/>
             <arg type="(is)" name="result" direction="out"/>
@@ -58,7 +58,7 @@
         <signal name="bitmapProcessed">
             <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QList&lt;int&gt;"/>
             <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QList&lt;int&gt;"/>        
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="BitmapInfo"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="Common::BitmapInfo"/>
         
             <arg type="ai" name="jpegHeads" direction="out"/>
             <arg type="ai" name="goodHeads" direction="out"/>

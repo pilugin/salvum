@@ -12,6 +12,8 @@
 #include <QtDBus>
 #include <QtDebug>
 
+using namespace Ui;
+
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);

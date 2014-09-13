@@ -7,7 +7,7 @@
 #include <QPair>
 #include <QFile>
 
-class DeviceMapFetch : public Fetch
+class DeviceMapFetch : public Core::Fetch
 {
 public:
     DeviceMapFetch(QObject *parent =nullptr);    

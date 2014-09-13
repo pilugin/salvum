@@ -15,9 +15,9 @@
         <method name="atEnd">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>	
 
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="DecodedClusters"/>
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="RejectedClusters"/>
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In3" value="Pixmap"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="Common::DecodedClusters"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="Common::RejectedClusters"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In3" value="Common::Pixmap"/>
 
             <arg type="b" name="complete" direction="in"/>
             <arg type="a(iii)" name="decodedClusters" direction="in"/>

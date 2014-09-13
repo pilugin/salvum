@@ -1,4 +1,9 @@
 #include "bcast.h"
+#include <jpeg/algo.h>
+
+using namespace Common;
+using namespace Core;
+using namespace Jpeg;
 
 Bcast::Bcast(const char *shmem, const SlotClosure &progressCallback, const SlotClosure &bitmapInfoCallback, Fetch *fetch) 
 : IPCFetch::Broadcast(shmem, fetch) 
@@ -76,5 +81,5 @@ void Bcast::postRead(const IPCFetch::BroadcastMessage &message)
 
 void Bcast::bitmapInfo(const QByteArray &bitmap, QList<int> &jpegHeads, QList<int> &goodHeads, BitmapInfo &info)
 {
-   info = BitmapInfo::processBitmap(bitmap, jpegHeads, goodHeads);
+   info = processBitmap(bitmap, jpegHeads, goodHeads);
 }

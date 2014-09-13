@@ -3,7 +3,9 @@
 
 #include <QThread>
 
+namespace Core {
 class Fetch;
+}
 class Bcast;
 
 class BcastThread : public QThread
@@ -11,11 +13,11 @@ class BcastThread : public QThread
 public:
     BcastThread(Bcast &bcast, QObject *parent =nullptr); 
     
-    void startBcast(Fetch *fetch =nullptr);
+    void startBcast(Core::Fetch *fetch =nullptr);
 protected:
     void run();
     
-    Fetch *mFetch;
+    Core::Fetch *mFetch;
     Bcast &mBcast;
 };
 

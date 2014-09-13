@@ -1,6 +1,8 @@
 #include <util/simplecheck.h>
 #include <QtDebug>
 
+using namespace Core;
+
 SimpleCheck::SimpleCheck(bool verbose, QObject *parent)
     : Check(parent), mVerbose(verbose)
 {

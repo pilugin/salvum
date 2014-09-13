@@ -8,16 +8,18 @@
 #	define QQuickImageProvider QDeclarativeImageProvider
 #endif
 
+namespace Ui {
 class SalvJpegObject;
+}
 
 class SalvObjectImageProvider : public QQuickImageProvider
 {
 public:
-    SalvObjectImageProvider(SalvJpegObject *object);
+    SalvObjectImageProvider(Ui::SalvJpegObject *object);
     
     QImage requestImage(const QString &id, QSize *size, const QSize &requestSize);
 private:
-    SalvJpegObject *mSalv;    
+    Ui::SalvJpegObject *mSalv;    
 };
 
 #endif

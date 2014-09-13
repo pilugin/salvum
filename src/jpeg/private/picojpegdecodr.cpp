@@ -6,6 +6,7 @@
 #include <QtDebug>
 
 using namespace Log;
+using namespace Core;
 
 namespace Jpeg {
 

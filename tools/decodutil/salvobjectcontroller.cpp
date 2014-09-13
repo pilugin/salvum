@@ -11,6 +11,11 @@
 #include <QtCore>
 #include <QtDebug>
 
+using namespace Core;
+using namespace Jpeg;
+using namespace Common;
+using namespace Ui;
+
 SalvObjectController::SalvObjectController(QObject *parent) :
     SalvJpegObject(1, QString("image://%1").arg(imageProviderName()), parent),
     mController(nullptr)

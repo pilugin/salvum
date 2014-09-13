@@ -4,6 +4,7 @@
 
 using namespace Log;
 using namespace Settings;
+using namespace Core;
 
 DeviceMapFetch::DeviceMapFetch(QObject *parent) : Fetch(parent)
 {

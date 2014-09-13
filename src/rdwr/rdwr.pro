@@ -5,3 +5,5 @@ CONFIG += staticlib
 TARGET = salv-rdwr
 
 DESTDIR = $$OUT_PWD/..
+
+include(../common/common.pri)

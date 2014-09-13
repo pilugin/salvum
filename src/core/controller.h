@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+namespace Core {
+
 class Result;
 class Check;
 class Fetch;
@@ -38,5 +40,7 @@ private:
     bool mRunning;
     bool mSuccess;
 };
+
+}
 
 #endif // CORE_CONTROLLER_H

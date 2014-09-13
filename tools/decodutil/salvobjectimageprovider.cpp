@@ -2,6 +2,8 @@
 #include <ui/salvjpegobject.h>
 #include <QtDebug>
 
+using namespace Ui;
+
 SalvObjectImageProvider::SalvObjectImageProvider(SalvJpegObject *object)
 : QQuickImageProvider( QQuickImageProvider::Image )
 , mSalv(object)

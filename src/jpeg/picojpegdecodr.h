@@ -3,9 +3,9 @@
 
 #include <core/decodr.h>
 #include <util/ilog.h>
+#include <util/singleton.h>
 #include <picojpeg/picojpeg.h>
 #include <jpeg/imagecursor.h>
-#include <util/singleton.h>
 
 #include <QImage>
 #include <QStack>
@@ -17,10 +17,10 @@ class ICheck;
 // This struct incapsulates the whole decoding context,
 // it is used for save/restore functionality.
 // Note: FFD9 = End-Of-Image marker 
-class PicoJpegDecodFrame : public DecodrFrame
+class PicoJpegDecodFrame : public Core::DecodrFrame
 {
 public:
-    enum { JpegContextType = DecodrFrame::CustomType +42 };
+    enum { JpegContextType = Core::DecodrFrame::CustomType +42 };
 
     PicoJpegDecodFrame(QImage *image =nullptr);
 
@@ -40,14 +40,14 @@ private:
 
 // Note: Signleton pattern is used to guarantee that only one instance is created.
 // Such limitation comes with picojpeg library, as it uses lots of global variables :(
-class PicoJpegDecodr : public Decodr, public Singleton<PicoJpegDecodr>
+class PicoJpegDecodr : public Core::Decodr, public Singleton<PicoJpegDecodr>
 {
 public:
     PicoJpegDecodr(ICheck *check, QObject *parent =nullptr);
 
-    bool restart(Fetch *fetch);
+    bool restart(Core::Fetch *fetch);
     void resume();
-    void loadFrame(const DecodrFrame &frame);
+    void loadFrame(const Core::DecodrFrame &frame);
     
 
     bool isDone() const;
@@ -60,7 +60,7 @@ protected:
     bool checkFFD9() const;
     int latestBlock() const;
     
-    Fetch *mFetch;
+    Core::Fetch *mFetch;
     ICheck *mCheck;
     QImage mImage;
     PicoJpegDecodFrame mFrame;

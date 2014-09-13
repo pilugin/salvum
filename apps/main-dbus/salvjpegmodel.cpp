@@ -1,6 +1,8 @@
 #include "salvjpegmodel.h"
 #include <ui/salvjpegobject.h>
 
+using namespace Ui;
+
 SalvJpegModel::SalvJpegModel(QObject *parent)
 : QAbstractListModel(parent)
 , mCurrentSalvIndex(-1)

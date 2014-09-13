@@ -6,27 +6,27 @@ static struct DBusMetatypesRegistrer
 {
     DBusMetatypesRegistrer()
     {
-        qRegisterMetaType<Pixmap>("Pixmap");
-        qRegisterMetaType<DecodedClusterInfo>("DecodedClusterInfo");
-        qRegisterMetaType<DecodedClusters>("DecodedClusters");
-        qRegisterMetaType<RejectedClusterInfo>("RejectedClusterInfo");
-        qRegisterMetaType<RejectedClusters>("RejectedClusters");
-        qRegisterMetaType<Result>("Result");
-        qRegisterMetaType<BitmapInfo>("BitmapInfo");
+        qRegisterMetaType<Common::Pixmap>("Common::Pixmap");
+        qRegisterMetaType<Common::DecodedClusterInfo>("Common::DecodedClusterInfo");
+        qRegisterMetaType<Common::DecodedClusters>("Common::DecodedClusters");
+        qRegisterMetaType<Common::RejectedClusterInfo>("Common::RejectedClusterInfo");
+        qRegisterMetaType<Common::RejectedClusters>("Common::RejectedClusters");
+        qRegisterMetaType<Common::Result>("Common::Result");
+        qRegisterMetaType<Common::BitmapInfo>("Common::BitmapInfo");
 
-        qDBusRegisterMetaType<Pixmap>();
-        qDBusRegisterMetaType<DecodedClusterInfo>();
-        qDBusRegisterMetaType<DecodedClusters>();
-        qDBusRegisterMetaType<RejectedClusterInfo>();
-        qDBusRegisterMetaType<RejectedClusters>();
-        qDBusRegisterMetaType<Result>();
-        qDBusRegisterMetaType<BitmapInfo>();
+        qDBusRegisterMetaType<Common::Pixmap>();
+        qDBusRegisterMetaType<Common::DecodedClusterInfo>();
+        qDBusRegisterMetaType<Common::DecodedClusters>();
+        qDBusRegisterMetaType<Common::RejectedClusterInfo>();
+        qDBusRegisterMetaType<Common::RejectedClusters>();
+        qDBusRegisterMetaType<Common::Result>();
+        qDBusRegisterMetaType<Common::BitmapInfo>();
     }
 } theDBusMetatypesRegistrer;
 
 ///////////////// << & >>
 
-const QDBusArgument &operator>>(const QDBusArgument &stream, DecodedClusterInfo &dc)
+const QDBusArgument &operator>>(const QDBusArgument &stream, Common::DecodedClusterInfo &dc)
 {
     stream.beginStructure();
     stream >> dc.clusterNo >> dc.blockBegin >> dc.blockEnd;        
@@ -34,7 +34,7 @@ const QDBusArgument &operator>>(const QDBusArgument &stream, DecodedClusterInfo 
     return stream;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &stream, RejectedClusterInfo &rc)
+const QDBusArgument &operator>>(const QDBusArgument &stream, Common::RejectedClusterInfo &rc)
 {
     stream.beginStructure();
     stream >> rc.clusterNo >> rc.blockBegin >> rc.pixels;        
@@ -42,7 +42,7 @@ const QDBusArgument &operator>>(const QDBusArgument &stream, RejectedClusterInfo
     return stream;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &stream, Pixmap &pixmap)
+const QDBusArgument &operator>>(const QDBusArgument &stream, Common::Pixmap &pixmap)
 {
     stream.beginStructure();
     stream >> pixmap.width >> pixmap.height >> pixmap.pixels;
@@ -50,7 +50,7 @@ const QDBusArgument &operator>>(const QDBusArgument &stream, Pixmap &pixmap)
     return stream;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &stream, Result &result)
+const QDBusArgument &operator>>(const QDBusArgument &stream, Common::Result &result)
 {
     stream.beginStructure();
     stream >> result.errorCode >> result.error;
@@ -58,7 +58,7 @@ const QDBusArgument &operator>>(const QDBusArgument &stream, Result &result)
     return stream;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &stream, BitmapInfo &info)
+const QDBusArgument &operator>>(const QDBusArgument &stream, Common::BitmapInfo &info)
 {
     stream.beginStructure();
     stream  >> info.jpegHeads
@@ -73,7 +73,7 @@ const QDBusArgument &operator>>(const QDBusArgument &stream, BitmapInfo &info)
 
 //
 
-QDBusArgument &operator<<(QDBusArgument &stream, const DecodedClusterInfo &dc)
+QDBusArgument &operator<<(QDBusArgument &stream, const Common::DecodedClusterInfo &dc)
 {
     stream.beginStructure();
     stream << dc.clusterNo << dc.blockBegin << dc.blockEnd;        
@@ -81,7 +81,7 @@ QDBusArgument &operator<<(QDBusArgument &stream, const DecodedClusterInfo &dc)
     return stream;
 }
 
-QDBusArgument &operator<<(QDBusArgument &stream, const RejectedClusterInfo &rc)
+QDBusArgument &operator<<(QDBusArgument &stream, const Common::RejectedClusterInfo &rc)
 {
     stream.beginStructure();
     stream << rc.clusterNo << rc.blockBegin << rc.pixels;        
@@ -89,7 +89,7 @@ QDBusArgument &operator<<(QDBusArgument &stream, const RejectedClusterInfo &rc)
     return stream;
 }
 
-QDBusArgument &operator<<(QDBusArgument &stream, const Pixmap &pixmap)
+QDBusArgument &operator<<(QDBusArgument &stream, const Common::Pixmap &pixmap)
 {
     stream.beginStructure();
     stream << pixmap.width << pixmap.height << pixmap.pixels;
@@ -97,7 +97,7 @@ QDBusArgument &operator<<(QDBusArgument &stream, const Pixmap &pixmap)
     return stream;
 }
 
-QDBusArgument &operator<<(QDBusArgument &stream, const Result &result)
+QDBusArgument &operator<<(QDBusArgument &stream, const Common::Result &result)
 {  
     stream.beginStructure();
     stream << result.errorCode << result.error;
@@ -105,7 +105,7 @@ QDBusArgument &operator<<(QDBusArgument &stream, const Result &result)
     return stream;
 }
 
-QDBusArgument &operator<<(QDBusArgument &stream, const BitmapInfo &info)
+QDBusArgument &operator<<(QDBusArgument &stream, const Common::BitmapInfo &info)
 {
     stream.beginStructure();
     stream  << info.jpegHeads

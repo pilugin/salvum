@@ -1,5 +1,7 @@
 #include "customclustersmodel.h"
 
+using namespace Ui;
+
 CustomClustersModel::CustomClustersModel(QObject *parent)
 : DecodedClustersModel(parent)
 {

@@ -3,9 +3,11 @@
 
 #include <ui/salvjpegobject.h>
 
+namespace Core {
 class Controller;
+}
 
-class SalvObjectController : public SalvJpegObject
+class SalvObjectController : public Ui::SalvJpegObject
 {
     Q_OBJECT
 public:
@@ -26,7 +28,7 @@ private slots:
 private:
     QList<int> translateClusterList(const QString &clusterList, QString &errorMsg) const;
 
-    Controller *mController;
+    Core::Controller *mController;
     QList<int> mCurrentClusterList;
 };
 

@@ -4,6 +4,8 @@
 
 #include <QtDebug>
 
+using namespace Core;
+
 GuidedFetch::GuidedFetch(const QString &filename, const QList<int> &clusters,QObject *parent) :
     Fetch(parent)
 {

@@ -1,5 +1,7 @@
 #include <core/fetch.h>
 
+namespace Core {
+
 Fetch::Fetch(QObject *parent) : QObject(parent)
 {
 }
@@ -20,4 +22,6 @@ void Fetch::fetch(int &clusterNo, QByteArray &cluster)
 
     if (atEnd() || clusterNo == InvalidClusterNo)
         emit end();
+}
+
 }

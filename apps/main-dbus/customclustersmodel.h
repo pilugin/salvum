@@ -3,7 +3,7 @@
 
 #include <ui/decodedclustersmodel.h>
 
-class CustomClustersModel : public DecodedClustersModel
+class CustomClustersModel : public Ui::DecodedClustersModel
 {
 public:
     CustomClustersModel(QObject *parent =nullptr);

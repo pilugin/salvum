@@ -1,8 +1,10 @@
 #ifndef DECODEDCLUSTERSMODEL_H
 #define DECODEDCLUSTERSMODEL_H
 
-#include <dbus/dbustypes.h>
+#include <common/types.h>
 #include <QAbstractListModel>
+
+namespace Ui {
 
 class DecodedClustersModel : public QAbstractListModel
 {
@@ -16,7 +18,7 @@ public:
     int rowCount(const QModelIndex &parent =QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
     
-    void reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters);
+    void reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters);
     
 #if QT_VERSION >= 0x050000
     QHash<int, QByteArray> roleNames() const { return roleNames_internal(); }
@@ -60,5 +62,7 @@ protected:
 
     int mCurrentCluster;
 };
+
+}
 
 #endif

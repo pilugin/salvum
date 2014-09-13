@@ -15,11 +15,11 @@ public:
     bool isValid() const;
     
 public slots:
-    Result setSource(const QString &mediaPath, const QString &bitmapPath);
+    Common::Result setSource(const QString &mediaPath, const QString &bitmapPath);
     void start();
     void skip(int clusterNo, int length);
     void stop();
-    Result saveBitmap(const QString &bitmapPath);    
+    Common::Result saveBitmap(const QString &bitmapPath);    
     void dumpStats();
     void emitProgress();
     void emitBitmapProcessed();
@@ -27,7 +27,7 @@ public slots:
     
 signals:
     void progress(int currentClusterNo, int clustersCount);
-    void bitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, BitmapInfo info);
+    void bitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, Common::BitmapInfo info);
     void quitted();
     
 private:    

@@ -10,6 +10,9 @@
 #include <jpeg/advancedchecker.h>
 #include <jpeg/picojpegdecodr.h>
 
+using namespace Core;
+using namespace Jpeg;
+
 int main(int argc, char **argv)
 {
     if (argc != 4) {
@@ -24,8 +27,8 @@ int main(int argc, char **argv)
     
     SimpleCheck check(true);
     DeviceMapFetch fetch;
-    Jpeg::AdvancedChecker jpegCheck;
-    Jpeg::PicoJpegDecodr decodr(&jpegCheck);
+    AdvancedChecker jpegCheck;
+    PicoJpegDecodr decodr(&jpegCheck);
     RangeFileResult result;
     
     if (!fetch.init(QString(argv[1]), QString(argv[2])) ) {

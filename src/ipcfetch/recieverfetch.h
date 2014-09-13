@@ -12,7 +12,7 @@
 
 namespace IPCFetch {
 
-class RecieverFetch : public Fetch, public RdWr::Reader<BroadcastMessage>
+class RecieverFetch : public Core::Fetch, public RdWr::Reader<BroadcastMessage>
 {
 public:
     RecieverFetch(const char *shmemName, QObject *parent =nullptr);

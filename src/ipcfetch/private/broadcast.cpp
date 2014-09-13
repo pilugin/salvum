@@ -9,6 +9,7 @@
 using namespace Log;
 using namespace IPC;
 using namespace RdWr;
+using namespace Core;
 
 namespace IPCFetch {
 

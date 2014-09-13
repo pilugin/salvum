@@ -1,9 +1,11 @@
 #ifndef CORE_CHECK_H
 #define CORE_CHECK_H
 
-#include "decodr.h"
+#include <core/decodr.h>
 #include <QPair>
 #include <QVector>
+
+namespace Core {
 
 class Check : public QObject
 {
@@ -61,5 +63,7 @@ private:
     QVector<QPair<int /*clusterNo*/, DecodrFrame *>> mFrames;
     bool mFetchEnd;
 };
+
+}
 
 #endif // CORE_CHECK_H

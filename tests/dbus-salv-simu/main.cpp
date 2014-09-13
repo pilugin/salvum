@@ -7,7 +7,10 @@
 #include <dbus/org.salvum.DecodrHub.h>
 #include <dbus/org.salvum.DecodrCtrl.h>
 
-#include "jpeg/imagehelpers.h"
+#include <jpeg/imagehelpers.h>
+
+using namespace Common;
+using namespace Jpeg;
 
 int main(int argc, char *argv[])
 {

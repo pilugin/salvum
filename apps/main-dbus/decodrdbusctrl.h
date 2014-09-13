@@ -18,11 +18,13 @@ public slots:
     void sendResume()                   { emit resume(); }
     void sendBaseline(int clusterNo)    { emit baseline(clusterNo); }
 signals:
-    void atEndRecv(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const Pixmap &pixmap);
+    void atEndRecv(bool complete, const Common::DecodedClusters &decodedClusters, 
+                    const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
     void noHeartbeat();
     
 private slots:
-    void atEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const Pixmap &pixmap)
+    void atEnd(bool complete, const Common::DecodedClusters &decodedClusters, 
+                    const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap)
                                         { emit atEndRecv(complete, decodedClusters, rejectedClusters, pixmap); }
     void heartbeat();
         

@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+namespace Core {
+
 class Result : public QObject
 {
     Q_OBJECT
@@ -14,5 +16,7 @@ public slots:
     virtual void addClusters(int clusterNo, int length) =0;
     virtual void finalize(bool success) =0;
 };
+
+}
 
 #endif // CORE_RESULT_H

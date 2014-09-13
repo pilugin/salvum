@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QMetaType>
 
+namespace Core {
+
 class Fetch;
 
 class DecodrFrame
@@ -27,7 +29,6 @@ private:
     int mType;
 };
 
-Q_DECLARE_METATYPE(DecodrFrame)
 
 
 
@@ -51,5 +52,10 @@ signals:
     void rejected();
     void done();
 };
+
+}
+
+Q_DECLARE_METATYPE(Core::DecodrFrame)
+
 
 #endif // CORE_DECODR_H

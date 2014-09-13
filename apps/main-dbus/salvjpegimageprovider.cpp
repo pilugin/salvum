@@ -3,6 +3,8 @@
 #include <ui/salvjpegobject.h>
 #include <QtDebug>
 
+using namespace Ui;
+
 SalvJpegImageProvider::SalvJpegImageProvider(SalvJpegModel *model)
 : QQuickImageProvider( QQuickImageProvider::Image )
 , mModel(model)

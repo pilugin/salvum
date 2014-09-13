@@ -1,6 +1,9 @@
 #include "loggingcheck.h"
 #include <jpeg/picojpegdecodr.h>
 
+using namespace Core;
+using namespace Common;
+
 LoggingCheck::LoggingCheck(QObject *parent) :
     Check(parent)
 {

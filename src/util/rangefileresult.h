@@ -4,7 +4,7 @@
 #include <core/result.h>
 #include <QFile>
 
-class RangeFileResult : public Result
+class RangeFileResult : public Core::Result
 {
 public:
     RangeFileResult(const QString &dir =".", QObject *parent =nullptr);

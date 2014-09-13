@@ -2,19 +2,19 @@
 #define LOGGINGCHECK_H
 
 #include <core/check.h>
-#include <dbus/dbustypes.h>
+#include <common/types.h>
 
-class LoggingCheck : public Check
+class LoggingCheck : public Core::Check
 {
     Q_OBJECT
 public:
     explicit LoggingCheck(QObject *parent = 0);
 
-    const DecodedClusters &res() const { return mRes; }
+    const Common::DecodedClusters &res() const { return mRes; }
 protected:
     const FrameDescription &chooseBaseline(const FrameDescription_v &frames);
 
-    DecodedClusters mRes;
+    Common::DecodedClusters mRes;
 };
 
 #endif // LOGGINGCHECK_H

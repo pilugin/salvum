@@ -1,6 +1,8 @@
 #include <jpeg/imagehelpers.h>
 #include <QtDebug>
 
+using namespace Common;
+
 namespace Jpeg {
 
 QImage image(const Pixmap &pixmap)

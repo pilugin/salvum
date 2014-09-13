@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+namespace Core {
+
 class Fetch : public QObject
 {
     Q_OBJECT
@@ -28,5 +30,7 @@ signals:
 protected:
     virtual void doFetch(int &clusterNo, QByteArray &cluster) =0;
 };
+
+}
 
 #endif // CORE_FETCH_H

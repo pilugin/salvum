@@ -3,6 +3,8 @@
 #include <QDir>
 #include <QtDebug>
 
+using namespace Core;
+
 RangeFileResult::RangeFileResult(const QString &dir, QObject *parent) : Result(parent), mDir(dir)
 {
     if (!QDir().mkpath(mDir))

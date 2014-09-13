@@ -1,5 +1,7 @@
 #include <core/check.h>
 
+namespace Core {
+
 Check::Check(QObject *parent) : QObject(parent)
 {
 }
@@ -108,4 +110,6 @@ Check::FrameDescription::FrameDescription(
 , clustersEnd(clustersEnd_)
 , frame(frame_)
 {
+}
+
 }

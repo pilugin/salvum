@@ -8,7 +8,6 @@
 #include <util/simplelogger.h>
 #include <util/defaultsettings.h>
 
-
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);

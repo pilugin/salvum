@@ -10,6 +10,8 @@ SOURCES += \
     
 QMAKE_CXXFLAGS *= -std=c++11    
 
+QT += dbus
+
 QML_FILES += \
     $$PWD/qml/DecodedClustersView.qml
     

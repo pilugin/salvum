@@ -1,6 +1,8 @@
 #include "bcast.h"
 #include "bcastthread.h"
 
+using namespace Core;
+
 BcastThread::BcastThread(Bcast &bcast, QObject *parent)
 : QThread(parent)
 , mFetch(nullptr)

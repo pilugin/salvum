@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QList>
 
-class GuidedFetch : public Fetch
+class GuidedFetch : public Core::Fetch
 {
     Q_OBJECT
 public:

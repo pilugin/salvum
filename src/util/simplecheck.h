@@ -3,12 +3,12 @@
 
 #include <core/check.h>
 
-class SimpleCheck : public Check
+class SimpleCheck : public Core::Check
 {
 public:
     SimpleCheck(bool verbose =false, QObject *parent =nullptr);
 
-    void doAcceptFrame(const QVector<int> &pendingClusters, const DecodrFrame &frame);
+    void doAcceptFrame(const QVector<int> &pendingClusters, const Core::DecodrFrame &frame);
     void doRejectFrame(const QVector<int> &pendingClusters);
     const FrameDescription &chooseBaseline(const FrameDescription_v &frames);
 private:
