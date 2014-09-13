@@ -33,7 +33,7 @@ m_d(nullptr)
     m_d = new Private(
         shmemPath(),
         SlotClosure(this, SIGNAL(progress(int,int))),
-        SlotClosure(this, SIGNAL(bitmapProcessed(QList<int>,QList<int>,BitmapInfo)))
+        SlotClosure(this, SIGNAL(bitmapProcessed(QList<int>,QList<int>,Common::BitmapInfo)))
     );
     new BroadcastAdaptor(this);
 }

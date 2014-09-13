@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     JpegHeadsModel goodHeadsModel;
     SelectedHeadsModel selectedHeadsModel;    
     
-    QObject::connect(&bcastCtrl, SIGNAL(bitmapInfoUpdated(BitmapInfo)), &bitmapInfo, SLOT(setInfo(BitmapInfo)));
+    QObject::connect(&bcastCtrl, SIGNAL(bitmapInfoUpdated(Common::BitmapInfo)), &bitmapInfo, SLOT(setInfo(Common::BitmapInfo)));
     QObject::connect(&bcastCtrl, SIGNAL(jpegHeadsUpdated(QList<int>)), &jpegHeadsModel, SLOT(setHeads(QList<int>)));
     QObject::connect(&bcastCtrl, SIGNAL(goodHeadsUpdated(QList<int>)), &goodHeadsModel, SLOT(setHeads(QList<int>)));
     
