@@ -72,8 +72,8 @@ void SalvJpegModel::decodrClientAdded(int clientId, QDBusObjectPath, DecodrDbusC
     
     connect(client, SIGNAL(resume()),   o, SLOT(decodrInProgress()) );
     connect(client, SIGNAL(start(int)), o, SLOT(decodrInProgress()) );
-    connect(client, SIGNAL(atEndRecv(bool,DecodedClusters,RejectedClusters,Pixmap)), 
-            o,      SLOT(decodrAtEnd(bool,DecodedClusters,RejectedClusters,Pixmap))  );
+    connect(client, SIGNAL(atEndRecv(bool,Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap)), 
+            o,      SLOT(decodrAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap))  );
     connect(o,      SIGNAL(baseline(int)),  client, SLOT(sendBaseline(int)) );
     
     connect(o, SIGNAL(inProgressChanged(bool)), this, SLOT(itemUpdated()) );
@@ -114,8 +114,8 @@ void SalvJpegModel::itemUpdated()
 SalvJpegObject *SalvJpegModel::getSalvJpeg(int id) const
 {
     for (SalvJpegObject *o: mList)
-	if (o->id() == id)
-	    return o;
+        if (o->id() == id)
+            return o;
     return nullptr;
 }
 
