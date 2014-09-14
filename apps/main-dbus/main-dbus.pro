@@ -22,7 +22,8 @@ SOURCES += \
     bcastdbuscontroller.cpp \
     jpegheadsmodel.cpp \
     customclustersmodel.cpp \
-    selectedheadsmodel.cpp
+    selectedheadsmodel.cpp \
+    workspacemodel.cpp
 
 HEADERS += \
     decodrdbushub.h \
@@ -32,7 +33,8 @@ HEADERS += \
     bcastdbuscontroller.h \
     jpegheadsmodel.h \
     customclustersmodel.h \
-    selectedheadsmodel.h
+    selectedheadsmodel.h \
+    workspacemodel.h
 
 OTHER_FILES += \
     qml/SalvJpegView.qml \

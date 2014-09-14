@@ -1,0 +1,53 @@
+#ifndef WORKSPACE_MODEL_H
+#define WORKSPACE_MODEL_H
+
+#include <QAbstractListModel>
+#include <ui/imageprovider.h>
+
+class WorkspaceModel : public QAbstractListModel, public Ui::ImageProviderAdaptor
+{
+    Q_OBJECT
+    Q_PROPERTY(QString bitmapPath   READ bitmapPath NOTIFY bitmapPathUpdated)
+public:
+    WorkspaceModel(QObject *parent =nullptr);
+    ~WorkspaceModel();
+    
+#if QT_VERSION >= 0x050000
+    QHash<int, QByteArray> roleNames() const { return roleNames_internal(); }
+#endif    
+
+    int rowCount(const QModelIndex &parent =QModelIndex()) const;
+    QModelIndex index(int row, int column=0, const QModelIndex &parent =QModelIndex()) const;
+    QVariant data(const QModelIndex &index, int role) const;   
+    
+    QString bitmapPath() const;
+    
+    QImage get(const QString &image) const;
+    void setImageProviderName(const QString &name);
+signals:
+    void wspaceReady();
+    void wspaceError(QString error);
+    void bitmapPathUpdated();
+    
+public slots:
+    void loadWspace(const QString &path);
+    void createWspace(const QString &path, const QString &mediaPath) {}
+    void reloadWspace();
+    
+private:
+    enum {
+        Role_Cluster,
+        Role_ClusterList,
+        Role_ClustersDecoded,
+        Role_Preview,
+        Role_BlocksDecoded,
+        Role_BlocksTotal
+    };
+    
+    virtual QHash<int, QByteArray> roleNames_internal() const;
+
+    struct Private;
+    Private *m_d;
+};
+
+#endif

@@ -2,10 +2,10 @@
 #define SALVJPEGIMAGEPROVIDER_H
 
 #if QT_VERSION >= 0x050000
-#	include <QQuickImageProvider>
+#   include <QQuickImageProvider>
 #else
-#	include <QDeclarativeImageProvider>
-#	define QQuickImageProvider QDeclarativeImageProvider
+#   include <QDeclarativeImageProvider>
+#   define QQuickImageProvider QDeclarativeImageProvider
 #endif
 
 class SalvJpegModel;
