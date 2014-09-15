@@ -1,14 +1,29 @@
 #include "selectedheadsmodel.h"
+#include "workspacemodel.h"
+
+#include <QPointer>
 
 class SelectedHeadsModel::Private
 {
 public:
     struct Head
-    {
+    {        
         int clusterNo;
-        bool isGood;
+        bool isGood;        
+        
+        struct WspaceData {
+            WspaceData(): set(false) {}
+            
+            bool set;
+            int clustersDecoded;
+            int blocksDecoded;
+            int blocksTotal;
+        };
+        mutable WspaceData wspaceData;
     };
     QList<Head> heads;
+    
+    QPointer<WorkspaceModel> wspaceModel;
 };
 
 SelectedHeadsModel::SelectedHeadsModel(QObject *parent)
@@ -30,6 +45,9 @@ QHash<int, QByteArray> SelectedHeadsModel::roleNames_internal() const
     QHash<int, QByteArray> r;
     r.insert(Role_Cluster, "cluster");
     r.insert(Role_IsGood, "isGood");
+    r.insert(Role_ClustersDecoded, "clustersDecoded");    
+    r.insert(Role_BlocksDecoded, "blocksDecoded");
+    r.insert(Role_BlocksTotal, "blocksTotal");
     return r;
 }
 
@@ -50,13 +68,34 @@ QVariant SelectedHeadsModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-        
+    
+    const auto &v = m_d->heads[index.row()];    
+    if ( (role==Role_ClustersDecoded || role==Role_BlocksDecoded || role==Role_BlocksTotal)
+            && v.wspaceData.set==false
+            && m_d->wspaceModel) {
+            
+        v.wspaceData.set = true;
+        QModelIndex info =  m_d->wspaceModel->indexByCluster(v.clusterNo);
+        if (info.isValid()) {
+            v.wspaceData.clustersDecoded    = info.data(WorkspaceModel::Role_ClustersDecoded).toInt();
+            v.wspaceData.blocksDecoded      = info.data(WorkspaceModel::Role_BlocksDecoded).toInt();
+            v.wspaceData.blocksTotal        = info.data(WorkspaceModel::Role_BlocksTotal).toInt();
+        }
+    }
     switch (role) {
-    case Role_Cluster:  return m_d->heads[index.row()].clusterNo;
-    case Role_IsGood:   return m_d->heads[index.row()].isGood;
+    case Role_Cluster:          return v.clusterNo;
+    case Role_IsGood:           return v.isGood;    
+    case Role_ClustersDecoded:  return v.wspaceData.set ? v.wspaceData.clustersDecoded  : 0;
+    case Role_BlocksDecoded:    return v.wspaceData.set ? v.wspaceData.blocksDecoded    : 0;
+    case Role_BlocksTotal:      return v.wspaceData.set ? v.wspaceData.blocksTotal      : 0;
     default:
         return QVariant();
     }        
+}
+
+void SelectedHeadsModel::setWorkspaceModel(WorkspaceModel *wspace)
+{
+    m_d->wspaceModel = wspace;
 }
     
 void SelectedHeadsModel::onHeadSelected(int clusterNo, bool isSelected)
@@ -78,7 +117,7 @@ void SelectedHeadsModel::onGoodHeadSelected(int clusterNo, bool isSelected)
 void SelectedHeadsModel::appendHead(int clusterNo, bool isGood)
 {
     beginInsertRows(QModelIndex(), m_d->heads.size(), m_d->heads.size());
-    m_d->heads.push_back(Private::Head() = { clusterNo, isGood });
+    m_d->heads.push_back(Private::Head() = { clusterNo, isGood, Private::Head::WspaceData() });
     endInsertRows();
 }
 
@@ -93,3 +132,9 @@ void SelectedHeadsModel::removeHead(int clusterNo)
         }
 }
 
+void SelectedHeadsModel::clear()
+{
+    beginResetModel();
+    m_d->heads.clear();
+    endResetModel();
+}

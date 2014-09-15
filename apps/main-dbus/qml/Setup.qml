@@ -10,7 +10,7 @@ Rectangle {
 
         TextInput {
             id: mediaPath
-            width: parent.width/2
+            width: parent.width*0.4
             anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
         
             Rectangle {
@@ -23,26 +23,36 @@ Rectangle {
         }
     
         TextInput {
-            id: bitmapPath
-            anchors { left: mediaPath.right; top: parent.top; bottom: parent.bottom; right: setSourceBtn.left }
+            id: wspacePath
+            anchors { left: mediaPath.right; top: parent.top; bottom: parent.bottom  }
+            width: parent.width*0.4
         
-            text: "./shared_resources/bitmap.data"
+            text: "./shared_resources/WSPACE"
         }
     
         Rectangle {
             id: setSourceBtn
             anchors { right: parent.right; top: parent.top; bottom: parent.bottom }
-            width: height
-        
-            color: "blue"
+            width: parent.width*0.2        
+            color: "#A0A0FF"
+            Text { 
+                anchors.fill: parent
+                text: "load workspace" 
+                verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
+            }
         
             MouseArea {
                 anchors.fill: parent
-                onClicked: bcast.setSource(mediaPath.text, bitmapPath.text)
+                onClicked: wspaceModel.loadWspace(wspacePath.text)
             }
         }
         
-        Component.onCompleted: bcast.setSource(mediaPath.text, bitmapPath.text)
+        Component.onCompleted: wspaceModel.loadWspace(wspacePath.text)
+    }
+    
+    Connections {
+        target: wspaceModel
+        onBitmapPathUpdated: bcast.setSource( mediaPath.text, wspaceModel.bitmapPath )
     }
     
     Rectangle {
@@ -56,7 +66,7 @@ Rectangle {
         
             Text { text: "JpegHeads: " + bitmapInfo.jpegHeads }
             Text { text: "GoodHeads: " + bitmapInfo.goodHeads }
-            Text { text: "Zeros: " + bitmapInfo.zero }
+            Text { text: "Zeros: " + bitmapInfo.zeros }
             Text { text: "Goods: " + bitmapInfo.goods }
             Text { text: "Decodable: " + bitmapInfo.decodable }
             Text { text: "Starts: " + bitmapInfo.starts }            
@@ -67,21 +77,55 @@ Rectangle {
             id: selectedHeadsView
             anchors { left: parent.left; right: jpegHeadsView.left; top: bitmapInfoView.bottom; bottom: parent.bottom  }
             model: selectedHeadsModel
-            footer: Text { text: "TOTAL#: " + selectedHeadsView.count }
+            header: Rectangle {        
+                height: 15
+                width: parent.width
+                color: "gray"
+                Text {
+                    id: caption
+                    width: 70
+                    text: "CLUSTER"
+                }               
+                Text {
+                    id: clustersDecodedCaption
+                    anchors.left: caption.right
+                    width: 40
+                    text: "CNT"
+                }
+                Text {
+                    anchors.left: clustersDecodedCaption.right
+                    width: 50
+                    text: "IMAGE"
+                }
+            }
+            footer: Rectangle { 
+                color: "gray"
+                width: parent.width
+                height: 15
+                Text { text: "TOTAL#: " + selectedHeadsView.count }
+            }
             
             delegate: Rectangle {        
                 id: delegate      
                 height: 15
                 width: parent.width
+                color: (index%2 == 0) ? "#A0A0FF" : "#9090FF"
                 Text {
                     id: caption
                     width: 70
                     text: cluster.toString(16) 
-                    color: isGood ? "green" : "red"
+                    color: isGood ? "#505050" : "black"
                 }               
                 Text {
-                    x: caption.width
-                    text: "INFO HERE"
+                    id: clustersDecodedCaption
+                    anchors.left: caption.right
+                    width: 40
+                    text: clustersDecoded>0 ? clustersDecoded : ""
+                }
+                Text {
+                    anchors.left: clustersDecodedCaption.right
+                    width: 50
+                    text: blocksTotal > 0 ? (blocksDecoded.toString() + "/" + blocksTotal.toString()) : ""
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -127,6 +171,23 @@ Rectangle {
                     onClicked: goodHeadsModel.toggleSelected(cluster)
                 }
             }            
+        }
+        
+        Rectangle {
+            id: startButton
+            color: "#9090FF"
+            anchors { left: goodHeadsView.right; right: parent.right; bottom: parent.bottom }
+            height: 50
+            Text {
+                anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
+                text: selectedHeadsView.count>0 ? "press here to START" : "select clusters"
+            }
+            MouseArea {
+                anchors.fill: parent
+                enabled: selectedHeadsView.count>0
+                onClicked: console.log("GO!")
+            }
         }
         
         
