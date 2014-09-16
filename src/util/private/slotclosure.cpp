@@ -29,3 +29,20 @@ void SlotClosure::call(QGenericArgument val0, QGenericArgument val1, QGenericArg
     if (mObject)
         mSlot.invoke(mObject, Qt::QueuedConnection, val0, val1, val2, val3, val4, val5, val6, val7, val8, val9);
 }
+
+////////////////////
+
+SlotBindingClosure::SlotBindingClosure(QObject *object, const char *slot, QGenericArgument val0, QGenericArgument val1, 
+       QGenericArgument val2, QGenericArgument val3, QGenericArgument val4, QGenericArgument val5, QGenericArgument val6, 
+       QGenericArgument val7, QGenericArgument val8, QGenericArgument val9)
+: SlotClosure(object, slot)
+{
+    mArgs   <<val0<<val1<<val2<<val3<<val4
+            <<val5<<val6<<val7<<val8<<val9;
+}       
+
+void SlotBindingClosure::bindingCall()
+{
+    call(   mArgs[0], mArgs[1], mArgs[2], mArgs[3], mArgs[4],
+            mArgs[5], mArgs[6], mArgs[7], mArgs[8], mArgs[9]);
+}

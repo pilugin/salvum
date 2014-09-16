@@ -4,6 +4,7 @@
 DecodrDbusCtrl::DecodrDbusCtrl(QObject *parent)
 : QObject(parent)
 , mHeartbeatTimer(new QTimer(this))
+, mConnected(false)
 {
     new DecodrCtrlAdaptor(this);
     
@@ -19,6 +20,10 @@ DecodrDbusCtrl::~DecodrDbusCtrl()
 
 void DecodrDbusCtrl::heartbeat()
 {
+    if (!mConnected) {
+        emit connected();
+        mConnected = true;
+    }
     mHeartbeatTimer->start();
 }
 

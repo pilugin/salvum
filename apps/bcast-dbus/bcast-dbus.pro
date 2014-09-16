@@ -1,4 +1,4 @@
-TARGET = bcast
+TARGET = salvum-bcast
 
 TEMPLATE = app
 

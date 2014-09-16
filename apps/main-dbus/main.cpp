@@ -1,3 +1,4 @@
+#include "supervisor.h"
 #include "decodrdbushub.h"
 #include "salvjpegimageprovider.h"
 #include "salvjpegmodel.h"
@@ -26,6 +27,8 @@ int main(int argc, char **argv)
     }
     
     // Everybody!
+    Supervisor supervisor;
+    
     BcastDbusController bcastCtrl;
     BitmapInfoModel bitmapInfo;
     JpegHeadsModel jpegHeadsModel;
@@ -52,6 +55,7 @@ int main(int argc, char **argv)
 
     // export to QML
     QDeclarativeView view;
+    view.engine()->rootContext()->setContextProperty("supervisor", &supervisor);
     view.engine()->rootContext()->setContextProperty("bcast", &bcastCtrl);
     view.engine()->rootContext()->setContextProperty("salvJpegModel", &model);
     view.engine()->rootContext()->setContextProperty("bitmapInfo", &bitmapInfo);    
@@ -59,10 +63,12 @@ int main(int argc, char **argv)
     view.engine()->rootContext()->setContextProperty("goodHeadsModel", &goodHeadsModel);
     view.engine()->rootContext()->setContextProperty("selectedHeadsModel", &selectedHeadsModel);
     view.engine()->rootContext()->setContextProperty("wspaceModel", &wspaceModel);
+    view.engine()->rootContext()->setContextProperty("clientsHub", &hub);
+    
     view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
 
     // init view
-    view.setSource(QUrl("qml/Setup.qml"));
+    view.setSource(QUrl("qml/Main.qml"));
     view.setGeometry(0, 0, 600, 600);
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);    
     

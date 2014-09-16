@@ -23,7 +23,8 @@ SOURCES += \
     jpegheadsmodel.cpp \
     customclustersmodel.cpp \
     selectedheadsmodel.cpp \
-    workspacemodel.cpp
+    workspacemodel.cpp \
+    supervisor.cpp
 
 HEADERS += \
     decodrdbushub.h \
@@ -34,7 +35,9 @@ HEADERS += \
     jpegheadsmodel.h \
     customclustersmodel.h \
     selectedheadsmodel.h \
-    workspacemodel.h
+    workspacemodel.h \
+    supervisor.h \
+    supervisor_p.h
 
 OTHER_FILES += \
     qml/SalvJpegView.qml \

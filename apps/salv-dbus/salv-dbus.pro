@@ -1,4 +1,4 @@
-TARGET = salv
+TARGET = salvum-decodr
 
 TEMPLATE = app
 

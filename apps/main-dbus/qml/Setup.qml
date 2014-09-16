@@ -186,7 +186,9 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 enabled: selectedHeadsView.count>0
-                onClicked: console.log("GO!")
+                onClicked: { 
+                    supervisor.startDecode( selectedHeadsModel.selectedHeads )
+                }
             }
         }
         

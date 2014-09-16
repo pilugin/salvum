@@ -8,6 +8,7 @@ class WorkspaceModel;
 class SelectedHeadsModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(QList<int> selectedHeads READ selectedHeads NOTIFY selectedHeadsUpdated)
 public:
     SelectedHeadsModel(QObject *parent =nullptr);
     ~SelectedHeadsModel();
@@ -21,6 +22,10 @@ public:
        
     void setWorkspaceModel(WorkspaceModel *wspace);        
     
+    QList<int> selectedHeads() const;
+    
+signals:
+    void selectedHeadsUpdated();    
 public slots:
     void onHeadSelected(int clusterNo, bool isSelected);
     void onGoodHeadSelected(int clusterNo, bool isSelected);

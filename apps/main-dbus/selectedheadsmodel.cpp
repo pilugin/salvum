@@ -119,6 +119,8 @@ void SelectedHeadsModel::appendHead(int clusterNo, bool isGood)
     beginInsertRows(QModelIndex(), m_d->heads.size(), m_d->heads.size());
     m_d->heads.push_back(Private::Head() = { clusterNo, isGood, Private::Head::WspaceData() });
     endInsertRows();
+    emit selectedHeadsUpdated();        
+    
 }
 
 void SelectedHeadsModel::removeHead(int clusterNo)
@@ -130,6 +132,7 @@ void SelectedHeadsModel::removeHead(int clusterNo)
             --i;
             endRemoveRows();
         }
+    emit selectedHeadsUpdated();        
 }
 
 void SelectedHeadsModel::clear()
@@ -137,4 +140,13 @@ void SelectedHeadsModel::clear()
     beginResetModel();
     m_d->heads.clear();
     endResetModel();
+    emit selectedHeadsUpdated();        
+}
+
+QList<int> SelectedHeadsModel::selectedHeads() const
+{
+    QList<int> r;
+    for (const auto &h: m_d->heads)
+        r.push_back(h.clusterNo);
+    return r;
 }

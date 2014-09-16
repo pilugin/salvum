@@ -22,6 +22,8 @@ signals:
                     const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
     void noHeartbeat();
     
+    void connected();
+    
 private slots:
     void atEnd(bool complete, const Common::DecodedClusters &decodedClusters, 
                     const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap)
@@ -35,6 +37,7 @@ signals:
 
 private:
     QTimer *mHeartbeatTimer;
+    bool mConnected;
 };
 
 #endif
