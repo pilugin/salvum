@@ -5,5 +5,14 @@ Loader {
     source: supervisor.qmlScreen
     onSourceChanged: console.log("Main.qml::loader::source changed: " + source);
     
-    Component.onCompleted: supervisor.init()
+    Connections {
+        target: supervisor
+        onDecodeStateEntered: {
+            clientsHub.startDecoders( supervisor.decodedHeads );
+            console.log( supervisor.decodedHeads );        
+        }
+        
+    }
+    
+    Component.onCompleted: supervisor.init()        
 }

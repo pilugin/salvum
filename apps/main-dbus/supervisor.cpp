@@ -29,7 +29,7 @@ void Supervisor::Private::createFSM()
     st2_waitForDecoders ->addTransition(this, SIGNAL(allDecodersConnected()),   st2_broadcast);
     st1_decode          ->addTransition(this, SIGNAL(broadcastAtEnd()),         st1_check);
     
-    connect(st1_decode, SIGNAL(entered()), owner, SLOT(decodeStateEntered()) );
+    connect(st1_decode, SIGNAL(entered()), owner, SIGNAL(decodeStateEntered()) );
     
     fsm.addState(st1_setup);
     fsm.addState(st1_decode);

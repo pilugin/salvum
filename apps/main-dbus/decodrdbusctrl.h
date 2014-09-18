@@ -8,26 +8,39 @@ class QTimer;
 class DecodrDbusCtrl : public QObject
 {
     Q_OBJECT
-    
+    Q_PROPERTY(bool isConnected READ isConnected    NOTIFY isConnectedChanged)
+    Q_PROPERTY(bool isStarted   READ isStarted      NOTIFY isStartedChanged)
+    Q_PROPERTY(int clustersDecoded READ clustersDecoded NOTIFY progressChanged)
+    Q_PROPERTY(int blocksDecoded READ blocksDecoded NOTIFY progressChanged)
+    Q_PROPERTY(int blocksTotal READ blocksTotal NOTIFY progressChanged)
 public:
     DecodrDbusCtrl(QObject *parent =nullptr);
     ~DecodrDbusCtrl();
     
+    bool isConnected() const    { return mIsConnected; }
+    bool isStarted() const      { return mIsStarted; }
+    int clustersDecoded() const { return mClustersDecoded; }
+    int blocksDecoded() const   { return mBlocksDecoded; }
+    int blocksTotal() const     { return mBlocksTotal; }
+    
 public slots:    
-    void sendStart(int clusterNo)       { emit start(clusterNo); }
+    void sendStart(int clusterNo);
     void sendResume()                   { emit resume(); }
     void sendBaseline(int clusterNo)    { emit baseline(clusterNo); }
 signals:
     void atEndRecv(bool complete, const Common::DecodedClusters &decodedClusters, 
-                    const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
+                    const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);                    
     void noHeartbeat();
     
-    void connected();
+    void isConnectedChanged();
+    void isStartedChanged();
+    void progressChanged();
     
 private slots:
     void atEnd(bool complete, const Common::DecodedClusters &decodedClusters, 
                     const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap)
                                         { emit atEndRecv(complete, decodedClusters, rejectedClusters, pixmap); }
+    void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);                                        
     void heartbeat();
         
 signals:    
@@ -37,7 +50,11 @@ signals:
 
 private:
     QTimer *mHeartbeatTimer;
-    bool mConnected;
+    bool mIsConnected;
+    bool mIsStarted;
+    int mClustersDecoded;
+    int mBlocksDecoded;
+    int mBlocksTotal;
 };
 
 #endif

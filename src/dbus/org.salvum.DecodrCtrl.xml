@@ -13,7 +13,7 @@
     <interface name="org.salvum.DecodrCtrl">
     
         <method name="atEnd">
-            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>	
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
 
             <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="Common::DecodedClusters"/>
             <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="Common::RejectedClusters"/>
@@ -24,6 +24,20 @@
             <arg type="a(iiai)" name="rejectedClusters" direction="in"/>
             <arg type="(iiai)" name="pixmap" direction="in"/>
         </method>
+        
+        <method name="thumbnailCreated">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+            
+            <arg type="s" name="path" direction="in"/>
+        </method>
+        
+        <method name="progress">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+            
+            <arg type="i" name="clustersDecoded" direction="in"/>
+            <arg type="i" name="blocksDecoded" direction="in"/>
+            <arg type="i" name="blocksTotal" direction="in"/>
+        </method>
 
         <method name="heartbeat">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/> 
@@ -31,13 +45,15 @@
 
         <signal name="start">
             <arg type="i" name="clusterNo" direction="out"/>
-        </signal>
+        </signal>                
 
-        <signal name="resume"/>	
+        <signal name="resume"/>
 
         <signal name="baseline">
             <arg type="i" name="clusterNo" direction="out"/>
         </signal>
+        
+        <signal name="exit"/>
     
     </interface>
 </node>

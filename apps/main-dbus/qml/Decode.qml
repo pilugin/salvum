@@ -9,8 +9,4 @@ Rectangle {
         delegate: Text { text: clientsHub.clientIds[index] }
     }
     
-    Component.onCompleted: {
-        clientsHub.startDecoders( supervisor.decodedHeads );
-        console.log( supervisor.decodedHeads );        
-    }
 }

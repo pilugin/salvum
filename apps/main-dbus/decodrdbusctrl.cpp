@@ -4,7 +4,11 @@
 DecodrDbusCtrl::DecodrDbusCtrl(QObject *parent)
 : QObject(parent)
 , mHeartbeatTimer(new QTimer(this))
-, mConnected(false)
+, mIsConnected(false)
+, mIsStarted(false)
+, mClustersDecoded(0)
+, mBlocksDecoded(0)
+, mBlocksTotal(0)
 {
     new DecodrCtrlAdaptor(this);
     
@@ -20,10 +24,26 @@ DecodrDbusCtrl::~DecodrDbusCtrl()
 
 void DecodrDbusCtrl::heartbeat()
 {
-    if (!mConnected) {
-        emit connected();
-        mConnected = true;
+    if (!mIsConnected) {
+        mIsConnected = true;
+        emit isConnectedChanged();
     }
     mHeartbeatTimer->start();
 }
 
+void DecodrDbusCtrl::sendStart(int clusterNo)
+{
+    if (!mIsStarted) {
+        mIsStarted = true;
+        emit isStartedChanged();
+    }
+    emit start(clusterNo);
+}
+
+void DecodrDbusCtrl::progress(int clustersDecoded, int blocksDecoded, int blocksTotal)
+{
+    mClustersDecoded = clustersDecoded;
+    mBlocksDecoded = blocksDecoded;
+    mBlocksTotal = blocksTotal;
+    emit progressChanged();
+}
