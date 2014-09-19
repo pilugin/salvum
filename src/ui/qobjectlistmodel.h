@@ -3,8 +3,11 @@
 
 #include <QAbstractListModel>
 
+namespace Ui {
+
 class QObjectListModelBase : public QAbstractListModel
 {
+    Q_OBJECT
 public:
     QObjectListModelBase(const QMetaObject &mo, QObject *parent =nullptr);
     ~QObjectListModelBase();
@@ -36,8 +39,9 @@ class QObjectListModel : public QObjectListModelBase
 {
 public:
     QObjectListModel<Object>(QObject *parent =nullptr) 
-        : QObjectListModelBase(Object::getStaticMetaObject(), parent) {}
+        : QObjectListModelBase(Object::staticMetaObject, parent) {}
 };
 
+}
 
 #endif // QOBJECT_LIST_MODEL_H

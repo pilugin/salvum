@@ -1,3 +1,6 @@
+include(../../src/dbus/dbus.pri)
+include(../../src/common/colorgcc.pri)
+
 TARGET = salvum-bcast
 
 TEMPLATE = app
@@ -8,8 +11,6 @@ INCLUDEPATH += ../../src ../..
 DEPENDPATH += ../../src ../..
 LIBS += -L../../lib -lsalv -lrt
 
-include(../../src/dbus/dbus.pri)
-include(../../src/common/colorgcc.pri)
 
 SOURCES += \
     bcastdbusctrl.cpp \

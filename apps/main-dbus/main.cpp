@@ -8,17 +8,25 @@
 #include "workspacemodel.h"
 
 #include <ui/bitmapinfomodel.h>
+#include <ui/qobjectlistmodel.h>
 
 #include <QtCore>
 #include <QtDeclarative>
 #include <QtDBus>
 #include <QtDebug>
 
+
 using namespace Ui;
 
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
+    
+//    DecodrDbusCtrl::staticMetaObject;
+    Ui::QObjectListModel<DecodrDbusCtrl> objmodel;
+    DecodrDbusCtrl o;
+    objmodel.appendObject(&o);
+
 
     // init DBus    
     if (! QDBusConnection::sessionBus().registerService("org.salvum.Decodr")) {

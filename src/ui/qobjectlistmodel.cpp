@@ -2,6 +2,8 @@
 #include <QtCore/QMetaProperty>
 #include <QtDebug>
 
+namespace Ui {
+
 class QObjectListModelBase::Private
 {
 public:
@@ -16,7 +18,7 @@ public:
         for (int i=0; i<metaObject.propertyCount(); ++i) 
             rn.insert(i, metaObject.property(i).name());
         
-        qDebug()<<rn;
+//        qDebug()<<rn;
         return rn;
     }
     
@@ -84,11 +86,10 @@ void QObjectListModelBase::appendObject(QObject *object)
         if (m_d->metaObject.property(i).notifySignalIndex() == -1)
             continue;
             
-        // here is a hack.. Rewrite it later            
-        QByteArray signal(SIGNAL(""));
+        // dirty hack.. Rewrite it later    
+        QByteArray signal(SIGNAL());
         signal += m_d->metaObject.property(i).notifySignal().signature();
-        qDebug()<<signal<<SIGNAL(smth(int,char));        
-        connect(object,signal.data(), this, SLOT(objectUpdated()), /*Qt::AutoConnection |*/ Qt::UniqueConnection);        
+        connect(object, signal.data(), this, SLOT(objectUpdated()), /*Qt::AutoConnection |*/ Qt::UniqueConnection);        
     }
     
     endInsertRows();
@@ -118,3 +119,4 @@ void QObjectListModelBase::objectUpdated()
     emit dataChanged(index(row), index(row));
 }
 
+}
