@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Usage: shuf.sh jpg-file bm-file out-file
