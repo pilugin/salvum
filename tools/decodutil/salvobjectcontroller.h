@@ -21,10 +21,13 @@ signals:
 public slots:
     void processDecode(QString filename, QString clusterList);
 private slots:
-    void doProcessDecode(QString filename, QString clusterList);    
+    void doProcessDecode(QString filename, const QList<int> &clusterList);    
 
 private:
+    QList<int> translateClusterList(const QString &clusterList, QString &errorMsg) const;
+
     Controller *mController;
+    QList<int> mCurrentClusterList;
 };
 
 #endif // SALVOBJECTCONTROLLER_H

@@ -9,6 +9,7 @@
 #include <jpeg/advancedchecker.h>
 
 #include <QtCore>
+#include <QtDebug>
 
 SalvObjectController::SalvObjectController(QObject *parent) :
     SalvJpegObject(1, QString("image://%1").arg(imageProviderName()), parent),
@@ -18,13 +19,24 @@ SalvObjectController::SalvObjectController(QObject *parent) :
 
 void SalvObjectController::processDecode(QString filename, QString clusterList)
 {
+    QString errorMsg;
+    QList<int> clusters = translateClusterList(clusterList, errorMsg);
+    qDebug()<<clusters;
+    if (clusters.size()==0 && errorMsg.size()>0) {
+        emit error(errorMsg);
+        return;
+    }
+
+    if (clusters == mCurrentClusterList)
+        return;    
+        
     emit processStarted();
-    metaObject()->invokeMethod(this, "doProcessDecode", Qt::QueuedConnection, Q_ARG(QString, filename), Q_ARG(QString, clusterList));
+    metaObject()->invokeMethod(this, "doProcessDecode", Qt::QueuedConnection, Q_ARG(QString, filename), Q_ARG(QList<int>, clusters));
     mImage = QImage();
     emit imageChanged("");
 }
 
-void SalvObjectController::doProcessDecode(QString filename, QString clusterList)
+void SalvObjectController::doProcessDecode(QString filename, const QList<int> &clusterList)
 {
     delete mController;
     mController = nullptr;
@@ -35,22 +47,12 @@ void SalvObjectController::doProcessDecode(QString filename, QString clusterList
         return;
     }    
     
-    QList<int> clusters;
-    foreach (QString c, clusterList.split(" ", QString::SkipEmptyParts)) {
-        bool ok;
-        clusters.push_back(c.toInt(&ok, 16));
-        if (!ok) {
-            emit error(QString("Failed to parse clusterList: %1").arg(c));
-            return;
-        }
-    }
-
     mController = new Controller(this);
     Jpeg::PicoJpegDecodr *decodr = new Jpeg::PicoJpegDecodr(new Jpeg::PhlegmaticChecker(mController), mController);
     LoggingCheck *check = new LoggingCheck(mController);
 
     mController->setEverybody(
-                new GuidedFetch(filename, clusters, mController),
+                new GuidedFetch(filename, clusterList, mController),
                 check,
                 decodr
                 );
@@ -73,4 +75,42 @@ void SalvObjectController::doProcessDecode(QString filename, QString clusterList
     if (mImage.width()>0)
         qDebug()<<"lastBlock="<<(lastBlock%(mImage.width()/8))<<","<<(lastBlock/(mImage.width()/8));
     
+}
+
+QList<int> SalvObjectController::translateClusterList(const QString &clusterList, QString &errorMsg) const
+{
+    bool parseOk = true;
+    bool toIntOk, toIntOk2;
+    QList<int> clusters;
+    for (QString word: clusterList.split(QRegExp("\\s+"), QString::SkipEmptyParts) ) {
+        if (word.count("-") == 1) {
+            QStringList range = word.split("-", QString::SkipEmptyParts);
+            if (range.size() != 2) {
+                parseOk = false;
+                break;
+            }
+            int from = range[0].toInt(&toIntOk, 16);
+            int to = range[1].toInt(&toIntOk2, 16);
+            if (from > to || !toIntOk || !toIntOk2) {
+                parseOk = false;
+                break;
+            }
+            for (int i=from; i<=to; ++i)
+                clusters.push_back(i);
+        
+        } else {
+            int i=word.toInt(&toIntOk, 16);
+            if (!toIntOk) {
+                parseOk = false;
+                break;
+            }
+            clusters.push_back(i);
+        }
+    }
+    
+    if (parseOk)
+        return clusters;
+        
+    errorMsg = QString("Failed to parse clusterList: %1").arg(clusterList);
+    return QList<int>();
 }
