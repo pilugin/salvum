@@ -2,13 +2,15 @@ HEADERS += \
     $$PWD/decodedclustersmodel.h \
     $$PWD/salvjpegobject.h \
     $$PWD/bitmapinfomodel.h \
-    $$PWD/imageprovider.h
+    $$PWD/imageprovider.h \
+    $$PWD/qobjectlistmodel.h
     
 SOURCES += \
     $$PWD/decodedclustersmodel.cpp \
     $$PWD/salvjpegobject.cpp \
     $$PWD/bitmapinfomodel.cpp \
-    $$PWD/imageprovider.cpp
+    $$PWD/imageprovider.cpp \
+    $$PWD/qobjectlistmodel.cpp
     
 QMAKE_CXXFLAGS *= -std=c++11    
 

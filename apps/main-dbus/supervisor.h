@@ -29,7 +29,7 @@ public slots:
     void broadcastAtEnd();
     
 private:
-    struct Private;
+    class Private;
     Private *m_d;    
 };
 
