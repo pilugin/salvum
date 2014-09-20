@@ -7,11 +7,15 @@ using namespace Common;
 
 BcastDbusController::BcastDbusController(QObject *parent)
 : QObject(parent)
+, mCurrentCluster(-1)
+, mClustersCount(-1)
 {
     mBcast = new org::salvum::Broadcast("org.salvum.Broadcast", "/broadcast", 
                                                             QDBusConnection::sessionBus(), this);
     connect(mBcast, SIGNAL(bitmapProcessed(QList<int>,QList<int>,Common::BitmapInfo)), 
             this, SLOT(onBitmapProcessed(QList<int>,QList<int>,Common::BitmapInfo)));
+    connect(mBcast, SIGNAL(progress(int,int)), 
+            this, SLOT(onProgress(int,int)));            
 }
 
 void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, Common::BitmapInfo info)
@@ -31,3 +35,10 @@ void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const Q
     emit goodHeadsUpdated(goodHeads);
 }
 
+void BcastDbusController::onProgress(int currentCluster_, int clustersCount_)
+{
+    qDebug() << "------------"<<currentCluster_<<"  "<<clustersCount_;
+    mCurrentCluster = currentCluster_;
+    mClustersCount = clustersCount_;
+    emit progress();
+}

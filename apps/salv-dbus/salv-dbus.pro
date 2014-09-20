@@ -12,10 +12,12 @@ include(../../src/dbus/dbus.pri)
 include(../../src/common/colorgcc.pri)
 
 SOURCES += \
-    main.cpp 
+    main.cpp \
+    salvdbuscheck.cpp
 
 HEADERS += \
-
+    salvdbuscheck.h
+    
 RESOURCES +=
 
 

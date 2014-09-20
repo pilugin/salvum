@@ -9,7 +9,7 @@ Loader {
         target: supervisor
 //        onSetupStateExited: bcast.start();
         onDecodeStateEntered: clientsHub.startDecoders( supervisor.decodedHeads )
-        onBroadcastStateEntered: { /*bcast.start();*/ clientsHub.startProcessing() }
+        onBroadcastStateEntered: clientsHub.startProcessing() 
         
     }
     
