@@ -47,4 +47,19 @@ private:
     QList<int> mHeads;
 };
 
+#include <ui/qobjectlistmodel.h>
+
+class DecodrDbusCtrlModel : public Ui::QObjectListModel<DecodrDbusCtrl>
+{
+    Q_OBJECT
+public:
+    DecodrDbusCtrlModel(QObject *parent =nullptr) : Ui::QObjectListModel<DecodrDbusCtrl>(parent) {}
+    
+public slots:
+    void decodrClientAdded(int, QDBusObjectPath, DecodrDbusCtrl *client) 
+    {
+        appendObject(client);
+    }    
+};
+
 #endif

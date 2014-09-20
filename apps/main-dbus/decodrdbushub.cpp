@@ -43,7 +43,7 @@ QDBusObjectPath DecodrDbusHub::aquireClient(int clientId)
         
         mHeartbeatMapper->setMapping(object, clientId);
         connect(object, SIGNAL(noHeartbeat()), mHeartbeatMapper, SLOT(map()) );
-        connect(object, SIGNAL(connected()), this, SLOT(decodrConnected()) );
+        connect(object, SIGNAL(isConnectedChanged()), this, SLOT(decodrConnected()) );
 
         return path;
     } else
@@ -88,25 +88,25 @@ void DecodrDbusHub::startDecoders(const QList<int> &heads)
 
 void DecodrDbusHub::decodrConnected()
 {
-    qDebug()<<__FUNCTION__<<mHeads.size()<<mClients.size();
-    
-    DecodrDbusCtrl *dctrl = qobject_cast<DecodrDbusCtrl *>(sender());
-    Q_ASSERT(dctrl);
-    Q_ASSERT(mHeads.size() >0 );
-    
-    if (mHeads.size() == mClients.size())
+    int c=0;
+    for (const auto &p: mClients)
+        if (p.second->isConnected())
+            ++c;
+    if (c == mClients.size())
         emit allDecodersConnected();
 }
 
 void DecodrDbusHub::startProcessing()
 {
-    if (mHeads.size() > 0) {
-        Q_ASSERT(mHeads.size() >= mClients.size());
-        
-        for (auto itr=mClients.begin(); itr!=mClients.end(); ++itr) {
+    qDebug()<<"START PROC";
+    for (auto itr=mClients.begin(); itr!=mClients.end(); ++itr) {
+        if (itr->second->isStarted()) {
+            itr->second->sendResume();
+            qDebug()<<"RESUMR";
+        } else if (mHeads.size() >0) {
+            qDebug()<<"START "<<mHeads.back();
             itr->second->sendStart( mHeads.back() );
             mHeads.pop_back();
         }
-    
-    } 
+    }
 }

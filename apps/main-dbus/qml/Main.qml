@@ -7,11 +7,15 @@ Loader {
     
     Connections {
         target: supervisor
-        onDecodeStateEntered: {
-            clientsHub.startDecoders( supervisor.decodedHeads );
-            console.log( supervisor.decodedHeads );        
-        }
+//        onSetupStateExited: bcast.start();
+        onDecodeStateEntered: clientsHub.startDecoders( supervisor.decodedHeads )
+        onBroadcastStateEntered: { /*bcast.start();*/ clientsHub.startProcessing() }
         
+    }
+    
+    Connections {
+        target: clientsHub
+        onAllDecodersConnected: { supervisor.allDecodersConnected(); console.log("ALL_DECODRES_CONNECTED") }
     }
     
     Component.onCompleted: supervisor.init()        

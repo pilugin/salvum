@@ -6,6 +6,7 @@ DecodrDbusCtrl::DecodrDbusCtrl(QObject *parent)
 , mHeartbeatTimer(new QTimer(this))
 , mIsConnected(false)
 , mIsStarted(false)
+, mCluster(0)
 , mClustersDecoded(0)
 , mBlocksDecoded(0)
 , mBlocksTotal(0)
@@ -35,6 +36,7 @@ void DecodrDbusCtrl::sendStart(int clusterNo)
 {
     if (!mIsStarted) {
         mIsStarted = true;
+        mCluster = clusterNo;
         emit isStartedChanged();
     }
     emit start(clusterNo);

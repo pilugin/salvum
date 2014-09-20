@@ -20,6 +20,7 @@ public:
     QHash<int, QByteArray> roleNames() const;
 #endif    
 
+public slots:
     void appendObject(QObject *object);
     void removeObject(QObject *object);
     void eraseObject(int row);

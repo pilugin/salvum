@@ -91,6 +91,7 @@ void QObjectListModelBase::appendObject(QObject *object)
         signal += m_d->metaObject.property(i).notifySignal().signature();
         connect(object, signal.data(), this, SLOT(objectUpdated()), /*Qt::AutoConnection |*/ Qt::UniqueConnection);        
     }
+    connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(removeObject(QObject*)) );
     
     endInsertRows();
 }

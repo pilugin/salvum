@@ -22,12 +22,6 @@ int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
     
-//    DecodrDbusCtrl::staticMetaObject;
-    Ui::QObjectListModel<DecodrDbusCtrl> objmodel;
-    DecodrDbusCtrl o;
-    objmodel.appendObject(&o);
-
-
     // init DBus    
     if (! QDBusConnection::sessionBus().registerService("org.salvum.Decodr")) {
         qDebug()<<"Failed to register DBus service";
@@ -55,25 +49,30 @@ int main(int argc, char **argv)
     QObject::connect(&goodHeadsModel, SIGNAL(headSelected(int,bool)), &selectedHeadsModel, SLOT(onGoodHeadSelected(int,bool)));
         
     DecodrDbusHub hub;
-    SalvJpegModel model;
-    QObject::connect(&hub,      SIGNAL(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*)),
-                     &model,    SLOT(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*))    );
-    QObject::connect(&hub,      SIGNAL(decodrClientReleased(int,QDBusObjectPath)),
-                     &model,    SLOT(decodrClientReleased(int,QDBusObjectPath))                 );
+    DecodrDbusCtrlModel decodrModel;
+    QObject::connect(&hub,          SIGNAL(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*)),
+                     &decodrModel,  SLOT(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*))    );
+    
+//    SalvJpegModel model;
+//    QObject::connect(&hub,      SIGNAL(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*)),
+//                     &model,    SLOT(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*))    );
+//    QObject::connect(&hub,      SIGNAL(decodrClientReleased(int,QDBusObjectPath)),
+//                     &model,    SLOT(decodrClientReleased(int,QDBusObjectPath))                 );
 
     // export to QML
     QDeclarativeView view;
     view.engine()->rootContext()->setContextProperty("supervisor", &supervisor);
     view.engine()->rootContext()->setContextProperty("bcast", &bcastCtrl);
-    view.engine()->rootContext()->setContextProperty("salvJpegModel", &model);
+//    view.engine()->rootContext()->setContextProperty("salvJpegModel", &model);
     view.engine()->rootContext()->setContextProperty("bitmapInfo", &bitmapInfo);    
     view.engine()->rootContext()->setContextProperty("jpegHeadsModel", &jpegHeadsModel);
     view.engine()->rootContext()->setContextProperty("goodHeadsModel", &goodHeadsModel);
     view.engine()->rootContext()->setContextProperty("selectedHeadsModel", &selectedHeadsModel);
     view.engine()->rootContext()->setContextProperty("wspaceModel", &wspaceModel);
     view.engine()->rootContext()->setContextProperty("clientsHub", &hub);
+    view.engine()->rootContext()->setContextProperty("decodrModel", &decodrModel);
     
-    view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
+//    view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
 
     // init view
     view.setSource(QUrl("qml/Main.qml"));

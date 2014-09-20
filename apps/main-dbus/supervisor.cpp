@@ -19,17 +19,19 @@ void Supervisor::Private::createFSM()
     QState *st2_waitForDecoders = new QState( st1_decode );
     QState *st2_broadcast = new QState( st1_decode );
     
-    st1_decode->setInitialState(st2_broadcast);
+    st1_decode->setInitialState(st2_waitForDecoders);
     
     st1_setup   ->assignProperty(owner, "qmlScreen", "Setup.qml");
     st1_decode  ->assignProperty(owner, "qmlScreen", "Decode.qml");
     st1_check   ->assignProperty(owner, "qmlScreen", "Check.qml");
-    
+        
     st1_setup           ->addTransition(this, SIGNAL(startDecode()),            st1_decode);
     st2_waitForDecoders ->addTransition(this, SIGNAL(allDecodersConnected()),   st2_broadcast);
     st1_decode          ->addTransition(this, SIGNAL(broadcastAtEnd()),         st1_check);
     
-    connect(st1_decode, SIGNAL(entered()), owner, SIGNAL(decodeStateEntered()) );
+    connect(st1_setup,      SIGNAL(exited()),   owner, SIGNAL(setupStateExited())   );
+    connect(st1_decode,     SIGNAL(entered()),  owner, SIGNAL(decodeStateEntered()) );
+    connect(st2_broadcast,  SIGNAL(entered()),  owner, SIGNAL(broadcastStateEntered()) );
     
     fsm.addState(st1_setup);
     fsm.addState(st1_decode);

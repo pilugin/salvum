@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     QObject::connect(&timer, SIGNAL(timeout()), &decodrClient, SLOT(heartbeat()) );
     timer.setInterval(1000);
     timer.start();
-    qDebug()<<"HEARTBEAT START";
+    qDebug()<<"HEARTBEAT START";        
     
     return app.exec();
 }

@@ -6,6 +6,7 @@ Rectangle {
     
     property string totalColor: "black"
     property string currentColor: "magenta"
+    property bool textVisible: true
     
     color: totalColor
     
@@ -19,6 +20,7 @@ Rectangle {
         
     }
     Text {
+        visible: textVisible
         text: current + "/" + total        
         anchors { right: currentRect.right; top: currentRect.top }
         color: totalColor

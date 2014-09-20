@@ -18,14 +18,16 @@ signals:
     void qmlScreenChanged();    
     void decodedHeadsChanged();
     
+    void setupStateExited();
     void decodeStateEntered();
+    void broadcastStateEntered();
     
 public slots:
     void init();
 
     void startDecode(const QList<int> &clusters);
     void startDecode(const QVariant &clusters);
-    void allDecodersConnected();
+    void allDecodersConnected();  
     void broadcastAtEnd();
     
 private:

@@ -31,8 +31,3 @@ void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const Q
     emit goodHeadsUpdated(goodHeads);
 }
 
-void BcastDbusController::setSource(const QString &mediaPath, const QString &bitmapPath)
-{
-    mBcast->setSource(mediaPath, bitmapPath);
-}
-
