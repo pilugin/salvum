@@ -31,6 +31,7 @@ void SalvObjectController::processDecode(QString filename, QString clusterList)
         return;    
         
     emit processStarted();
+    mCurrentClusterList = clusters;
     metaObject()->invokeMethod(this, "doProcessDecode", Qt::QueuedConnection, Q_ARG(QString, filename), Q_ARG(QList<int>, clusters));
     mImage = QImage();
     emit imageChanged("");
