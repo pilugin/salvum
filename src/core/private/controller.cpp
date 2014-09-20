@@ -31,9 +31,9 @@ void Controller::setEverybody(Fetch *fetch, Check *check, Decodr *decodr)
     connect(mFetch,     SIGNAL(end()),                      mCheck,     SLOT(onFetchEnd())              );
     connect(mFetch,     SIGNAL(end()),                      this,       SLOT(fetchEnd())                );
 
-    connect(mDecodr,    SIGNAL(accepted(Core::DecodrFrame)),mCheck,     SLOT(onAccept(Core::DecodrFrame)));
+    connect(mDecodr,    SIGNAL(accepted(Core::DecodrFrame)),mCheck,     SLOT(onAccept(Core::DecodrFrame))   );
     connect(mDecodr,    SIGNAL(accepted(Core::DecodrFrame)),this,       SLOT(decodrAccepted())          );
-    connect(mDecodr,    SIGNAL(rejected()),                 mCheck,     SLOT(onReject())                );
+    connect(mDecodr,    SIGNAL(rejected(Core::DecodrFrame)),mCheck,     SLOT(onReject(Core::DecodrFrame))   );
     connect(mDecodr,    SIGNAL(done()),                     this,       SLOT(decodrDone())              );
     connect(mDecodr,    SIGNAL(done()),                     mCheck,     SLOT(onFetchEnd())              );
 

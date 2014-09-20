@@ -2,13 +2,13 @@
 
 namespace Core {
 
-Check::Check(QObject *parent) : QObject(parent)
+Check::Check(QObject *parent) : QObject(parent), mPrevAccepted(false)
 {
 }
 
 void Check::onFetch(int clusterNo)
 {
-    mPendingClusters.push_back(clusterNo);    
+    mPendingClusters.push_back(clusterNo);        
     mFetchEnd = false;
 }
 
@@ -24,15 +24,19 @@ void Check::onAccept(const DecodrFrame &frame)
     
     if (mFetchEnd)
         processFetchEnd();
+        
+    mPrevAccepted = true;        
 }
 
-void Check::onReject()
+void Check::onReject(const DecodrFrame &frame)
 {
-    doRejectFrame(mPendingClusters);
+    doRejectFrame(mPendingClusters, frame);
     mPendingClusters.clear();
     
     if (mFetchEnd)
         processFetchEnd();
+        
+    mPrevAccepted = false;        
 }
 
 void Check::onFetchEnd()
@@ -95,7 +99,7 @@ void Check::doAcceptFrame(const QVector<int> &/*pendingClusters*/, const DecodrF
 {
 }
 
-void Check::doRejectFrame(const QVector<int> &/*pendingClusters*/)
+void Check::doRejectFrame(const QVector<int> &/*pendingClusters*/, const DecodrFrame &/*frame*/)
 {
 }
 
@@ -104,11 +108,13 @@ void Check::doRejectFrame(const QVector<int> &/*pendingClusters*/)
 Check::FrameDescription::FrameDescription(
                 QVector<int>::const_iterator clustersBegin_,
                 QVector<int>::const_iterator clustersEnd_,
-                DecodrFrame *frame_        
+                DecodrFrame *frame_,
+                bool accepted_
 )
 : clustersBegin(clustersBegin_)
 , clustersEnd(clustersEnd_)
 , frame(frame_)
+, accepted(accepted_)
 {
 }
 

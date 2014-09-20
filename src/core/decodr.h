@@ -49,7 +49,7 @@ public slots:
 
 signals:
     void accepted(const DecodrFrame &frame);
-    void rejected();
+    void rejected(const DecodrFrame &frame);
     void done();
 };
 
