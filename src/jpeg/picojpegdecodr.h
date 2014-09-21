@@ -33,7 +33,10 @@ public:
     pjpeg_image_info_t imgInfo;
     ImageCursor cursor;
     
+    bool decodeOkValue;
+    
     PicoJpegDecodFrame *clone() const;
+    bool decodeOk() const { return decodeOkValue; }
 private:
     static int id_gen;    
 };

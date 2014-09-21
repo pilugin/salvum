@@ -31,5 +31,10 @@ DecodrFrame *DecodrFrame::clone() const
     return new DecodrFrame(id(), type());
 }
 
+bool DecodrFrame::decodeOk() const
+{
+    return true;
+}
+
 }
 

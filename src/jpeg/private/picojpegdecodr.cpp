@@ -25,6 +25,7 @@ PicoJpegDecodFrame::PicoJpegDecodFrame(QImage *image)
         cursor.setCanvas(image);
         cursor.restart();
     }
+    decodeOkValue = true;
 }
 
 PicoJpegDecodFrame *PicoJpegDecodFrame::clone() const
@@ -56,6 +57,7 @@ bool PicoJpegDecodr::restart(Fetch *fetch)
     if (rv != 0) {
         Msg("PicoJpegDecodr::restart() picojpeg err: %d\n", rv);
         mDone = true;
+        mFrame.decodeOkValue = false;
         emit rejected(mFrame);
         return false;
 
@@ -111,6 +113,7 @@ bool PicoJpegDecodr::decodeCluster()
 
         if (mWasFetched && mBlockCount > 450) {
             Msg("[BlockCount too big %d]", mBlockCount);
+//            mFrame.decodeOkValue = false;            
             retval = false;
             break;
         }
@@ -132,6 +135,7 @@ bool PicoJpegDecodr::decodeCluster()
         Msg("[PJPG_NO_MORE_BLOCKS]");
     } else if (rv > 0) {
         Msg("[Error in Decoding %d]", rv);
+        mFrame.decodeOkValue = false;        
         retval = false;
     }
 

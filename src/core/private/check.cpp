@@ -63,19 +63,19 @@ void Check::processFetchEnd()
     FrameDescription_itr chosenOne = chooseBaseline( mFrames );
     Q_ASSERT(chosenOne != mFrames.end());
     
-    qDebug()<<"CLUSTERS"<<mClusters;
+//    qDebug()<<"CLUSTERS"<<mClusters;
     
     // interpret result; emit skipClusters & baselineFrame
     beginSkipClusters();
     
     for (auto f=mFrames.begin(); f <= chosenOne; ++f) {
-        qDebug()<<"FRAME"<<f->clustersPos<<"->"<<mClusters[f->clustersPos]<<"  "<<f->clustersCount;
+//        qDebug()<<"FRAME"<<f->clustersPos<<"->"<<mClusters[f->clustersPos]<<"  "<<f->clustersCount;
     
         if (!f->accepted && f!=chosenOne)
             continue;
             
         for (int i=0; i<f->clustersCount; ++i) {
-            qDebug()<<"call SKIP CLUSTERS "<<(f->clustersPos+i);
+//            qDebug()<<"call SKIP CLUSTERS "<<(f->clustersPos+i);
             skipCluster( mClusters[f->clustersPos+i] );        
         }
     }
@@ -97,7 +97,7 @@ void Check::beginSkipClusters()
 
 void Check::skipCluster(int cluster)
 {
-    qDebug()<<"Check::skipCluster  "<<cluster;
+//    qDebug()<<"Check::skipCluster  "<<cluster;
     if (!mSkipClustersTmp.flushed 
         && (cluster == (mSkipClustersTmp.cluster + mSkipClustersTmp.len) )) {
         
@@ -118,7 +118,7 @@ void Check::endSkipClusters()
     if (mSkipClustersTmp.flushed)
         return;
         
-    qDebug()<<"Check:: emit skipClusters:"<<mSkipClustersTmp.cluster<<", "<< mSkipClustersTmp.len;
+//    qDebug()<<"Check:: emit skipClusters:"<<mSkipClustersTmp.cluster<<", "<< mSkipClustersTmp.len;
     emit skipClusters(mSkipClustersTmp.cluster, mSkipClustersTmp.len);
     mSkipClustersTmp.flushed = true;        
 }

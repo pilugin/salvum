@@ -21,6 +21,7 @@ public:
     virtual ~DecodrFrame();
     
     virtual DecodrFrame *clone() const;
+    virtual bool decodeOk() const;
 
     int type() const { return mType; }
     int id() const { return mId; }
