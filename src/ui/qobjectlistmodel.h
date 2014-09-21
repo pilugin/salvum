@@ -24,6 +24,7 @@ public slots:
     void appendObject(QObject *object);
     void removeObject(QObject *object);
     void eraseObject(int row);
+    void clear();
 
 private slots:
     void objectUpdated();

@@ -23,7 +23,7 @@ public:
     }
     
     
-    QMetaObject metaObject;
+    const QMetaObject &metaObject;
     QObjectList items;
 };
 
@@ -107,8 +107,18 @@ void QObjectListModelBase::eraseObject(int row)
 {
     beginRemoveRows(QModelIndex(), row, row);
     disconnect(m_d->items[row], 0, this, 0);
-    m_d->items.erase(m_d->items.begin() + row);
+    m_d->items.removeAt(row);
     endRemoveRows();
+}
+
+void QObjectListModelBase::clear()
+{
+    beginResetModel();
+    for (QObject *o: m_d->items)
+        disconnect(o, 0, this, 0);
+    m_d->items.clear();
+    
+    endResetModel();
 }
 
 void QObjectListModelBase::objectUpdated()
