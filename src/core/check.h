@@ -30,32 +30,37 @@ protected:
     
     struct FrameDescription
     {
-        FrameDescription(
-                QVector<int>::const_iterator clustersBegin_ =QVector<int>::const_iterator(),
-                QVector<int>::const_iterator clustersEnd_   =QVector<int>::const_iterator(),                
-                DecodrFrame *frame_                         =nullptr,
-                bool accepted_                              =false
-        );
-        QVector<int>::const_iterator clustersBegin;
-        QVector<int>::const_iterator clustersEnd;        
+        FrameDescription(int clustersPos_ =0, int clustersCount_ =0, DecodrFrame *frame_ =nullptr, bool accepted_ =false);
+        int clustersPos;
+        int clustersCount; 
         DecodrFrame *frame;        
         bool accepted;
     };
     typedef QVector<FrameDescription> FrameDescription_v;
     typedef FrameDescription_v::const_iterator FrameDescription_itr;
     
-    virtual const FrameDescription &chooseBaseline(const FrameDescription_v &frames) =0;
+    virtual FrameDescription_itr chooseBaseline(const FrameDescription_v &frames) =0;
+    
+    const QVector<int> &clusters() const { return mClusters; }
    
 private:
     void processFetchEnd();
+    
+    void beginSkipClusters();
+    void skipCluster(int cluster);
+    void endSkipClusters();
+    struct {
+        int cluster;
+        int len;
+        bool flushed;
+    } mSkipClustersTmp;
 
     QVector<int> mPendingClusters;
     
     /*
-    ** 0-1-2-3--------8-9--------4-6------7-X           <-- mClusters
-    ** |              |          |          |
-    ** |===Frame0=====|----------|===Frame2=|-X         <-- mFrames
-    **                |===Frame1=|                      <--
+    ** 0-1-2-3--------8-9----------4-6-7-----         <-- mClusters
+    ** |              |            |         
+    ** 0+4+Frame0-----4+2+Frame1---6+3+Frame2         <-- mFrames
     **                          
     **
     ** Meaning:

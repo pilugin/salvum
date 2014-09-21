@@ -30,3 +30,4 @@ SOURCES += \
 QMAKE_CXXFLAGS *= -std=c++11
     
 INCLUDEPATH *= $$PWD/..
+DEPENDPATH *= $$PWD/../core

@@ -13,3 +13,5 @@ include(../src/ipcfetch/ipcfetch.pri)
 include(../src/ui/ui.pri)
 
 include(../src/common/colorgcc.pri)
+
+DEPENDPATH+=$$PWD/../src

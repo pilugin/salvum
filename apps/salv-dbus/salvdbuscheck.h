@@ -18,7 +18,7 @@ public slots:
     void baseline(int clusterNo);
     
 protected:
-    const FrameDescription &chooseBaseline(const FrameDescription_v &frames);
+    FrameDescription_itr chooseBaseline(const FrameDescription_v &frames);
 private:        
     QEventLoop *mEloop;
 };

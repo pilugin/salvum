@@ -10,7 +10,7 @@ public:
 
     void doAcceptFrame(const QVector<int> &pendingClusters, const Core::DecodrFrame &frame);
     void doRejectFrame(const QVector<int> &pendingClusters);
-    const FrameDescription &chooseBaseline(const FrameDescription_v &frames);
+    FrameDescription_itr chooseBaseline(const FrameDescription_v &frames);
 private:
     const bool mVerbose;
 };

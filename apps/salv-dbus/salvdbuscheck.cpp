@@ -10,6 +10,6 @@ void SalvDbusCheck::baseline(int clusterNo)
 {
 }
     
-const SalvDbusCheck::FrameDescription &SalvDbusCheck::chooseBaseline(const SalvDbusCheck::FrameDescription_v &frames)
+SalvDbusCheck::FrameDescription_itr SalvDbusCheck::chooseBaseline(const SalvDbusCheck::FrameDescription_v &frames)
 {
 }

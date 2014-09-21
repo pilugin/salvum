@@ -1,4 +1,5 @@
 #include <core/check.h>
+#include <QtDebug>
 
 namespace Core {
 
@@ -16,9 +17,11 @@ void Check::onAccept(const DecodrFrame &frame)
 {
     doAcceptFrame(mPendingClusters, frame);
 
-    mAcceptedClusters += mPendingClusters;
-    if (mAcceptedClusters.size() > 0)
-        mFrames.push_back( qMakePair<int,DecodrFrame*>(mAcceptedClusters.back(), frame.clone()) );
+    mClusters += mPendingClusters;
+    if (mClusters.size() > 0) {
+        int pos = mFrames.size()==0 ? 0 : mFrames.back().clustersPos + mFrames.back().clustersCount;
+        mFrames.push_back( FrameDescription(pos, mPendingClusters.size(), frame.clone(), true) );
+    }        
 
     mPendingClusters.clear();    
     
@@ -31,6 +34,17 @@ void Check::onAccept(const DecodrFrame &frame)
 void Check::onReject(const DecodrFrame &frame)
 {
     doRejectFrame(mPendingClusters, frame);
+    
+    if (mPrevAccepted) {
+        mClusters += mPendingClusters;
+        if (mClusters.size() > 0) {
+            mFrames.push_back( 
+                FrameDescription( (mFrames.back().clustersPos + mFrames.back().clustersCount), 
+                                mPendingClusters.size(), frame.clone(), false) 
+                );
+        }
+    }
+    
     mPendingClusters.clear();
     
     if (mFetchEnd)
@@ -46,54 +60,68 @@ void Check::onFetchEnd()
 
 void Check::processFetchEnd()
 {
-    // prepare params for chooseBaseline
-    QVector<FrameDescription> frames;
+    FrameDescription_itr chosenOne = chooseBaseline( mFrames );
+    Q_ASSERT(chosenOne != mFrames.end());
     
-    auto beginItr   = mAcceptedClusters.constBegin();
-    auto endItr     = beginItr;
-    
-    for (auto frameItr = mFrames.begin();   frameItr!=mFrames.end()  
-                                            && endItr!=mAcceptedClusters.end(); ++frameItr) {
-    
-        while ( endItr != mAcceptedClusters.end()   
-                && *endItr!=frameItr->first)
-            ++endItr;
-            
-        frames.push_back(FrameDescription(beginItr, ++endItr, frameItr->second));
-        beginItr = endItr;
-    }
-    
-    // call it
-    const FrameDescription &chosenOne = chooseBaseline( frames );
+    qDebug()<<"CLUSTERS"<<mClusters;
     
     // interpret result; emit skipClusters & baselineFrame
-    beginItr = mAcceptedClusters.begin();
-    endItr = chosenOne.clustersEnd;
-
-    while (beginItr != endItr) {
-        int clusterNo = *beginItr;
-        int length = 0;
-        
-        while ( beginItr != endItr
-                && (*beginItr == (clusterNo + length))  ) {
-            ++beginItr;
-            ++length;
-        }
-        
-        emit skipClusters(clusterNo, length);
-    }
+    beginSkipClusters();
     
-    emit baselineFrame(*chosenOne.frame);
+    for (auto f=mFrames.begin(); f <= chosenOne; ++f) {
+        qDebug()<<"FRAME"<<f->clustersPos<<"->"<<mClusters[f->clustersPos]<<"  "<<f->clustersCount;
+    
+        if (!f->accepted && f!=chosenOne)
+            continue;
+            
+        for (int i=0; i<f->clustersCount; ++i) {
+            qDebug()<<"call SKIP CLUSTERS "<<(f->clustersPos+i);
+            skipCluster( mClusters[f->clustersPos+i] );        
+        }
+    }
+    endSkipClusters();
+    
+    emit baselineFrame(*chosenOne->frame);
     
     // clear all
-    for (auto pair : mFrames)
-        delete pair.second;
+    for (auto frame : mFrames)
+        delete frame.frame;
     mFrames.clear();
-    mAcceptedClusters.clear();
+    mClusters.clear();
 }
 
+void Check::beginSkipClusters()
+{
+    mSkipClustersTmp.flushed = true;
+}
 
+void Check::skipCluster(int cluster)
+{
+    qDebug()<<"Check::skipCluster  "<<cluster;
+    if (!mSkipClustersTmp.flushed 
+        && (cluster == (mSkipClustersTmp.cluster + mSkipClustersTmp.len) )) {
+        
+        ++mSkipClustersTmp.len;
+        return;        
+    }
+    
+    if (!mSkipClustersTmp.flushed)
+        endSkipClusters();
+        
+    mSkipClustersTmp.flushed = false;
+    mSkipClustersTmp.cluster = cluster;
+    mSkipClustersTmp.len = 1;        
+}
 
+void Check::endSkipClusters()
+{
+    if (mSkipClustersTmp.flushed)
+        return;
+        
+    qDebug()<<"Check:: emit skipClusters:"<<mSkipClustersTmp.cluster<<", "<< mSkipClustersTmp.len;
+    emit skipClusters(mSkipClustersTmp.cluster, mSkipClustersTmp.len);
+    mSkipClustersTmp.flushed = true;        
+}
 
 void Check::doAcceptFrame(const QVector<int> &/*pendingClusters*/, const DecodrFrame &/*frame*/)
 {
@@ -105,14 +133,9 @@ void Check::doRejectFrame(const QVector<int> &/*pendingClusters*/, const DecodrF
 
 //////////////////////////////////////////////////////////////////////
 
-Check::FrameDescription::FrameDescription(
-                QVector<int>::const_iterator clustersBegin_,
-                QVector<int>::const_iterator clustersEnd_,
-                DecodrFrame *frame_,
-                bool accepted_
-)
-: clustersBegin(clustersBegin_)
-, clustersEnd(clustersEnd_)
+Check::FrameDescription::FrameDescription(int clustersPos_, int clustersCount_, DecodrFrame *frame_, bool accepted_)
+: clustersPos(clustersPos_)
+, clustersCount(clustersCount_)
 , frame(frame_)
 , accepted(accepted_)
 {

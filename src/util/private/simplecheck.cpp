@@ -21,15 +21,15 @@ void SimpleCheck::doRejectFrame(const QVector<int> &pendingClusters)
         qDebug()<<"Check::doRejectFrame: "<<pendingClusters;
 }
 
-const Check::FrameDescription &SimpleCheck::chooseBaseline(const Check::FrameDescription_v &frames)
+Check::FrameDescription_itr SimpleCheck::chooseBaseline(const Check::FrameDescription_v &frames)
 {
     if (mVerbose) {
         qDebug()<<"Check::chooseBaseline:";
         for (int i=0; i<frames.size(); ++i)
-            qDebug("\t%X-{ %08X ~ %08X}", i, *frames[i].clustersBegin, *(frames[i].clustersEnd -1) );
+            qDebug("\t%X-{ %08X ~ %08X}", i, *frames[i].clustersBegin, *frames[i].clustersBegin + frames[i].clustersCount -1 );
 
         qDebug()<<"\t\tsize="<<frames.size();
     }
 
-    return frames.back();
+    return frames.begin() + frames.size() - 1;
 }

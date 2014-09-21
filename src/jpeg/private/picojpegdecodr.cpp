@@ -56,7 +56,7 @@ bool PicoJpegDecodr::restart(Fetch *fetch)
     if (rv != 0) {
         Msg("PicoJpegDecodr::restart() picojpeg err: %d\n", rv);
         mDone = true;
-        emit rejected();
+        emit rejected(mFrame);
         return false;
 
     } else {
@@ -79,7 +79,7 @@ void PicoJpegDecodr::resume()
             emit accepted(mFrame);
 
         } else {
-            emit rejected();
+            emit rejected(mFrame);
             loadFrame(prevFrame);
         }
     }

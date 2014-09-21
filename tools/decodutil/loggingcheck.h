@@ -12,7 +12,7 @@ public:
 
     const Common::DecodedClusters &res() const { return mRes; }
 protected:
-    const FrameDescription &chooseBaseline(const FrameDescription_v &frames);
+    FrameDescription_itr chooseBaseline(const FrameDescription_v &frames);
 
     Common::DecodedClusters mRes;
 };
