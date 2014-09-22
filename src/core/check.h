@@ -12,6 +12,17 @@ class Check : public QObject
     Q_OBJECT
 public:
     Check(QObject *parent =nullptr);
+    
+    struct FrameDescription
+    {
+        FrameDescription(int clustersPos_ =0, int clustersCount_ =0, DecodrFrame *frame_ =nullptr, bool accepted_ =false);
+        int clustersPos;
+        int clustersCount; 
+        DecodrFrame *frame;        
+        bool accepted;
+    };
+    typedef QVector<FrameDescription> FrameDescription_v;
+    typedef FrameDescription_v::const_iterator FrameDescription_itr;
 
 signals:
     void skipClusters(int clusterNo, int length);
@@ -27,22 +38,10 @@ public slots:
 protected:    
     virtual void doAcceptFrame(const QVector<int> &pendingClusters, const DecodrFrame &frame);
     virtual void doRejectFrame(const QVector<int> &pendingClusters, const DecodrFrame &frame);
-    
-    struct FrameDescription
-    {
-        FrameDescription(int clustersPos_ =0, int clustersCount_ =0, DecodrFrame *frame_ =nullptr, bool accepted_ =false);
-        int clustersPos;
-        int clustersCount; 
-        DecodrFrame *frame;        
-        bool accepted;
-    };
-    typedef QVector<FrameDescription> FrameDescription_v;
-    typedef FrameDescription_v::const_iterator FrameDescription_itr;
-    
+        
     virtual FrameDescription_itr chooseBaseline(const FrameDescription_v &frames) =0;
     
-    const QVector<int> &clusters() const { return mClusters; }
-   
+    const QVector<int> &clusters() const { return mClusters; }   
 private:
     void processFetchEnd();
     

@@ -55,6 +55,7 @@ bool Controller::run(int clusterNo)
 
     if (! mFetch->rewind(clusterNo)) {
         Msg("ERR: fetch.rewind(%08X) failed\n", clusterNo);
+        emit end(false);
         return success();
     }
 
@@ -62,6 +63,7 @@ bool Controller::run(int clusterNo)
 
     if (! mDecodr->restart(mFetch)) {
         Msg("ERR: decodr.restart() failed\n");
+        emit end(false);
         return success();
     }
 

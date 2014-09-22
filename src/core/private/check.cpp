@@ -35,7 +35,7 @@ void Check::onReject(const DecodrFrame &frame)
 {
     doRejectFrame(mPendingClusters, frame);
     
-    if (mPrevAccepted) {
+    if (mPrevAccepted && frame.decodeOk()) {
         mClusters += mPendingClusters;
         if (mClusters.size() > 0) {
             mFrames.push_back( 
@@ -61,27 +61,27 @@ void Check::onFetchEnd()
 void Check::processFetchEnd()
 {
     FrameDescription_itr chosenOne = chooseBaseline( mFrames );
-    Q_ASSERT(chosenOne != mFrames.end());
+    if (chosenOne != mFrames.end()) {
     
 //    qDebug()<<"CLUSTERS"<<mClusters;
     
     // interpret result; emit skipClusters & baselineFrame
-    beginSkipClusters();
+        beginSkipClusters();
     
-    for (auto f=mFrames.begin(); f <= chosenOne; ++f) {
+        for (auto f=mFrames.begin(); f <= chosenOne; ++f) {
 //        qDebug()<<"FRAME"<<f->clustersPos<<"->"<<mClusters[f->clustersPos]<<"  "<<f->clustersCount;
     
-        if (!f->accepted && f!=chosenOne)
-            continue;
+            if (!f->accepted && f!=chosenOne)
+                continue;
             
-        for (int i=0; i<f->clustersCount; ++i) {
+            for (int i=0; i<f->clustersCount; ++i) {
 //            qDebug()<<"call SKIP CLUSTERS "<<(f->clustersPos+i);
-            skipCluster( mClusters[f->clustersPos+i] );        
+                skipCluster( mClusters[f->clustersPos+i] );        
+            }
         }
-    }
-    endSkipClusters();
-    
-    emit baselineFrame(*chosenOne->frame);
+        endSkipClusters();    
+        emit baselineFrame(*chosenOne->frame);        
+    }        
     
     // clear all
     for (auto frame : mFrames)

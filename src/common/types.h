@@ -19,7 +19,7 @@ struct RejectedClusterInfo
 {
     int clusterNo;
     int blockBegin; //< offset of @property pixels
-    QList<int> pixels; //< pixels block by block { (b0x0, b0y0), (b0x1, b0y1),.. (b0x7, b0y7),.. (bNx7, bNy6), (bNx7, bNy7) }
+    QList<int> pixels; //< pixels block by block { (b0x0, b0y0), (b0x1, b0y0),.. (b0x7, b0y7),.. (bNx7, bNy6), (bNx7, bNy7) }
     
     QList<int>::const_iterator block(int blockNumber) const;
     int pixel(int blockNumber, int x, int y) const;

@@ -33,10 +33,18 @@ public:
     pjpeg_image_info_t imgInfo;
     ImageCursor cursor;
     
-    bool decodeOkValue;
+    // 
+    bool decodeOkValue;                
+    struct {
+        int blockBegin;
+        QList<int> pixels;
+    } savedPixels;
+    void setDecodeFailed() { decodeOkValue = false; }
+    void savePixels(const PicoJpegDecodFrame &prevFrame);
+    bool decodeOk() const;
     
     PicoJpegDecodFrame *clone() const;
-    bool decodeOk() const { return decodeOkValue; }
+    
 private:
     static int id_gen;    
 };

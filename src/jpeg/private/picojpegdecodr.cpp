@@ -33,6 +33,30 @@ PicoJpegDecodFrame *PicoJpegDecodFrame::clone() const
     return new PicoJpegDecodFrame( *this );
 }
 
+static void saveBlock(int block, const QImage *src, QList<int> &dest)
+{
+    int blockX = block % (src->width()/8);
+    int blockY = block / (src->width()/8);
+    int x = blockX * 8;
+    int y = blockY * 8;
+    for (int dx=0; dx<8; ++dx)
+        for (int dy=0; dy<8; ++dy)
+            dest.push_back( src->pixel(x+dx, y+dy) );
+}
+
+void PicoJpegDecodFrame::savePixels(const PicoJpegDecodFrame &prevFrame)
+{
+    savedPixels.blockBegin = prevFrame.cursor.currentBlockIndex();
+    savedPixels.pixels.clear();
+    for (int b=prevFrame.cursor.currentBlockIndex(); b<cursor.currentBlockIndex(); ++b) 
+        saveBlock(b, cursor.canvas(), savedPixels.pixels);    
+}
+
+bool PicoJpegDecodFrame::decodeOk() const
+{
+    return decodeOkValue;
+}
+
 ///////////////////////////////////
 
 PicoJpegDecodr::PicoJpegDecodr(ICheck *check, QObject *parent)
@@ -57,7 +81,7 @@ bool PicoJpegDecodr::restart(Fetch *fetch)
     if (rv != 0) {
         Msg("PicoJpegDecodr::restart() picojpeg err: %d\n", rv);
         mDone = true;
-        mFrame.decodeOkValue = false;
+        mFrame.setDecodeFailed();
         emit rejected(mFrame);
         return false;
 
@@ -81,6 +105,8 @@ void PicoJpegDecodr::resume()
             emit accepted(mFrame);
 
         } else {
+            if (mFrame.decodeOk()) //< if parsing was successful, then save the fragment of image
+                mFrame.savePixels( prevFrame );
             emit rejected(mFrame);
             loadFrame(prevFrame);
         }
@@ -113,7 +139,7 @@ bool PicoJpegDecodr::decodeCluster()
 
         if (mWasFetched && mBlockCount > 450) {
             Msg("[BlockCount too big %d]", mBlockCount);
-//            mFrame.decodeOkValue = false;            
+//            mFrame.setDecodeFailed();            
             retval = false;
             break;
         }
@@ -135,7 +161,7 @@ bool PicoJpegDecodr::decodeCluster()
         Msg("[PJPG_NO_MORE_BLOCKS]");
     } else if (rv > 0) {
         Msg("[Error in Decoding %d]", rv);
-        mFrame.decodeOkValue = false;        
+        mFrame.setDecodeFailed();        
         retval = false;
     }
 

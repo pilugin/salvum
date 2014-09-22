@@ -13,10 +13,12 @@ include(../../src/common/colorgcc.pri)
 
 SOURCES += \
     main.cpp \
-    salvdbuscheck.cpp
+    salvdbuscheck.cpp \
+    dbusdecodeprocessor.cpp
 
 HEADERS += \
-    salvdbuscheck.h
+    salvdbuscheck.h \
+    dbusdecodeprocessor.h
     
 RESOURCES +=
 
