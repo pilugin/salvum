@@ -32,14 +32,14 @@ void DecodrDbusCtrl::heartbeat()
     mHeartbeatTimer->start();
 }
 
-void DecodrDbusCtrl::sendStart(int clusterNo)
+void DecodrDbusCtrl::sendStart(const QString &shmemPath, int clusterNo)
 {
     if (!mIsStarted) {
         mIsStarted = true;
         mCluster = clusterNo;
         emit isStartedChanged();
     }
-    emit start(clusterNo);
+    emit start(shmemPath, clusterNo);
 }
 
 void DecodrDbusCtrl::progress(int clustersDecoded, int blocksDecoded, int blocksTotal)

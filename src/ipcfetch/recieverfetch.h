@@ -15,9 +15,10 @@ namespace IPCFetch {
 class RecieverFetch : public Core::Fetch, public RdWr::Reader<BroadcastMessage>
 {
 public:
+    RecieverFetch(QObject *parent =nullptr);
     RecieverFetch(const char *shmemName, QObject *parent =nullptr);
     ~RecieverFetch();
-
+    
     bool rewind(int clusterNo);
     void skip(int clusterNo, int length);
     void fastfwd();

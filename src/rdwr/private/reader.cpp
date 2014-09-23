@@ -8,8 +8,10 @@ namespace RdWr {
 
 template <class T>
 Reader<T>::Reader(const char *name) 
-: mMem( ShMem::attach(name) )
+: mMem( nullptr )
 {
+    if (name)
+        init(name);
 }
 
 template <class T>
@@ -17,6 +19,16 @@ Reader<T>::~Reader()
 {
     if (mMem)
         ShMem::detach(mMem);
+}
+
+template <class T>
+bool Reader<T>::init(const char *name)
+{
+    if (isValid())
+        return false;
+        
+    mMem = ShMem::attach(name);
+    return isValid();
 }
 
 template <class T>

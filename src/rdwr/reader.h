@@ -10,8 +10,10 @@ class Reader
 {
 public:
 
-    Reader(const char *shmemName);
+    Reader(const char *shmemName =nullptr);
     virtual ~Reader();
+    
+    bool init(const char *shmemName);
 
     virtual bool isValid() const { return mMem != nullptr; }     
 
@@ -31,7 +33,6 @@ protected:
 
 
 private:
-    Reader(); //< disable
     Reader(const Reader<T> &); //< disable
     Reader<T> &operator=(const Reader<T> &); //< disable
 

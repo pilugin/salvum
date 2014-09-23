@@ -65,5 +65,9 @@
             <arg type="(iiiiii)" name="info" direction="out"/>                
         </signal>
         
+        <signal name="shmemCreated">
+            <arg type="s" name="path" direction="out"/>
+        </signal>
+        
     </interface>
 </node>

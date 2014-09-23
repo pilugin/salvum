@@ -63,7 +63,7 @@ void DecodrDbusHub::releaseClient(int clientId)
     }
 }
 
-void DecodrDbusHub::startDecoders(const QVariant &heads)
+void DecodrDbusHub::startDecoders(const QString &shmemPath, const QVariant &heads)
 {
     QList<int> c;
     bool ok;
@@ -74,11 +74,12 @@ void DecodrDbusHub::startDecoders(const QVariant &heads)
         else
             qDebug()<<"ERR: DecodrDbusHub::startDecoders. failed to cast to int " << heads;
     }
-    startDecoders(c);
+    startDecoders(shmemPath, c);
 }
 
-void DecodrDbusHub::startDecoders(const QList<int> &heads)
+void DecodrDbusHub::startDecoders(const QString &shmemPath, const QList<int> &heads)
 {
+    mShmemPath = shmemPath;
     mHeads.append(heads);
     
     for (int i=0; i<heads.size(); ++i)
@@ -101,11 +102,11 @@ void DecodrDbusHub::startProcessing()
     qDebug()<<"START PROC";
     for (auto itr=mClients.begin(); itr!=mClients.end(); ++itr) {
         if (itr->second->isStarted()) {
-            itr->second->sendResume();
+//            itr->second->sendResume();
             qDebug()<<"RESUMR";
         } else if (mHeads.size() >0) {
-            qDebug()<<"START "<<mHeads.back();
-            itr->second->sendStart( mHeads.back() );
+            qDebug()<<"START "<<mShmemPath<<mHeads.back();
+            itr->second->sendStart( mShmemPath, mHeads.back() );
             mHeads.pop_back();
         }
     }

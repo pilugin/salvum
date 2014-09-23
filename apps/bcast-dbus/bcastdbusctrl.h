@@ -7,7 +7,7 @@ class BcastDbusCtrl : public QObject
 {
     Q_OBJECT
 public:    
-    static const char *shmemPath() { return "salv_broadcast"; }
+    static const char *shmemPathPrefix() { return "salv_broadcast_"; }
 
     BcastDbusCtrl(QObject *parent =nullptr);
     ~BcastDbusCtrl();
@@ -29,6 +29,7 @@ signals:
     void progress(int currentClusterNo, int clustersCount);
     void bitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, Common::BitmapInfo info);
     void quitted();
+    void shmemCreated(const QString &path);
     
 private:    
     class Private;

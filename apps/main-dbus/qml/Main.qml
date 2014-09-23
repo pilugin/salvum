@@ -8,7 +8,7 @@ Loader {
     Connections {
         target: supervisor
 //        onSetupStateExited: bcast.start();
-        onDecodeStateEntered: clientsHub.startDecoders( supervisor.decodedHeads )
+        onDecodeStateEntered: clientsHub.startDecoders( bcast.shmemPath, supervisor.decodedHeads )
         onBroadcastStateEntered: clientsHub.startProcessing() 
         
     }

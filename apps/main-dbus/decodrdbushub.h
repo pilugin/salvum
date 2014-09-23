@@ -25,8 +25,8 @@ public slots:
     QDBusObjectPath aquireClient(int clientId);
     void releaseClient(int clientId);   
     
-    void startDecoders(const QList<int> &heads);
-    void startDecoders(const QVariant &heads);
+    void startDecoders(const QString &shmemPath, const QList<int> &heads);
+    void startDecoders(const QString &shmemPath, const QVariant &heads);
     
     void startProcessing();
     
@@ -45,6 +45,7 @@ private:
     QMap<int, QPair<QDBusObjectPath, DecodrDbusCtrl *>> mClients;
     QSignalMapper *mHeartbeatMapper;
     QList<int> mHeads;
+    QString mShmemPath;
 };
 
 #include <ui/qobjectlistmodel.h>

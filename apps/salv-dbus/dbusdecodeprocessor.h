@@ -17,7 +17,7 @@ signals:
     
 private slots:
     void onExit();        
-    void onStart(int clusterNo);
+    void onStart(int clusterNo, const QString &shmemPath);
     
 private:
     class Private;

@@ -33,15 +33,25 @@ protected:
     Reader<BroadcastMessage> &mReader;
 };
 
-RecieverFetch::RecieverFetch(const char *shmemName, QObject *parent)
+RecieverFetch::RecieverFetch(QObject *parent)
 : Fetch(parent)
-, Reader<BroadcastMessage>(shmemName)
 , mWaitForCluster(Fetch::InvalidClusterNo)
 , mRegistered(false)
 , mAtEnd(true)
 , mExiting(false)
 , mRecvThread(nullptr)
 {
+}
+
+RecieverFetch::RecieverFetch(const char *shmemName, QObject *parent)
+: Fetch(parent)
+, mWaitForCluster(Fetch::InvalidClusterNo)
+, mRegistered(false)
+, mAtEnd(true)
+, mExiting(false)
+, mRecvThread(nullptr)
+{
+    init(shmemName);
 }
 
 RecieverFetch::~RecieverFetch()

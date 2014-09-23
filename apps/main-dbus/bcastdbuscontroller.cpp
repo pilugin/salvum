@@ -16,6 +16,8 @@ BcastDbusController::BcastDbusController(QObject *parent)
             this, SLOT(onBitmapProcessed(QList<int>,QList<int>,Common::BitmapInfo)));
     connect(mBcast, SIGNAL(progress(int,int)), 
             this, SLOT(onProgress(int,int)));            
+    connect(mBcast, SIGNAL(shmemCreated(QString)),
+            this, SLOT(onShmemCreated(QString)));
 }
 
 void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, Common::BitmapInfo info)
@@ -42,3 +44,11 @@ void BcastDbusController::onProgress(int currentCluster_, int clustersCount_)
     mClustersCount = clustersCount_;
     emit progress();
 }
+
+void BcastDbusController::onShmemCreated(const QString &path)
+{
+    qDebug()<<"SHMEM CREATED"<<path;
+    mShmemPath = path;
+    emit shmemPathChanged();
+}
+

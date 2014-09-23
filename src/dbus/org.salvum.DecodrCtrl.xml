@@ -45,6 +45,7 @@
 
         <signal name="start">
             <arg type="i" name="clusterNo" direction="out"/>
+            <arg type="s" name="shmemPath" direction="out"/>
         </signal>                
 
         <signal name="resume"/>

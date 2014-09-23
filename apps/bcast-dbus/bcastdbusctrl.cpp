@@ -6,6 +6,7 @@
 #include <util/devicemapfetch.h>
 
 #include <QFile>
+#include <unistd.h>
 
 using namespace Common;
 using namespace Core;
@@ -13,15 +14,18 @@ using namespace Core;
 class BcastDbusCtrl::Private 
 {
 public:
-    Private(const char *shmem, const SlotClosure &progressCallback, const SlotClosure &bitmapInfoCallback)
-    : bcast(shmem, progressCallback, bitmapInfoCallback, &fetch)
+    Private(const QString &shmem, const SlotClosure &progressCallback, const SlotClosure &bitmapInfoCallback)
+    : bcast(shmem.toUtf8().data(), progressCallback, bitmapInfoCallback, &fetch)
     , thread(bcast)
+    , shmemPath(shmem)
     {
     }
 
     DeviceMapFetch  fetch;
     Bcast           bcast;
     BcastThread     thread;
+    
+    QString         shmemPath;
 };
 
 ///////////////////////////////////////////////
@@ -30,8 +34,9 @@ BcastDbusCtrl::BcastDbusCtrl(QObject *parent)
 : QObject(parent),
 m_d(nullptr)
 {
+    QString shmemPath = QString("%1%2").arg(shmemPathPrefix()).arg(getpid());
     m_d = new Private(
-        shmemPath(),
+        shmemPath,
         SlotClosure(this, SIGNAL(progress(int,int))),
         SlotClosure(this, SIGNAL(bitmapProcessed(QList<int>,QList<int>,Common::BitmapInfo)))
     );
@@ -67,6 +72,8 @@ Result BcastDbusCtrl::setSource(const QString &mediaPath, const QString &bitmapP
         else
             emitBitmapProcessed();
     }
+    emit shmemCreated(m_d->shmemPath);
+    
     return r;
 }
 

@@ -11,6 +11,7 @@ include(../src/util/util.pri)
 include(../src/jpeg/jpeg.pri)
 include(../src/ipcfetch/ipcfetch.pri)
 include(../src/ui/ui.pri)
+#LIBS+= -L$$OUT_PWD/../src -lsalv-{common,core,dbus,ipcfetch,jpeg,rdwr,util}
 
 include(../src/common/colorgcc.pri)
 
