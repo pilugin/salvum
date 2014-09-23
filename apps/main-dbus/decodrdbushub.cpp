@@ -106,7 +106,7 @@ void DecodrDbusHub::startProcessing()
             qDebug()<<"RESUMR";
         } else if (mHeads.size() >0) {
             qDebug()<<"START "<<mShmemPath<<mHeads.back();
-            itr->second->sendStart( mShmemPath, mHeads.back() );
+            itr->second->sendStart( mHeads.back(), mShmemPath );
             mHeads.pop_back();
         }
     }

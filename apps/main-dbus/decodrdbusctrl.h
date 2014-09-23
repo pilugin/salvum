@@ -26,7 +26,7 @@ public:
     int blocksTotal() const     { return mBlocksTotal; }
     
 public slots:    
-    void sendStart(const QString &shmemPath, int clusterNo);
+    void sendStart(int clusterNo, const QString &shmemPath);
     void sendResume()                   { emit resume(); }
     void sendBaseline(int clusterNo)    { emit baseline(clusterNo); }
 signals:
@@ -46,7 +46,7 @@ private slots:
     void heartbeat();
         
 signals:    
-    void start(const QString &shmemPath, int clusterNo);
+    void start(int cluterNo, const QString &shmemPath);
     void resume();
     void baseline(int clusterNo);
 

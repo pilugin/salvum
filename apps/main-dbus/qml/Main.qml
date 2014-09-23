@@ -7,7 +7,7 @@ Loader {
     
     Connections {
         target: supervisor
-//        onSetupStateExited: bcast.start();
+        onSetupStateExited: bcast.start();
         onDecodeStateEntered: clientsHub.startDecoders( bcast.shmemPath, supervisor.decodedHeads )
         onBroadcastStateEntered: clientsHub.startProcessing() 
         
@@ -15,7 +15,7 @@ Loader {
     
     Connections {
         target: clientsHub
-        onAllDecodersConnected: { supervisor.allDecodersConnected(); console.log("ALL_DECODRES_CONNECTED") }
+        onAllDecodersConnected: supervisor.allDecodersConnected();
     }
     
     Component.onCompleted: supervisor.init()        

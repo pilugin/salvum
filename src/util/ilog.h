@@ -16,9 +16,9 @@ public:
 
 namespace Log {
 
-inline void Session(const QString &session)
+inline bool Session(const QString &session)
 {
-    ILog::instance()->setSession(session);
+    return ILog::instance()->setSession(session);
 }
 
 inline void Msg(const QString &str)

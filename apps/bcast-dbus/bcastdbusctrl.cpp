@@ -64,7 +64,7 @@ Result BcastDbusCtrl::setSource(const QString &mediaPath, const QString &bitmapP
     
     if (m_d->thread.isRunning()) {
         r.errorCode = -2;
-        r.error = "Bcast is running";
+        r.error = "Bcast is running";       
     } else {
         r.errorCode = m_d->fetch.init(mediaPath, bitmapPath) ? 0 : -1;
         if (!r)

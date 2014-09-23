@@ -25,7 +25,8 @@ signals:
     
 public slots:
     void setSource(const QString &mediaPath, const QString &bitmapPath) { mBcast->setSource(mediaPath, bitmapPath); }
-    void start() { mBcast->start(); }
+    void start()    { mBcast->start(); }
+    void stop()     { mBcast->stop(); }
     
 private slots:    
     void onBitmapProcessed(const QList<int> &jpegHeads, const QList<int> &goodHeads, Common::BitmapInfo info);

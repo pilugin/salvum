@@ -39,7 +39,7 @@ void BcastDbusController::onBitmapProcessed(const QList<int> &jpegHeads, const Q
 
 void BcastDbusController::onProgress(int currentCluster_, int clustersCount_)
 {
-    qDebug() << "------------"<<currentCluster_<<"  "<<clustersCount_;
+    qDebug("Bcast progress -- %08X / %08X", currentCluster_, clustersCount_);
     mCurrentCluster = currentCluster_;
     mClustersCount = clustersCount_;
     emit progress();

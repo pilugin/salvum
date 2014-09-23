@@ -52,7 +52,10 @@ Rectangle {
     
     Connections {
         target: wspaceModel
-        onBitmapPathUpdated: bcast.setSource( mediaPath.text, wspaceModel.bitmapPath )
+        onBitmapPathUpdated: {
+            bcast.stop()
+            bcast.setSource( mediaPath.text, wspaceModel.bitmapPath )
+        }          
     }
     
     Rectangle {

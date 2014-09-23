@@ -6,9 +6,12 @@
 #include <jpeg/picojpegdecodr.h>
 #include <jpeg/advancedchecker.h>
 #include <ipcfetch/recieverfetch.h>
+#include <util/ilog.h>
 
 #include <QTimer>
 #include <QtDBus>
+
+using namespace Log;
 
 class DbusDecodeProcessor::Private 
 {
@@ -33,8 +36,13 @@ public:
         t->setInterval(1000);
         t->start();
         
+        QTimer *t2 = new QTimer(parent);
+        QObject::connect(t2, SIGNAL(timeout()), parent, SLOT(checkDbus()) );
+        t2->setInterval(5000);
+        t2->start();
+        
         // init
-        controller->setEverybody(fetch, check, decodr);
+        controller->setEverybody(fetch, check, decodr);               
     }
     
     org::salvum::DecodrCtrl *dbus;
@@ -68,8 +76,18 @@ void DbusDecodeProcessor::onExit()
 
 void DbusDecodeProcessor::onStart(int clusterNo, const QString &shmemPath)
 {
-    qDebug()<<__FUNCTION__<<clusterNo<<shmemPath;
+    Msg("START %s %08X\n", shmemPath.toUtf8().data(), clusterNo);
+    Session(QString().sprintf("%s.%08X", shmemPath.toUtf8().data(), clusterNo));
+    Msg("START %08X\n", clusterNo);
     
     m_d->fetch->init(shmemPath.toUtf8().data());
     m_d->controller->run(clusterNo);
 }
+
+void DbusDecodeProcessor::checkDbus()
+{
+    if (!m_d->dbus->isValid())
+        onExit();
+    Msg("##CHECK DBUS-%s\n", m_d->dbus->isValid() ? "Valid" : "NOT Valid");
+}
+

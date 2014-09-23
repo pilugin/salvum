@@ -18,6 +18,7 @@ signals:
 private slots:
     void onExit();        
     void onStart(int clusterNo, const QString &shmemPath);
+    void checkDbus();
     
 private:
     class Private;
