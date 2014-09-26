@@ -20,7 +20,7 @@ Rectangle {
         id: clustersDecodedCaption
         anchors { left: preview.right; top: clusterCaption.bottom; right: parent.right }
         color: "gray"
-        text: "#C: " + clustersDecoded
+        text: "#C: " + clustersDecoded + " " + status
     }
     
     ProgressBar {

@@ -179,7 +179,7 @@ bool RecieverFetch::process(const BroadcastMessage &message)
     }
 
     // process
-    if (message.status == AtEnd) {     
+    if (message.status == AtEnd || message.clusters.size() == 0) {     
         mRecvClusters.enqueue( qMakePair((int)Fetch::InvalidClusterNo, QByteArray() ) );
         Msg("BCAST:AtEnd");
         
@@ -194,9 +194,7 @@ bool RecieverFetch::process(const BroadcastMessage &message)
 
         // if rewind was called, skip bad clusters
         if (mWaitForCluster != Fetch::InvalidClusterNo) {
-            Msg("skip until %08X", mWaitForCluster);
-            if (message.clusters.size()>0)
-                Msg(". Current=%08X", message.clusters[0].clusterNo);
+            Msg("skip until %08X. Current=%08X\n", mWaitForCluster, message.clusters[0].clusterNo);
                 
             for (; i<message.clusters.size(); ++i) 
                 if (message.clusters[i].clusterNo == mWaitForCluster) {

@@ -17,13 +17,13 @@ bool FileLogger::setSession(const QString &session)
         qDebug()<<"Failed to create dir"<<mOutputDir;
         return false;
     }
-    
+
     if (mOut.isOpen())
         mOut.close();
 
     mOut.setFileName(QString("%1/%2.log").arg(mOutputDir, session).toAscii());
     if (!mOut.open(QFile::WriteOnly | QFile::Truncate
-//                   | QFile::Unbuffered
+                   | QFile::Unbuffered
                    )) {
         qDebug()<<mOut.errorString();
         return false;

@@ -12,7 +12,7 @@
 <node name="/">
     <interface name="org.salvum.DecodrCtrl">
     
-        <method name="atEnd">
+        <method name="fetchAtEnd">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
 
             <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="Common::DecodedClusters"/>
@@ -23,6 +23,12 @@
             <arg type="a(iii)" name="decodedClusters" direction="in"/>
             <arg type="a(iiai)" name="rejectedClusters" direction="in"/>
             <arg type="(iiai)" name="pixmap" direction="in"/>
+        </method>
+        
+        <method name="decodingEnd">
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+        
+            <arg type="b" name="success" direction="in"/>
         </method>
         
         <method name="thumbnailCreated">
@@ -48,7 +54,7 @@
             <arg type="s" name="shmemPath" direction="out"/>
         </signal>                
 
-        <signal name="resume"/>
+<!--        <signal name="resume"/> -->
 
         <signal name="baseline">
             <arg type="i" name="clusterNo" direction="out"/>

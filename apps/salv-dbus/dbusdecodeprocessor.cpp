@@ -28,7 +28,7 @@ public:
         QObject::connect(dbus, SIGNAL(start(int,QString)), parent, SLOT(onStart(int,QString)) );
         QObject::connect(dbus, SIGNAL(baseline(int)), check, SLOT(baseline(int)) );
         QObject::connect(check, SIGNAL(atEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)),
-                        dbus, SLOT(atEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)) );
+                        dbus, SLOT(fetchAtEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)) );
 
         QTimer *t = new QTimer(parent);
         QObject::connect(t, SIGNAL(timeout()), dbus, SLOT(heartbeat()) );
@@ -67,9 +67,12 @@ DbusDecodeProcessor::~DbusDecodeProcessor()
 
 void DbusDecodeProcessor::onExit()
 {
+    Msg("EXITING..\n");
+    // it can possibly wait in 2 states: fetch and check.    
     if (m_d->check->isWaiting())
         m_d->check->breakEventLoop();
-    m_d->fetch->exit();
+        
+    m_d->fetch->exit();        
 
     emit exitApp();
 }
@@ -82,13 +85,17 @@ void DbusDecodeProcessor::onStart(int clusterNo, const QString &shmemPath)
     
     m_d->fetch->init(shmemPath.toUtf8().data());
     m_d->controller->run(clusterNo);
+    
+    Msg("END.\n");
+    onExit();
+    m_d->dbus->decodingEnd(m_d->controller->success());
 }
 
 void DbusDecodeProcessor::checkDbus()
 {
+//    Msg("##CHECK DBUS-%s\n", m_d->dbus->isValid() ? "Valid" : "NOT Valid");
+    
     if (!m_d->dbus->isValid())
-        onExit();
-        
-    Msg("##CHECK DBUS-%s\n", m_d->dbus->isValid() ? "Valid" : "NOT Valid");
+        onExit();        
 }
 

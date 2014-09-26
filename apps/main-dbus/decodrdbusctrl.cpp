@@ -4,19 +4,20 @@
 DecodrDbusCtrl::DecodrDbusCtrl(QObject *parent)
 : QObject(parent)
 , mHeartbeatTimer(new QTimer(this))
-, mIsConnected(false)
-, mIsStarted(false)
 , mCluster(0)
 , mClustersDecoded(0)
 , mBlocksDecoded(0)
 , mBlocksTotal(0)
+, mStatus(Initial)
 {
     new DecodrCtrlAdaptor(this);
     
     mHeartbeatTimer->setSingleShot(true);
     mHeartbeatTimer->setInterval(5000);
-    connect(mHeartbeatTimer, SIGNAL(timeout()), this, SIGNAL(noHeartbeat()) );
+    connect(mHeartbeatTimer, SIGNAL(timeout()), this, SLOT(onNoHeartbeat()) );//SIGNAL(noHeartbeat()) );
     mHeartbeatTimer->start();
+    
+//    connect(this, SIGNAL(noHeartbeat()), this, SLOT(onNoHeartbeat()) );
 }
 
 DecodrDbusCtrl::~DecodrDbusCtrl()
@@ -25,19 +26,20 @@ DecodrDbusCtrl::~DecodrDbusCtrl()
 
 void DecodrDbusCtrl::heartbeat()
 {
-    if (!mIsConnected) {
-        mIsConnected = true;
-        emit isConnectedChanged();
+    if (mStatus == Initial) {
+        mStatus = Connected;
+        emit statusChanged();
+        emit connected();
     }
     mHeartbeatTimer->start();
 }
 
 void DecodrDbusCtrl::sendStart(int clusterNo, const QString &shmemPath)
 {
-    if (!mIsStarted) {
-        mIsStarted = true;
+    if (mStatus == Connected) {
+        mStatus = Started;
         mCluster = clusterNo;
-        emit isStartedChanged();
+        emit statusChanged();
     }
     emit start(clusterNo, shmemPath);
 }
@@ -48,4 +50,35 @@ void DecodrDbusCtrl::progress(int clustersDecoded, int blocksDecoded, int blocks
     mBlocksDecoded = blocksDecoded;
     mBlocksTotal = blocksTotal;
     emit progressChanged();
+    
+    mStatus = Decoding;
+    emit statusChanged();
+}
+
+void DecodrDbusCtrl::onNoHeartbeat()
+{
+    mStatus = Disconnected;
+    emit statusChanged();
+}
+
+void DecodrDbusCtrl::decodingEnd(bool success)
+{
+    mStatus = success ? DecodingSuccess : DecodingFailed;
+    emit statusChanged();
+    disconnect(mHeartbeatTimer, 0, this, 0);
+}
+
+QString DecodrDbusCtrl::status() const
+{
+    switch (mStatus) {
+    case Initial:   return "initial";
+    case Connected: return "connected";
+    case Started:   return "started";
+    case Decoding:  return "decoding";
+    case Disconnected:      return "disconnected";
+    case DecodingFailed:    return "decodingFailed";
+    case DecodingSuccess:   return "decodingSuccess";
+    default:    return QString();
+        
+    }
 }

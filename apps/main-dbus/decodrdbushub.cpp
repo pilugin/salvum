@@ -43,7 +43,7 @@ QDBusObjectPath DecodrDbusHub::aquireClient(int clientId)
         
         mHeartbeatMapper->setMapping(object, clientId);
         connect(object, SIGNAL(noHeartbeat()), mHeartbeatMapper, SLOT(map()) );
-        connect(object, SIGNAL(isConnectedChanged()), this, SLOT(decodrConnected()) );
+        connect(object, SIGNAL(connected()), this, SLOT(decodrConnected()) );
 
         return path;
     } else

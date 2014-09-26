@@ -11,7 +11,7 @@ Rectangle {
         
         delegate: DecodrDelegate {
             width: 150
-            height: 40
+            height: 40            
         }
     }
     
