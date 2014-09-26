@@ -8,7 +8,7 @@ class SalvDbusCheck : public Core::Check
 {
     Q_OBJECT
 public:
-    SalvDbusCheck(QObject *parent =nullptr);    
+    explicit SalvDbusCheck(QObject *parent);    
     ~SalvDbusCheck();
     
     bool isWaiting() const;

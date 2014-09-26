@@ -14,11 +14,13 @@ include(../../src/common/colorgcc.pri)
 SOURCES += \
     main.cpp \
     salvdbuscheck.cpp \
-    dbusdecodeprocessor.cpp
+    dbusdecodeprocessor.cpp \
+    eventlooprecieverfetch.cpp
 
 HEADERS += \
     salvdbuscheck.h \
-    dbusdecodeprocessor.h
+    dbusdecodeprocessor.h \
+    eventlooprecieverfetch.h
     
 RESOURCES +=
 

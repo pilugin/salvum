@@ -31,6 +31,13 @@ protected:
     bool process(const BroadcastMessage &msg);
     void duringReg();
     void duringUnreg();
+    
+    void setExiting(bool exiting)   { mExiting = exiting; }
+    bool exiting() const            { return mExiting; }
+    
+    /// this routine is called from main thread, while doFetch is waiting. Use it for eventLoop, etc
+    /// @return time in milliseconds to wait for
+    virtual int waiting4Fetch(); 
 
 private:
     SharedFeedback                  *mFeedback;

@@ -1,11 +1,11 @@
 #include "dbusdecodeprocessor.h"
 #include "org.salvum.DecodrCtrl.h"
 #include "salvdbuscheck.h"
+#include "eventlooprecieverfetch.h"
 
 #include <core/controller.h>
 #include <jpeg/picojpegdecodr.h>
 #include <jpeg/advancedchecker.h>
-#include <ipcfetch/recieverfetch.h>
 #include <util/ilog.h>
 
 #include <QTimer>
@@ -20,13 +20,12 @@ public:
     : dbus(new org::salvum::DecodrCtrl(service, path, connection, parent))
     
     , controller(new Core::Controller(parent))
-    , fetch(new IPCFetch::RecieverFetch(parent))    
+    , fetch(new EventLoopRecieverFetch(parent))    
     , check(new SalvDbusCheck(parent))
     , decodr(new Jpeg::PicoJpegDecodr(new Jpeg::AdvancedChecker, parent))
     {
         QObject::connect(dbus, SIGNAL(exit()), parent, SLOT(onExit()) );
         QObject::connect(dbus, SIGNAL(start(int,QString)), parent, SLOT(onStart(int,QString)) );
-//        QObject::connect(dbus, SIGNAL(resume()), parent, SLOT(onResume()) ); <<=== do we really need this??
         QObject::connect(dbus, SIGNAL(baseline(int)), check, SLOT(baseline(int)) );
         QObject::connect(check, SIGNAL(atEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)),
                         dbus, SLOT(atEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)) );
@@ -48,7 +47,7 @@ public:
     org::salvum::DecodrCtrl *dbus;
     
     Core::Controller        *controller;
-    IPCFetch::RecieverFetch *fetch;
+    EventLoopRecieverFetch  *fetch;
     SalvDbusCheck           *check;
     Jpeg::PicoJpegDecodr    *decodr;
 };
@@ -70,6 +69,7 @@ void DbusDecodeProcessor::onExit()
 {
     if (m_d->check->isWaiting())
         m_d->check->breakEventLoop();
+    m_d->fetch->exit();
 
     emit exitApp();
 }
@@ -88,6 +88,7 @@ void DbusDecodeProcessor::checkDbus()
 {
     if (!m_d->dbus->isValid())
         onExit();
+        
     Msg("##CHECK DBUS-%s\n", m_d->dbus->isValid() ? "Valid" : "NOT Valid");
 }
 

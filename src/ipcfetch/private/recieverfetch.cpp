@@ -82,7 +82,7 @@ bool RecieverFetch::rewind(int clusterNo)
 
     Msg("\nRECV:rewind[%08X]", clusterNo);
 
-    if (!mRegistered) {
+    if (!mRegistered && !mRecvThread) {
         mRecvThread = new RecvThread(*this);
         mRecvThread->start();
         mWaitForCluster = clusterNo;
@@ -127,6 +127,7 @@ void RecieverFetch::doFetch(int &clusterNo, QByteArray &cluster)
     Msg("\n");
 
     QMutexLocker l( &mInternMtx );
+    clusterNo = InvalidClusterNo;
 
     if (mRecvClusters.size() < Clusters::capacity()/4) {
         Msg("q");
@@ -134,7 +135,13 @@ void RecieverFetch::doFetch(int &clusterNo, QByteArray &cluster)
     }
     while (mRecvClusters.size() == 0) {
         Msg("z");
-        mInternCnd.wait( &mInternMtx ); 
+        int to = waiting4Fetch();
+        if (to < 0) {
+            mAtEnd = true;
+            mExiting = true;
+            return;
+        }
+        mInternCnd.wait( &mInternMtx, to ); 
     }
 
     clusterNo = mRecvClusters.head().first;
@@ -150,6 +157,11 @@ void RecieverFetch::doFetch(int &clusterNo, QByteArray &cluster)
         mAtEnd = false;
         Msg("[%08X]", clusterNo);
     }
+}
+
+int RecieverFetch::waiting4Fetch()
+{
+    return 1000;
 }
 
 bool RecieverFetch::process(const BroadcastMessage &message)
@@ -176,13 +188,16 @@ bool RecieverFetch::process(const BroadcastMessage &message)
         Msg("BCAST:About2Quit");
         mExiting = true;
 
-    } else {
+    } else if (!mExiting) {
 
         int i=0;
 
         // if rewind was called, skip bad clusters
         if (mWaitForCluster != Fetch::InvalidClusterNo) {
             Msg("skip until %08X", mWaitForCluster);
+            if (message.clusters.size()>0)
+                Msg(". Current=%08X", message.clusters[0].clusterNo);
+                
             for (; i<message.clusters.size(); ++i) 
                 if (message.clusters[i].clusterNo == mWaitForCluster) {
                     mWaitForCluster = Fetch::InvalidClusterNo;
