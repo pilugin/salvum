@@ -73,7 +73,7 @@ void SalvObjectController::doProcessDecode(QString filename, const QList<int> &c
         qDebug() << "\t"<<i.clusterNo<<"     "<<i.blockBegin<<"~"<<i.blockEnd;
         
 
-    decodrAtEnd(success, check->res(), RejectedClusters(), decodr->image());
+    fetchAtEnd(success, check->res(), RejectedClusters(), decodr->image());
     emit processEnd();
     
     int lastBlock = check->res().size()>0 ? check->res().back().blockEnd : 0;    

@@ -12,7 +12,7 @@ QImage image(const Pixmap &pixmap)
     int i=0;
     for (int y=0; y<res.height(); ++y)
         for (int x=0; x<res.width(); ++x)
-	    res.setPixel(x, y, pixmap.pixels[i++]);
+            res.setPixel(x, y, pixmap.pixels[i++]);
     
     return res;
 }
@@ -24,7 +24,7 @@ Pixmap dbusPixmap(const QImage &image)
     res.height = image.height();
     for (int y=0; y<image.height(); ++y)
         for (int x=0; x<image.width(); ++x)
-    	    res.pixels.push_back(image.pixel(x, y));
+            res.pixels.push_back(image.pixel(x, y));
     
     return res;
 }
@@ -54,6 +54,26 @@ QImage highlight(const QImage &base, int blockEnd)
     }
     
     return res;
+}
+
+QPair<QRect, QRect> shade(const QImage &base, int blockEnd)
+{
+    int blockX = (blockEnd +1) % (base.width() / 8);
+    int blockY = (blockEnd +1) / (base.width() / 8);
+    
+    QPair<QRect, QRect> rects;
+    
+    rects.first.setLeft( blockX *8 );
+    rects.first.setTop( blockY *8 );
+    rects.first.setRight( base.width()-1 );
+    rects.first.setBottom( base.height()-1 );
+    
+    rects.second.setLeft(0);
+    rects.second.setTop( (blockY +1) *8 );
+    rects.second.setRight( base.width()-1 );
+    rects.second.setBottom( base.height()-1 );
+    
+    return rects;
 }
 
 } // eons Jpeg

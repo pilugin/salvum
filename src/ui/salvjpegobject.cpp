@@ -21,7 +21,7 @@ SalvJpegObject::SalvJpegObject(int id_, const QString &imageProviderPrefix, QObj
     connect(mSubmodel,  SIGNAL(baselineSelected(int)),                      this,   SLOT(baselineSelected(int)) );
 }
 
-void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const QImage &image)
+void SalvJpegObject::fetchAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const QImage &image)
 {
     emit inProgressChanged(mInProgress = false);
     emit completeChanged(mComplete = complete);
@@ -33,9 +33,9 @@ void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedCl
     mSubmodel->reset(decodedClusters, rejectedClusters);
 }
 
-void SalvJpegObject::decodrAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const Pixmap &pixmap)
+void SalvJpegObject::fetchAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const Pixmap &pixmap)
 {
-    decodrAtEnd(complete, decodedClusters, rejectedClusters, Jpeg::image(pixmap));
+    fetchAtEnd(complete, decodedClusters, rejectedClusters, Jpeg::image(pixmap));
 }
 
 QString SalvJpegObject::imageId() const
@@ -61,6 +61,7 @@ QObject *SalvJpegObject::decodedClusters() const
 void SalvJpegObject::currentClusterChanged(int clusterNo, int blockBegin, int blockEnd)
 {    
     emit shadeChanged(mShadeId = QString("%1/shade/%2/%3").arg(mImageProviderPrefix).arg(mId).arg(blockEnd) );
+    mShadeBlockEnd = blockEnd;
 }
 
 QImage SalvJpegObject::shade(int blockEnd) const
@@ -71,6 +72,21 @@ QImage SalvJpegObject::shade(int blockEnd) const
     }
     
     return mShade.image;
+}
+
+QList<int> SalvJpegObject::shadePath() const
+{
+    QPair<QRect,QRect> shade = Jpeg::shade(mImage, mShadeBlockEnd);
+    
+    QList<int> points = {
+            shade.first.left(),     shade.first.top(),
+            shade.first.right(),    shade.first.top(),
+            shade.first.right(),    shade.first.bottom(),
+            shade.second.left(),    shade.second.bottom(),
+            shade.second.left(),    shade.second.top(),
+            shade.second.right(),   shade.second.top()  
+            };
+    return points;
 }
 
 void SalvJpegObject::baselineSelected(int clusterNo)

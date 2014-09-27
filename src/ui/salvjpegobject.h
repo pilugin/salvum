@@ -17,6 +17,7 @@ class SalvJpegObject : public QObject
     Q_PROPERTY(bool complete                READ complete           NOTIFY completeChanged)
     Q_PROPERTY(QString image                READ imageId            NOTIFY imageChanged)    
     Q_PROPERTY(QString shade                READ shadeId            NOTIFY shadeChanged)
+    Q_PROPERTY(QList<int> shadePath         READ shadePath          NOTIFY shadeChanged)
 //    Q_PROPERTY(int imageWidth               READ imageWidth         NOTIFY imageWidthChanged)
 //    Q_PROPERTY(int imageHeight              READ imageHeight        NOTIFY imageHeight)
     Q_PROPERTY(QObject *decodedClusters     READ decodedClusters    NOTIFY decodedClustersChanged)
@@ -32,6 +33,7 @@ public:
     
     QImage image() const { return mImage; } 
     QImage shade(int blockEnd) const;
+    QList<int> shadePath() const;
     
 signals:
     void idChanged(int); //< never emitted, as id = const
@@ -45,8 +47,8 @@ signals:
 
 public slots:    
     void decodrInProgress();
-    void decodrAtEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
-    void decodrAtEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const QImage &image);
+    void fetchAtEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
+    void fetchAtEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const QImage &image);
     void currentClusterChanged(int clusterNo, int blockBegin, int blockEnd);
     void baselineSelected(int clusterNo);
 
@@ -66,6 +68,7 @@ protected:
         QImage image;
         int blockEnd;
     } mShade;
+    int mShadeBlockEnd;
     
     DecodedClustersModel *mSubmodel;
 };

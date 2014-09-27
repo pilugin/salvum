@@ -50,6 +50,7 @@ private:
         Role_Complete,
         Role_Image,
         Role_Shade,
+        Role_ShadePath,
         Role_DecodedClusters,
     };
     static QHash<int, QByteArray> roleNames_internal();

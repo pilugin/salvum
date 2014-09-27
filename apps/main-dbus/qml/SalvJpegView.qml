@@ -34,11 +34,21 @@ GridView {
             anchors.fill: parent
             source: image
         }
-        Image {
-            //visible: false
+//        Image {
+//            //visible: false
+//            anchors.fill: parent
+//            source: shade
+//        }
+        Item {
             anchors.fill: parent
-            source: shade
+//            Rectangle {
+//                color: "red"
+//                x: 
+//            }
+//            Text { text: shadePath }
+//            Component.onCompleted: console.log(shadePath)
         }
+        
 
         MouseArea {
             anchors.fill: parent

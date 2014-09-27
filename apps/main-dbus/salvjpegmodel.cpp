@@ -23,6 +23,7 @@ QHash<int, QByteArray> SalvJpegModel::roleNames_internal()
         rn.insert(Role_Complete, "complete");
         rn.insert(Role_Image, "image");
         rn.insert(Role_Shade, "shade");
+        rn.insert(Role_ShadePath, "shadePath");
         rn.insert(Role_DecodedClusters, "decodedClusters");
     }
     return rn;
@@ -61,6 +62,8 @@ QVariant SalvJpegModel::data(const QModelIndex &index, int role) const
         return object->shadeId();
     case Role_DecodedClusters:
         return QVariant::fromValue(object->decodedClusters());
+    case Role_ShadePath:
+        return QVariant::fromValue(object->shadePath());
     default:
         return QVariant();
     }
@@ -70,10 +73,9 @@ void SalvJpegModel::decodrClientAdded(int clientId, QDBusObjectPath, DecodrDbusC
 {
     SalvJpegObject *o = new SalvJpegObject(clientId, imageProviderPrefix(), this);
     
-    connect(client, SIGNAL(resume()),   o, SLOT(decodrInProgress()) );
-    connect(client, SIGNAL(start(int)), o, SLOT(decodrInProgress()) );
-    connect(client, SIGNAL(atEndRecv(bool,Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap)), 
-            o,      SLOT(decodrAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap))  );
+    connect(client, SIGNAL(start(int,QString)), o, SLOT(decodrInProgress()) );
+    connect(client, SIGNAL(fetchAtEndRecv(bool,Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap)), 
+            o,      SLOT(fetchAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap))  );
     connect(o,      SIGNAL(baseline(int)),  client, SLOT(sendBaseline(int)) );
     
     connect(o, SIGNAL(inProgressChanged(bool)), this, SLOT(itemUpdated()) );
