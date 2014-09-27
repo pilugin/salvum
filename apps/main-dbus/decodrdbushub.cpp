@@ -2,6 +2,7 @@
 #include <QSignalMapper>
 #include <QProcess>
 #include <QtDebug>
+#include <algorithm>
 
 static const char *s_decodrExeName = "./salvum-decodr";
 
@@ -17,7 +18,7 @@ DecodrDbusHub::DecodrDbusHub(QObject *parent)
         qDebug()<<"Failed to register DecodrHub:/hub";
     }
     
-    connect(mHeartbeatMapper, SIGNAL(mapped(int)), this, SLOT(releaseClient(int)) );
+//    connect(mHeartbeatMapper, SIGNAL(mapped(int)), this, SLOT(releaseClient(int)) );
 }
 
 DecodrDbusHub::~DecodrDbusHub()
@@ -111,3 +112,11 @@ void DecodrDbusHub::startProcessing()
         }
     }
 }
+
+int DecodrDbusHub::getRewindCluster() const
+{
+    qDebug()<<mHeads;
+    auto min = std::min_element(mHeads.begin(), mHeads.end());
+    return min==mHeads.end() ? -1 : *min;
+}
+

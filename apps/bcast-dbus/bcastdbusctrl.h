@@ -16,7 +16,7 @@ public:
     
 public slots:
     Common::Result setSource(const QString &mediaPath, const QString &bitmapPath);
-    void start();
+    void start(int clusterNo);
     void skip(int clusterNo, int length);
     void stop();
     Common::Result saveBitmap(const QString &bitmapPath);    

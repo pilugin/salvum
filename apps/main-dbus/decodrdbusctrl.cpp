@@ -14,10 +14,10 @@ DecodrDbusCtrl::DecodrDbusCtrl(QObject *parent)
     
     mHeartbeatTimer->setSingleShot(true);
     mHeartbeatTimer->setInterval(5000);
-    connect(mHeartbeatTimer, SIGNAL(timeout()), this, SLOT(onNoHeartbeat()) );//SIGNAL(noHeartbeat()) );
+    connect(mHeartbeatTimer, SIGNAL(timeout()), this, SIGNAL(noHeartbeat()) );
     mHeartbeatTimer->start();
     
-//    connect(this, SIGNAL(noHeartbeat()), this, SLOT(onNoHeartbeat()) );
+    connect(this, SIGNAL(noHeartbeat()), this, SLOT(onNoHeartbeat()) );
 }
 
 DecodrDbusCtrl::~DecodrDbusCtrl()
@@ -59,6 +59,7 @@ void DecodrDbusCtrl::onNoHeartbeat()
 {
     mStatus = Disconnected;
     emit statusChanged();
+    emit disconnected();
 }
 
 void DecodrDbusCtrl::decodingEnd(bool success)

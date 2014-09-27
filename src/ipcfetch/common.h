@@ -15,7 +15,7 @@ struct Cluster
     ClusterData cluster; 
 };
 
-typedef Array<Cluster, 1000> Clusters;
+typedef Array<Cluster, 1024> Clusters;
 
 enum BroadcastStatus
 {
@@ -27,26 +27,8 @@ enum BroadcastStatus
 struct BroadcastMessage
 {
     BroadcastStatus status;
-    int             rewind;
     Clusters        clusters;
 };
-
-
-typedef Array<int, 4000> SkipClusters;
-
-typedef Array< std::pair<int, int>, 20> RewindClusters;
-
-struct Feedback
-{
-    SkipClusters    skip;
-};
-
-enum FeedbackSync {
-    BCAST = 0,  //< SharedFeedback broadcast condvar
-    RECV = 1    //< SharedFeedback reciever condvar
-};
-
-typedef IPC::SynchroMem<Feedback, 1, 2> SharedFeedback;
 
 } // ns IPCFetch
 

@@ -4,6 +4,7 @@
 #include <QtDebug>
 
 #include <util/filelogger.h>
+#include <util/simplelogger.h>
 #include <util/defaultsettings.h>
 
 int main(int argc, char **argv)
@@ -11,7 +12,9 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
     
     FileLogger l("res");
+//    SimpleLogger l;
     DefaultSettings s;
+    Log::Session("bcast");
 
     BcastDbusCtrl bcastCtrl;
     

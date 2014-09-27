@@ -21,15 +21,17 @@ class Broadcast : public RdWr::Writer<BroadcastMessage>
 public:
     Broadcast(const char *shmemName, Core::Fetch *fetch =nullptr);
     
-    void write(Core::Fetch *fetch =nullptr);
+    void write(Core::Fetch *fetch =nullptr, int clusterNo =0);
 
     QByteArray dumpStats();
     QPair<bool, QString> saveBitmap(const QString &filename);
+    void rewind(int clusterNo);
 protected:   
     enum InternalOperation { 
         DumpStats = Super::Custom,
         SaveBitmap,
-        Custom
+        Custom,
+        Rewind
     };
     bool processInternalMsg(int internalMsg);
 
@@ -44,6 +46,7 @@ private:
     bool            mSaveBitmapSuccess;
     QString         mSaveBitmapError;
     QString         mSaveBitmapFilename;
+    int             mRewind;
 };
 
 } // ns IPCFetch

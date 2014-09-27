@@ -13,6 +13,8 @@
         
         <method name="start">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+            
+            <arg type="i" name="clusterNo" direction="in"/>
         </method>
 
         <method name="skip">

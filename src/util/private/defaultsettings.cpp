@@ -7,7 +7,8 @@ QVariant DefaultSettings::get(int field) const
 {
     switch (field) {
     case ClusterSize:       return 4096;
-    case GoodClusters:      return QByteArray("1+JT"); // except 0GgRrU
+//    case GoodClusters:      return QByteArray("1+JT"); // except 0GgRrU
+    case GoodClusters:      return QByteArray("1+JTGg"); //Kill it
     case UsedCluster:       return 'U';
     case ZeroCluster:       return '0';
     case JpegHead:          return 'J';

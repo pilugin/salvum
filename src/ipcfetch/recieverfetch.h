@@ -24,8 +24,6 @@ public:
     void fastfwd();
     bool atEnd() const;
 
-    bool isValid() const;
-    
 protected:
     void doFetch(int &clusterNo, QByteArray &cluster);
     bool process(const BroadcastMessage &msg);
@@ -40,7 +38,7 @@ protected:
     virtual int waiting4Fetch(); 
 
 private:
-    SharedFeedback                  *mFeedback;
+//    SharedFeedback                  *mFeedback;
     int                             mWaitForCluster; //< set by rewind()
     bool                            mRegistered;
     bool                            mAtEnd;

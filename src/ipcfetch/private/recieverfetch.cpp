@@ -69,11 +69,6 @@ RecieverFetch::~RecieverFetch()
     }
 }
 
-bool RecieverFetch::isValid() const
-{
-    return mFeedback != nullptr && Reader<BroadcastMessage>::isValid();
-}
-
 bool RecieverFetch::rewind(int clusterNo)
 {
     QMutexLocker l( &mInternMtx );
@@ -96,8 +91,9 @@ void RecieverFetch::duringReg()
 
     mRegistered = true;
 
-    if (sharedMem().regCount == 1 && sharedData().rewind == Fetch::InvalidClusterNo) 
-        sharedData().rewind = mWaitForCluster;
+//    if (sharedMem().regCount == 1 && sharedData().rewind == InvalidClusterNo) 
+//    if (mWaitForCluster != InvalidClusterNo && sharedData().rewind > mWaitForCluster)
+//        sharedData().rewind = mWaitForCluster;
 }
 
 void RecieverFetch::duringUnreg()
@@ -200,7 +196,7 @@ bool RecieverFetch::process(const BroadcastMessage &message)
                 if (message.clusters[i].clusterNo == mWaitForCluster) {
                     mWaitForCluster = Fetch::InvalidClusterNo;
                     break;
-                }
+                }            
         }
 
         Msg("copy %d", message.clusters.size() -i);

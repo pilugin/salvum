@@ -84,6 +84,8 @@ void DbusDecodeProcessor::onStart(int clusterNo, const QString &shmemPath)
     Msg("START %08X\n", clusterNo);
     
     m_d->fetch->init(shmemPath.toUtf8().data());
+    
+    m_d->dbus->progress(0, -1, -1);
     m_d->controller->run(clusterNo);
     
     Msg("END.\n");

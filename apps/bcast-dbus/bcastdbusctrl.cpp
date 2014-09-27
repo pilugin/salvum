@@ -60,6 +60,8 @@ bool BcastDbusCtrl::isValid() const
 
 Result BcastDbusCtrl::setSource(const QString &mediaPath, const QString &bitmapPath)
 {
+    qDebug()<<"qdbus:SET_SOURCE "<<mediaPath<<bitmapPath<<"-> ";
+
     Result r;
     
     if (m_d->thread.isRunning()) {
@@ -77,10 +79,12 @@ Result BcastDbusCtrl::setSource(const QString &mediaPath, const QString &bitmapP
     return r;
 }
 
-void BcastDbusCtrl::start()
+void BcastDbusCtrl::start(int clusterNo)
 {
+    qDebug("qdbus:START %08X->", clusterNo);
+
     if (!m_d->thread.isRunning()) {
-        m_d->thread.start();
+        m_d->thread.startBcast(clusterNo);
     }
 }
 
@@ -94,6 +98,8 @@ void BcastDbusCtrl::skip(int clusterNo, int length)
 
 void BcastDbusCtrl::stop()
 {
+    qDebug()<<"qdbus:STOP -> ";
+    
     if (m_d->thread.isRunning()) 
         m_d->bcast.stop();    
 }

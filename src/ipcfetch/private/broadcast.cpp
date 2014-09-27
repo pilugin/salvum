@@ -17,28 +17,24 @@ Broadcast::Broadcast(const char *shmemName, Fetch *fetch)
 : Writer< BroadcastMessage >(shmemName)
 , mFetch(fetch)
 {
-    sharedData().rewind = Fetch::InvalidClusterNo;
 }
 
-void Broadcast::write(Fetch *fetch)
+void Broadcast::write(Fetch *fetch, int clusterNo)
 {
+    Msg("BCAST:write(%08X)\n", clusterNo);
+    
     if (fetch)
         mFetch = fetch;
 
-    mFetch->rewind(0);
-    mFetch->fastfwd();
+    mFetch->rewind(clusterNo);
+    if (clusterNo == 0)
+        mFetch->fastfwd();
 
     Writer< BroadcastMessage > ::write();
 }
 
 bool Broadcast::prepare(BroadcastMessage &message)
 {
-    if ( message.rewind != Fetch::InvalidClusterNo && sharedMem().regCount == 1) {
-        Msg("BCAST:prepare rewind(%08X)\n", message.rewind );
-        mFetch->rewind( message.rewind );
-        message.rewind = Fetch::InvalidClusterNo;
-    }
-
     if ( mFetch->atEnd() ) {
         Msg("BCAST:prepare atEnd\n");
 
@@ -97,6 +93,12 @@ QPair<bool, QString> Broadcast::saveBitmap(const QString &filename)
     return qMakePair(mSaveBitmapSuccess, mSaveBitmapError);
 }
 
+void Broadcast::rewind(int clusterNo)
+{
+    mRewind = clusterNo;
+    interrupt(Rewind);
+}
+
 bool Broadcast::processInternalMsg(int internalMsg)
 {
     switch (internalMsg) {
@@ -140,6 +142,10 @@ bool Broadcast::processInternalMsg(int internalMsg)
             }
         }
         return true;
+    case Rewind:
+        Msg("BCAST:processInternalMsg rewind(%08X)\n", mRewind );
+        mFetch->rewind( mRewind );
+            
     default:
         return Super::processInternalMsg(internalMsg);
     }

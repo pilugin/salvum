@@ -41,7 +41,7 @@ signals:
     void statusChanged();
     
     void connected();
-//    void disconnected();
+    void disconnected();
     
 private slots:
     void fetchAtEnd(bool complete, const Common::DecodedClusters &decodedClusters, 

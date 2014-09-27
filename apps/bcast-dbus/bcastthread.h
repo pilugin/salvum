@@ -13,11 +13,12 @@ class BcastThread : public QThread
 public:
     BcastThread(Bcast &bcast, QObject *parent =nullptr); 
     
-    void startBcast(Core::Fetch *fetch =nullptr);
+    void startBcast(int clusterNo, Core::Fetch *fetch =nullptr);
 protected:
     void run();
     
     Core::Fetch *mFetch;
+    int mClusterNo;
     Bcast &mBcast;
 };
 

@@ -32,12 +32,14 @@ BitmapInfo processBitmap(const QByteArray &bm, QList<int> &jpegHeads, QList<int>
         } else {
             if (c == zero)
                 ++r.zeros;
-           else if (c == goodHead) {
-                ++r.goodHeads;
-                goodHeads.push_back(i);
-           } else if (c == good)
+            else if (c == good)
                 ++r.goods;                    
             prevGood = false;
+        }
+        
+        if (c == goodHead) {
+            ++r.goodHeads;
+            goodHeads.push_back(i);
         }
                         
     } // for

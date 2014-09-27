@@ -31,9 +31,6 @@ private:
     void doEmitProgress();
     void doEmitBitmapInfo();
     void postRead(const IPCFetch::BroadcastMessage &message);
-    
-
-    
 
     struct { int clusterNo, length; } mSkip;
     struct { int currentCluster, clusterCount; } mProgress;

@@ -19,7 +19,7 @@ public:
     ~DecodrDbusHub();
     
     QList<int> clientIds() const { return mClients.keys(); } 
-    
+    Q_INVOKABLE int getRewindCluster() const;
     
 public slots:
     QDBusObjectPath aquireClient(int clientId);

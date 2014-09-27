@@ -54,8 +54,6 @@
             <arg type="s" name="shmemPath" direction="out"/>
         </signal>                
 
-<!--        <signal name="resume"/> -->
-
         <signal name="baseline">
             <arg type="i" name="clusterNo" direction="out"/>
         </signal>
