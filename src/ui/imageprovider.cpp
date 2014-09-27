@@ -15,6 +15,26 @@ ImageProviderAdaptor::~ImageProviderAdaptor()
     }
 }
 
+void ImageProviderAdaptor::owned(const QString &provName, const QString &name, ImageProvider *owner)
+{ 
+    mProvName=provName; 
+    mName=name; 
+    mOwner=owner; 
+}
+
+void ImageProviderAdaptor::disowned() 
+{ 
+    mProvName.clear();
+    mName.clear(); 
+    mOwner=nullptr; 
+}
+
+QString ImageProviderAdaptor::imagePrefix() const
+{
+    return QString("image://%1/%2/").arg(mProvName, mName);
+}
+
+
 ///
 
 ImageProvider::ImageProvider()
@@ -36,7 +56,7 @@ void ImageProvider::addAdaptor(const QString &name, ImageProviderAdaptor *adapto
         return;
     }
     mAdaptors.insert(name, adaptor);
-    adaptor->owned(name, this);
+    adaptor->owned(mName, name, this);
 }
 
 void ImageProvider::removeAdaptor(const QString &name)

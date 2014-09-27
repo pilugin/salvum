@@ -23,7 +23,7 @@ bool FileLogger::setSession(const QString &session)
 
     mOut.setFileName(QString("%1/%2.log").arg(mOutputDir, session).toAscii());
     if (!mOut.open(QFile::WriteOnly | QFile::Truncate
-                   | QFile::Unbuffered
+//                   | QFile::Unbuffered
                    )) {
         qDebug()<<mOut.errorString();
         return false;

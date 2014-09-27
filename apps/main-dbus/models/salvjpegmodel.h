@@ -3,12 +3,13 @@
 
 #include <QAbstractListModel>
 #include "decodrdbusctrl.h"
+#include <ui/imageprovider.h>
 
 namespace Ui {
 class SalvJpegObject;
 }
 
-class SalvJpegModel : public QAbstractListModel
+class SalvJpegModel : public QAbstractListModel, public Ui::ImageProviderAdaptor
 {
     Q_OBJECT
     Q_PROPERTY(QObject *currentSalv READ currentSalv NOTIFY currentSalvChanged)
@@ -31,6 +32,8 @@ public:
     static QString imageProviderName();
 
     void setCurrentSalvIndex(int index);
+
+    QImage get(const QString &image) const;
 
 signals:
     void currentSalvChanged(QObject *salv);

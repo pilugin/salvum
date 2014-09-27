@@ -23,11 +23,13 @@ public:
     
     virtual QImage get(const QString &image) const =0;
     QString name() const { return mName; }
+    QString imagePrefix() const;
 private:
-    void owned(const QString &name, ImageProvider *owner) { mName=name; mOwner=owner; }
-    void disowned() { mName.clear(); mOwner=nullptr; }
+    void owned(const QString &provName, const QString &name, ImageProvider *owner);
+    void disowned();
 
     QString mName;
+    QString mProvName;
     ImageProvider *mOwner;            
 };
 
@@ -37,12 +39,14 @@ public:
     ImageProvider();
     ~ImageProvider();
     
+    void setName(const QString &name) { mName=name; }
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
     
     void addAdaptor(const QString &name, ImageProviderAdaptor *adaptor);
     void removeAdaptor(const QString &name);
 private:
     QMap<QString, ImageProviderAdaptor *> mAdaptors;
+    QString mName;
 };
 
 }

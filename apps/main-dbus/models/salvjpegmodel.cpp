@@ -63,7 +63,7 @@ QVariant SalvJpegModel::data(const QModelIndex &index, int role) const
     case Role_DecodedClusters:
         return QVariant::fromValue(object->decodedClusters());
     case Role_ShadePath:
-        return QVariant::fromValue(object->shadePath());
+//        return QVariant::fromValue(object->shadePath());
     default:
         return QVariant();
     }

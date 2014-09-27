@@ -15,33 +15,31 @@ include(../../src/common/colorgcc.pri)
 
 SOURCES += \
     main.cpp \
+    supervisor.cpp \
     decodrdbushub.cpp \
     decodrdbusctrl.cpp \
-    salvjpegmodel.cpp \
-    salvjpegimageprovider.cpp \
     bcastdbuscontroller.cpp \
-    jpegheadsmodel.cpp \
-    customclustersmodel.cpp \
-    selectedheadsmodel.cpp \
-    workspacemodel.cpp \
-    supervisor.cpp
+    models/jpegheadsmodel.cpp \
+    models/salvjpegmodel.cpp \
+    models/customclustersmodel.cpp \
+    models/selectedheadsmodel.cpp \
+    models/workspacemodel.cpp
 
 HEADERS += \
+    supervisor.h \
+    supervisor_p.h \
     decodrdbushub.h \
     decodrdbusctrl.h \
-    salvjpegmodel.h \
-    salvjpegimageprovider.h \
     bcastdbuscontroller.h \
-    jpegheadsmodel.h \
-    customclustersmodel.h \
-    selectedheadsmodel.h \
-    workspacemodel.h \
-    supervisor.h \
-    supervisor_p.h
+    models/salvjpegmodel.h \
+    models/jpegheadsmodel.h \
+    models/customclustersmodel.h \
+    models/selectedheadsmodel.h \
+    models/workspacemodel.h 
 
 OTHER_FILES += \
     qml/SalvJpegView.qml \
-    qml/Main.qml
+    qml/Main.qml 
 
 RESOURCES += \
     resources.qrc
