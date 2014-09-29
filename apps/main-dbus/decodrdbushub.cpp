@@ -1,5 +1,4 @@
 #include "decodrdbushub.h"
-//#include <ui/imageprovider.h>
 #include <QProcess>
 #include <QtDebug>
 #include <algorithm>

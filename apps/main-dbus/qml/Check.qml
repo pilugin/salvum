@@ -9,6 +9,7 @@ Rectangle {
         clustersView.model = decodedClusters
         imageView.rect1 = decodedClusters.shadeRect1
         imageView.rect2 = decodedClusters.shadeRect2
+        imageView.rejImg = decodedClusters.rejectedImage
     }
 
 
@@ -22,6 +23,7 @@ Rectangle {
 
         property variant rect1: null
         property variant rect2: null
+        property variant rejImg: null
         property string image: ""
 
         clip: true
@@ -50,10 +52,16 @@ Rectangle {
                 color: "#808080"
                 opacity: 0.7
             }
+            Image {
+                x: 0
+                y: imageView.rejImg ? imageView.rejImg.offset : 0
+                source: imageView.rejImg ? imageView.rejImg.source : ""
+                onSourceChanged: console.log("SRC = " + source )
+            }
 
             onStatusChanged: if (status == Image.Ready) {
-                                 imageView.contentX = 0//width/2
-                                 imageView.contentY = 0//height/2
+                                 imageView.contentX = 0
+                                 imageView.contentY = 0
                              }
         }
     }

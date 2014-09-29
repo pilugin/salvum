@@ -166,4 +166,10 @@ void RejectedImageProviderAdaptor::setImage(const QImage &image, int offset_)
     emit updated();
 }
 
+QString RejectedImageProviderAdaptor::source() const
+{ 
+    return mImage.isNull() ? QString() : QString("%1%2").arg(imagePrefix()).arg(qrand()); 
+}
+
+
 }

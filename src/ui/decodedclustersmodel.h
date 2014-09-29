@@ -20,7 +20,7 @@ public:
     void setImage(const QImage &image, int offset);
 
     QImage get(const QString &) const { return mImage; }
-    QString source() const { return imagePrefix() + "image"; }
+    QString source() const;
     int offset() const { return mOffset; }
 signals:
     void updated();
