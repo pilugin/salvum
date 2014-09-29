@@ -190,7 +190,7 @@ void WorkspaceModel::loadWspace(const QString &path)
     beginResetModel();
     m_d->items.clear();
     QDir wspaceDir(path);
-    m_d->wspacePath = path;
+    m_d->wspacePath = wspaceDir.absolutePath();
     
     do {
         if (!wspaceDir.exists()) {
