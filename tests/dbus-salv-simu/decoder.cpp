@@ -28,10 +28,20 @@ Decoder::Decoder(org::salvum::DecodrCtrl *dbus, QObject *parent)
 
     int nblocks = mImage.width()*mImage.height()/8/8;
     for (int i=0, c=0, previ=0; i<nblocks; ++c) {
+        if ( (c%10) == 0) {
+            QList<int> list;
+            while (list.size() < (50*8*8)) {
+                list.push_back( qRgb(list.size(), list.size(), list.size()) );
+            }
+            RejectedClusterInfo rci = { c++, previ, list };
+            mRC.push_back( rci );
+        }        
+        
         i += nblocks/mTotalClusters;
         DecodedClusterInfo dci = { c, previ, qMin(nblocks-1, i) };
         mDC.push_back( dci );
         previ = i + 1;
+        
     }
     qDebug()<<mDC.size();
 
@@ -45,9 +55,7 @@ void Decoder::start(int clusterNo, const QString &shmemPath, const QString &wspa
 
     QDir().mkpath(wspacePath);    
     mImagePath = wspacePath + "/image.png";
-    
-    
-    
+
     startDecoding();
 }
 
@@ -85,7 +93,7 @@ void Decoder::startDecoding()
 void Decoder::stopDecoding()
 {
     
-    emit fetchAtEnd(false, mDC, RejectedClusters(), Jpeg::storeImage(mImage, mImagePath));
+    emit fetchAtEnd(false, mDC, mRC, Jpeg::storeImage(mImage, mImagePath));
     mProgressTimer.stop();
 }
 

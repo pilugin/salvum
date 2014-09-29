@@ -5,33 +5,25 @@
 #include "decoderdbuscontroller.h"
 #include "models/workspacemodel.h"
 #include <ui/qobjectlistmodel.h>
-#include <ui/imageprovider.h>
 #include <QPair>
 #include <QMap>
 
+namespace Ui {
+class ImageProvider;
+}
+
 class DecodrDbusHub : public Ui::QObjectListModel<DecoderDbusController>
-                    , public Ui::ImageProviderAdaptor
 {
     Q_OBJECT
 public:
     DecodrDbusHub(QObject *parent =nullptr);
     ~DecodrDbusHub();
 
-#if 0
-#if QT_VERSION >= 0x050000
-    QHash<int, QByteArray> roleNames() const;
-#endif
-#endif
-
     void setWorkspaceModel(WorkspaceModel *wspace) { mWspace = wspace; }
+    void setImageProvider(Ui::ImageProvider *imgProv) { mImgProv = imgProv; }
     
     Q_INVOKABLE int getRewindCluster() const;
     
-#if 0    
-    QVariant data(const QModelIndex &index, int role) const;
-#endif    
-    QImage get(const QString &image) const;
-
 public slots:
     QDBusObjectPath aquireClient(int clientId);
     void releaseClient(int clientId);   
@@ -54,6 +46,7 @@ private:
     const DecoderDbusController *decoderByClientId(int clientId) const;
 
     WorkspaceModel *mWspace;
+    Ui::ImageProvider *mImgProv;
     QList<int> mHeads;
     QString mShmemPath;
 };

@@ -31,7 +31,7 @@ class DecoderDbusController : public QObject
     Q_PROPERTY(bool decodingEnd     READ decodingEnd                    NOTIFY decodingEndChanged)
     Q_PROPERTY(bool decodingSuccess READ decodingSuccess                NOTIFY decodingEndChanged)
 public:
-    DecoderDbusController(int clientId, const QDBusObjectPath &dbusObjectPath, QObject *parent =nullptr);
+    DecoderDbusController(int clientId, const QDBusObjectPath &dbusObjectPath, Ui::ImageProvider *imgProv, QObject *parent =nullptr);
     ~DecoderDbusController();
     
     int clientId() const;

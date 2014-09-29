@@ -7,7 +7,7 @@ ListView {
 
     highlight: Rectangle {
         border.color: "red"
-        width: parent.width
+        width: parent ? parent.width : 0
         z: 10
         color: "#00000000"
     }

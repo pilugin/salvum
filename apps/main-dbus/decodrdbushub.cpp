@@ -1,4 +1,5 @@
 #include "decodrdbushub.h"
+//#include <ui/imageprovider.h>
 #include <QProcess>
 #include <QtDebug>
 #include <algorithm>
@@ -8,6 +9,7 @@ static const char *s_decodrExeName = "./dbus-salv-simu"; //"./salvum-decodr";
 DecodrDbusHub::DecodrDbusHub(QObject *parent)
 : Ui::QObjectListModel<DecoderDbusController>(parent)
 , mWspace(nullptr)
+, mImgProv(nullptr)
 {
     new DecodrHubAdaptor(this);
 
@@ -15,26 +17,7 @@ DecodrDbusHub::DecodrDbusHub(QObject *parent)
         qDebug()<<"Failed to register DecodrHub:/hub";
     }
 
-#if 0
-#if QT_VERSION < 0x050000
-    auto rn = Ui::QObjectListModel<DecoderDbusController>::roleNames();
-    rn.insert(firstUserRole(), "image");
-    setRoleNames(rn);
-#endif
-#endif
-
 }
-
-#if 0
-#if QT_VERSION >= 0x050000
-QHash<int, QByteArray> DecodrDbusHub::roleNames() const
-{
-    auto rn = Ui::QObjectListModel<DecoderDbusController>::roleNames();
-    rn.insert(firstUserRole(), "image");
-    return rn;
-}
-#endif
-#endif
 
 DecodrDbusHub::~DecodrDbusHub()
 {
@@ -59,7 +42,7 @@ QDBusObjectPath DecodrDbusHub::aquireClient(int clientId)
         return ptr->dbusObjectPath();
     else {
         QDBusObjectPath path(QString("/salvum/%1").arg(clientId));
-        DecoderDbusController *object = new DecoderDbusController(clientId, path, this);
+        DecoderDbusController *object = new DecoderDbusController(clientId, path, mImgProv, this);
 
         connect(object, SIGNAL(connectedChanged(bool)), this, SLOT(decodrConnected(bool)) );
         connect(object, SIGNAL(decodingChanged(bool)), this, SLOT(decodingChanged(bool)) );
@@ -157,38 +140,5 @@ int DecodrDbusHub::getRewindCluster() const
     qDebug()<<mHeads;
     auto min = std::min_element(mHeads.begin(), mHeads.end());
     return min==mHeads.end() ? -1 : *min;
-}
-
-#if 0
-QVariant DecodrDbusHub::data(const QModelIndex &index, int role) const
-{
-    if (index.parent().isValid() || index.column()!=0 || index.row()<0 || index.row()>=rowCount())
-        return QVariant();
-
-    if (role < firstUserRole())
-        return Ui::QObjectListModel<DecoderDbusController>::data(index, role);
-
-    else if (role == firstUserRole())
-        return QString("%1%2/image").arg(imagePrefix()).arg(index.row());
-
-    return QVariant();
-}
-#endif
-
-QImage DecodrDbusHub::get(const QString &image) const
-{
-#if 0
-    QStringList sl = image.split("/", QString::KeepEmptyParts);
-
-    if (sl.size() == 2) {
-        int i = sl[0].toInt();
-        if (sl[1] == "image" && i<rowCount() && i>=0)
-            if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(objectList()[i]))
-                return ptr->image();
-    }
-
-    qDebug()<<"Failed to parse"<<sl;
-#endif
-    return QImage();
 }
 

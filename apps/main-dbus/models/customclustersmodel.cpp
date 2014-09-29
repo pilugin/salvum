@@ -2,8 +2,8 @@
 
 using namespace Ui;
 
-CustomClustersModel::CustomClustersModel(QObject *parent)
-: DecodedClustersModel(parent)
+CustomClustersModel::CustomClustersModel(ImageProvider *imgProv, QObject *parent)
+: DecodedClustersModel(imgProv, parent)
 {
 #if QT_VERSION < 0x050000
     setRoleNames(roleNames_internal());

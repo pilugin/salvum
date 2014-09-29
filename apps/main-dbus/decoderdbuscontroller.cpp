@@ -5,16 +5,18 @@
 #include <QStateMachine>
 #include <QTimer>
 
+using namespace Ui;
+
 class DecoderDbusController::Private
 {
 public:
 
-    Private(int clientId_, const QDBusObjectPath &dbusObjectPath_, DecoderDbusController *owner_)
+    Private(int clientId_, const QDBusObjectPath &dbusObjectPath_, ImageProvider *imgProv, DecoderDbusController *owner_)
     : clientId(clientId_)
     , dbusObjectPath(dbusObjectPath_)
     , owner(owner_)
     , dbus(new DecodrCtrlAdaptor(owner_))
-    , decodedClusters(new CustomClustersModel(owner_))
+    , decodedClusters(new CustomClustersModel(imgProv, owner_))
     , heartbeatTimer(new QTimer(owner_))
     {
         heartbeatTimer->setSingleShot(true);
@@ -93,9 +95,9 @@ public:
 
 ////////////////////////////////////////////
 
-DecoderDbusController::DecoderDbusController(int clientId, const QDBusObjectPath &dbusObjectPath, QObject *parent)
+DecoderDbusController::DecoderDbusController(int clientId, const QDBusObjectPath &dbusObjectPath, ImageProvider *imgProv, QObject *parent)
 : QObject(parent)
-, m_d(new Private(clientId, dbusObjectPath, this))
+, m_d(new Private(clientId, dbusObjectPath, imgProv, this))
 {
     m_d->createFSM();
     m_d->fsm.start();

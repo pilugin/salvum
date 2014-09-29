@@ -5,13 +5,14 @@ using namespace Common;
 
 namespace Ui {
 
-DecodedClustersModel::DecodedClustersModel(QObject *parent)
+DecodedClustersModel::DecodedClustersModel(ImageProvider *imgProv, QObject *parent)
 : QAbstractListModel(parent)
 , mCurrentCluster(-1)
 , mShadeRect1(new Rect(this))
 , mShadeRect2(new Rect(this))
-, mRejectedImageOffset(-1)
+, mRejectedImageProviderAdaptor(new RejectedImageProviderAdaptor(this))
 {
+    imgProv->addAdaptor( QString().sprintf("rejected-image-%p", this), mRejectedImageProviderAdaptor);   
 
 #if QT_VERSION < 0x050000
     setRoleNames(roleNames_internal());
@@ -87,7 +88,8 @@ void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const R
             
         } else {
         
-            mClusters.push_back( ClusterInfo() = { rc_itr->clusterNo, rc_itr->blockBegin, -1, true } );
+            mClusters.push_back( ClusterInfo() = { rc_itr->clusterNo, rc_itr->blockBegin, 
+                        rc_itr->blockBegin + (rc_itr->pixels.size()/8/8), true } );
             mRejectedPieces.insert( rc_itr->clusterNo, *rc_itr );
             ++rc_itr;
         }
@@ -123,9 +125,7 @@ void DecodedClustersModel::setCurrentCluster(int row)
         // rejected cluster
         if (currentClusterInfo().rejected) {
             auto p = Jpeg::imageFragment(mImageInfo.width, mImageInfo.height, currentRejectedCluster());
-            mRejectedImage = p.first;
-            mRejectedImageOffset = p.second;
-            emit rejectedImageChanged();
+            mRejectedImageProviderAdaptor->setImage(p.first, p.second);
         } else 
             clearRejectedImage();            
     }
@@ -149,9 +149,21 @@ RejectedClusterInfo DecodedClustersModel::currentRejectedCluster() const
 
 void DecodedClustersModel::clearRejectedImage()
 {
-    mRejectedImage = QImage();
-    mRejectedImageOffset = -1;
-    emit rejectedImageChanged();
+    mRejectedImageProviderAdaptor->setImage(QImage(), -1);
+}
+
+/////////////////////////////////////
+
+RejectedImageProviderAdaptor::RejectedImageProviderAdaptor(QObject *parent)
+: QObject(parent), mOffset(-1)
+{
+}
+
+void RejectedImageProviderAdaptor::setImage(const QImage &image, int offset_)
+{
+    mImage = image;
+    mOffset = offset_;
+    emit updated();
 }
 
 }

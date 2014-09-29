@@ -6,7 +6,7 @@
 class CustomClustersModel : public Ui::DecodedClustersModel
 {
 public:
-    CustomClustersModel(QObject *parent =nullptr);
+    CustomClustersModel(Ui::ImageProvider *imgProv, QObject *parent =nullptr);
     void setIcons(QString firstAcc, QString middleAcc, QString lastAccNextRej, QString rej, QString lastRej, QString lastAcc);
     
     QVariant data(const QModelIndex &index, int role) const;

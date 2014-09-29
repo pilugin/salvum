@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     
     Ui::ImageProvider *imgPrv = new Ui::ImageProvider;
     imgPrv->setName("prov");
-    imgPrv->addAdaptor("decoderHub", &decoderHub);
+    decoderHub.setImageProvider(imgPrv);
     view.engine()->addImageProvider(imgPrv->name(), imgPrv);
 
     // init view
