@@ -10,6 +10,7 @@ DecodedClustersModel::DecodedClustersModel(QObject *parent)
 , mCurrentCluster(-1)
 , mShadeRect1(new Rect(this))
 , mShadeRect2(new Rect(this))
+, mRejectedImageOffset(-1)
 {
 
 #if QT_VERSION < 0x050000
@@ -87,22 +88,24 @@ void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const R
         } else {
         
             mClusters.push_back( ClusterInfo() = { rc_itr->clusterNo, rc_itr->blockBegin, -1, true } );
-            mRejectedPieces.insert( rc_itr->clusterNo, rc_itr->pixels );
+            mRejectedPieces.insert( rc_itr->clusterNo, *rc_itr );
             ++rc_itr;
         }
     }
     
-    mCurrentCluster = -1;
+    mCurrentCluster = -1;    
 
     mShadeRect1->reset();
     mShadeRect2->reset();
+    
+    clearRejectedImage();
 
     endResetModel();
 }
 
 void DecodedClustersModel::setCurrentCluster(int row)
 {
-    if (row < mClusters.size() && row>0) {
+    if (row < mClusters.size() && row>0 && row!=mCurrentCluster) {
         emit currentClusterChanged(mCurrentCluster = row);
         const Clusters::value_type &v = mClusters[row];
         emit currentClusterParamsChanged( v.clusterNo, v.blockBegin, v.blockEnd );
@@ -116,6 +119,15 @@ void DecodedClustersModel::setCurrentCluster(int row)
         mShadeRect2->setY(rects.second.y());
         mShadeRect2->setWidth(rects.second.width());
         mShadeRect2->setHeight(rects.second.height());
+        
+        // rejected cluster
+        if (currentClusterInfo().rejected) {
+            auto p = Jpeg::imageFragment(mImageInfo.width, mImageInfo.height, currentRejectedCluster());
+            mRejectedImage = p.first;
+            mRejectedImageOffset = p.second;
+            emit rejectedImageChanged();
+        } else 
+            clearRejectedImage();            
     }
 }
 
@@ -124,6 +136,22 @@ void DecodedClustersModel::baseline()
     if ( mCurrentCluster>=0 && mCurrentCluster<mClusters.size() ) {
         emit baselineSelected( mClusters[mCurrentCluster].clusterNo );
     }
+}
+
+RejectedClusterInfo DecodedClustersModel::currentRejectedCluster() const
+{
+    const auto &v = currentClusterInfo();
+    if (!v.rejected)
+        return RejectedClusterInfo();
+        
+    return mRejectedPieces.value(v.clusterNo);        
+}
+
+void DecodedClustersModel::clearRejectedImage()
+{
+    mRejectedImage = QImage();
+    mRejectedImageOffset = -1;
+    emit rejectedImageChanged();
 }
 
 }

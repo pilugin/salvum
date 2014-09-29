@@ -87,7 +87,7 @@ QPair<QRect, QRect> shade(int width, int height, int blockEnd)
     return rects;
 }
 
-QImage imageFragment(int width, int height, const Common::RejectedClusterInfo &rc)
+QPair<QImage, int> imageFragment(int width, int height, const Common::RejectedClusterInfo &rc)
 {
     QImage res;
     
@@ -111,7 +111,7 @@ QImage imageFragment(int width, int height, const Common::RejectedClusterInfo &r
     while (!cursor.atEnd())
         cursor.addBlock(qRgba(0,0,0,0));
 
-    return res;
+    return qMakePair(res, (rc.blockBegin/(width/8))*8);
 }
 
 } // eons Jpeg

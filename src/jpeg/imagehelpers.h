@@ -20,7 +20,7 @@ Common::Pixmap dbusPixmap(const QImage &image);
 
 Common::ImageInfo storeImage(const QImage &image, const QString &path);
 
-QImage imageFragment(int width, int height, const Common::RejectedClusterInfo &rc);
+QPair<QImage, int> imageFragment(int width, int height, const Common::RejectedClusterInfo &rc); //< ret Image + vertical offset
 
 } // eons Jpeg
 

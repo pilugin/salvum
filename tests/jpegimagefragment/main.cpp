@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     for (int i=0; i<L; ++i)
         for (int j=0; j<64; ++j)
             rc.pixels.push_back(qRgb(80,0,0));
-    QImage img = Jpeg::imageFragment(W*8, H*8, rc);
+    QImage img = Jpeg::imageFragment(W*8, H*8, rc).first;
     
     img.save("jpegimagefragment.png", "PNG");
 

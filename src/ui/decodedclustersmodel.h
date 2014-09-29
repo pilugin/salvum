@@ -14,6 +14,8 @@ class DecodedClustersModel : public QAbstractListModel
     Q_PROPERTY(int              currentCluster  READ currentCluster WRITE setCurrentCluster NOTIFY currentClusterChanged)
     Q_PROPERTY(QObject*         shadeRect1      READ shadeRect1     CONSTANT)
     Q_PROPERTY(QObject*         shadeRect2      READ shadeRect2     CONSTANT)
+    Q_PROPERTY(QImage           rejectedImage   READ rejectedImage                          NOTIFY rejectedImageChanged)
+    Q_PROPERTY(int rejectedImageOffset          READ rejectedImageOffset                    NOTIFY rejectedImageChanged)
 public:
     
     DecodedClustersModel(QObject *parent =nullptr);
@@ -29,7 +31,9 @@ public:
     int currentCluster() const { return mCurrentCluster; }
     
     Rect *shadeRect1() { return mShadeRect1; }
-    Rect *shadeRect2() { return mShadeRect2; }
+    Rect *shadeRect2() { return mShadeRect2; }   
+    QImage rejectedImage() const { return mRejectedImage; }
+    int rejectedImageOffset() const { return mRejectedImageOffset; }
 
 public slots:
     void setCurrentCluster(int row);
@@ -40,6 +44,7 @@ signals:
     void currentClusterChanged(int row);
     void currentClusterParamsChanged(int clusterNo, int blockBegin, int blockEnd);
     void baselineSelected(int clusterNo);
+    void rejectedImageChanged();
     
 protected:
     enum 
@@ -64,12 +69,18 @@ protected:
     typedef QList<ClusterInfo> Clusters;
     Clusters mClusters;
     
-    QMap<int /*clusterNo*/, QList<int>/*pixels; order @see dbustypes.h*/> mRejectedPieces;
+    QMap<int /*clusterNo*/, Common::RejectedClusterInfo> mRejectedPieces;
     Common::ImageInfo mImageInfo;
 
     int mCurrentCluster;
     
     Rect *mShadeRect1, *mShadeRect2;
+    QImage mRejectedImage;
+    int mRejectedImageOffset;
+
+    const ClusterInfo &currentClusterInfo() const { return mClusters[mCurrentCluster]; }
+    Common::RejectedClusterInfo currentRejectedCluster() const;
+    void clearRejectedImage();
 };
 
 }
