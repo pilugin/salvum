@@ -36,18 +36,34 @@ bool ImageCursor::initCanvas(const QSize &size, QImage::Format format)
 
 void ImageCursor::addBlock(const uchar *r, const uchar *g, const uchar *b)
 {
+    addBlock_internal( 
+        [&]() { return qRgb(*r++, *g++, *b++); }
+        );
+}
+
+void ImageCursor::addBlock(uint color)
+{
+    addBlock_internal( 
+        [=]() { return color; } 
+        );
+}
+
+void ImageCursor::addBlock(QList<int>::const_iterator &itr)
+{
+    addBlock_internal( 
+        [&]() { return static_cast<uint>(*itr++); }
+        );
+}
+
+void ImageCursor::addBlock_internal(std::function<uint ()>func)
+{
     if (!isBlockValid())
         return;
-
     int baseX = mBlockX * 8;
     int baseY = mBlockY * 8;
-
     for (int y=0; y<8; ++y)
         for (int x=0; x<8; ++x)
-            mCanvas->setPixel(baseX + x, baseY + y, qRgb(*r++, *g++, *b++));
-            
-//    qDebug("BLOCK ADDED  %d %d      %d", mBlockX, mBlockY, (mBlockY*(mCanvas->width()/8) +mBlockX));
-
+            mCanvas->setPixel(baseX + x, baseY + y, func());
     incBlock();
 }
 
@@ -59,6 +75,12 @@ bool ImageCursor::atEnd() const
 int ImageCursor::currentBlockIndex() const
 {
     return (mBlockY * mCanvas->width() / 8) + mBlockX;
+}
+
+void ImageCursor::setCurrentBlockIndex(int block)
+{
+    mBlockY = block / (mCanvas->width() / 8);
+    mBlockX = block % (mCanvas->width() / 8);
 }
 
 bool ImageCursor::isBlockValid() const
