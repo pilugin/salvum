@@ -33,7 +33,7 @@ public:
 
     void setCurrentSalvIndex(int index);
 
-    QImage get(const QString &image) const;
+    QImage get(const QString &image) const { return QImage(); }
 
 signals:
     void currentSalvChanged(QObject *salv);

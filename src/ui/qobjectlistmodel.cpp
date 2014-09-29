@@ -51,6 +51,11 @@ QObjectListModelBase::~QObjectListModelBase()
 {
     delete m_d;
 }
+
+const QObjectList &QObjectListModelBase::objectList() const
+{
+    return m_d->items;
+}
     
 QModelIndex QObjectListModelBase::index(int row, int column, const QModelIndex &parent) const
 {

@@ -2,7 +2,7 @@
 #define DECODRDBUSHUB_H
 
 #include "org.salvum.DecodrHubAdp.h"
-#include "decodrdbusctrl.h"
+//#include "decodrdbusctrl.h"
 #include <QPair>
 #include <QMap>
 
@@ -50,6 +50,7 @@ private:
 
 #include <ui/qobjectlistmodel.h>
 
+/*
 class DecodrDbusCtrlModel : public Ui::QObjectListModel<DecodrDbusCtrl>
 {
     Q_OBJECT
@@ -62,5 +63,6 @@ public slots:
         appendObject(client);
     }    
 };
+*/
 
 #endif

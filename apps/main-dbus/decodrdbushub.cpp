@@ -32,7 +32,7 @@ QDBusObjectPath DecodrDbusHub::aquireClient(int clientId)
     auto itr = mClients.find(clientId);
     if (itr == mClients.end()) {
         QDBusObjectPath path(QString("/salvum/%1").arg(clientId));
-        DecodrDbusCtrl *object = new DecodrDbusCtrl(this);
+        DecodrDbusCtrl *object = nullptr;//new DecodrDbusCtrl(this);
 
         if (!QDBusConnection::sessionBus().registerObject(path.path(), object)) {
             qDebug()<<"Failed to register DecodrCtrl:"<<path.path();
@@ -107,7 +107,7 @@ void DecodrDbusHub::startProcessing()
             qDebug()<<"RESUMR";
         } else if (mHeads.size() >0) {
             qDebug()<<"START "<<mShmemPath<<mHeads.back();
-            itr->second->sendStart( mHeads.back(), mShmemPath );
+//            itr->second->sendStart( mHeads.back(), mShmemPath );
             mHeads.pop_back();
         }
     }

@@ -17,7 +17,7 @@ SOURCES += \
     main.cpp \
     supervisor.cpp \
     decodrdbushub.cpp \
-    decodrdbusctrl.cpp \
+    decoderdbuscontroller.cpp \
     bcastdbuscontroller.cpp \
     models/jpegheadsmodel.cpp \
     models/salvjpegmodel.cpp \
@@ -29,7 +29,7 @@ HEADERS += \
     supervisor.h \
     supervisor_p.h \
     decodrdbushub.h \
-    decodrdbusctrl.h \
+    decoderdbuscontroller.h \
     bcastdbuscontroller.h \
     models/salvjpegmodel.h \
     models/jpegheadsmodel.h \

@@ -1,6 +1,5 @@
 #include "supervisor.h"
 #include <QtDebug>
-#include <QStateMachine>
 
 #include "supervisor_p.h"
 

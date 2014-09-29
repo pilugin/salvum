@@ -25,7 +25,7 @@ public:
     , decodr(new Jpeg::PicoJpegDecodr(new Jpeg::AdvancedChecker, parent))
     {
         QObject::connect(dbus, SIGNAL(exit()), parent, SLOT(onExit()) );
-        QObject::connect(dbus, SIGNAL(start(int,QString)), parent, SLOT(onStart(int,QString)) );
+        QObject::connect(dbus, SIGNAL(start(int,QString,QString)), parent, SLOT(onStart(int,QString,QString)) );
         QObject::connect(dbus, SIGNAL(baseline(int)), check, SLOT(baseline(int)) );
         QObject::connect(check, SIGNAL(atEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)),
                         dbus, SLOT(fetchAtEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)) );
@@ -50,6 +50,8 @@ public:
     EventLoopRecieverFetch  *fetch;
     SalvDbusCheck           *check;
     Jpeg::PicoJpegDecodr    *decodr;
+    
+    QString                 wspacePath;
 };
 
 /////////////////////////////////////////////////
@@ -77,11 +79,13 @@ void DbusDecodeProcessor::onExit()
     emit exitApp();
 }
 
-void DbusDecodeProcessor::onStart(int clusterNo, const QString &shmemPath)
+void DbusDecodeProcessor::onStart(int clusterNo, const QString &shmemPath, const QString &workspacePath)
 {
     Msg("START %s %08X\n", shmemPath.toUtf8().data(), clusterNo);
     Session(QString().sprintf("%s.%08X", shmemPath.toUtf8().data(), clusterNo));
     Msg("START %08X\n", clusterNo);
+    
+    m_d->wspacePath = workspacePath;
     
     m_d->fetch->init(shmemPath.toUtf8().data());
     

@@ -26,6 +26,9 @@ public slots:
     void eraseObject(int row);
     void clear();
 
+protected:
+    const QObjectList &objectList() const;
+
 private slots:
     void objectUpdated();
 
