@@ -1,6 +1,6 @@
 HEADERS += \
     $$PWD/decodedclustersmodel.h \
-    $$PWD/salvjpegobject.h \
+#    $$PWD/salvjpegobject.h \
     $$PWD/bitmapinfomodel.h \
     $$PWD/imageprovider.h \
     $$PWD/qobjectlistmodel.h \
@@ -8,7 +8,7 @@ HEADERS += \
     
 SOURCES += \
     $$PWD/decodedclustersmodel.cpp \
-    $$PWD/salvjpegobject.cpp \
+#    $$PWD/salvjpegobject.cpp \
     $$PWD/bitmapinfomodel.cpp \
     $$PWD/imageprovider.cpp \
     $$PWD/qobjectlistmodel.cpp \

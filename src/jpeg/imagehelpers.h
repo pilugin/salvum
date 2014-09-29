@@ -20,6 +20,8 @@ Common::Pixmap dbusPixmap(const QImage &image);
 
 Common::ImageInfo storeImage(const QImage &image, const QString &path);
 
+QImage imageFragment(int width, int height, const Common::RejectedClusterInfo &rc);
+
 } // eons Jpeg
 
 #endif

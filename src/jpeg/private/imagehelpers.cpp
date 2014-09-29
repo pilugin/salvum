@@ -1,4 +1,5 @@
 #include <jpeg/imagehelpers.h>
+#include <jpeg/imagecursor.h>
 #include <QtDebug>
 
 using namespace Common;
@@ -84,6 +85,33 @@ QPair<QRect, QRect> shade(int width, int height, int blockEnd)
     rects.second.setBottom( height-1 );
     
     return rects;
+}
+
+QImage imageFragment(int width, int height, const Common::RejectedClusterInfo &rc)
+{
+    QImage res;
+    
+    int w = width;
+    int blockBeginX = rc.blockBegin % (width/8);
+    int h = (  (blockBeginX + (rc.pixels.size()/8/8)) + (width/8) -1) / (width/8); //< int division w/ceiling; ceil(x/y) == (x+y-1)/y
+    h *= 8;
+    
+    qDebug()<<"IMAGE_FRAGMENT!!"<<width<<height<<rc.pixels.size();
+    qDebug()<<"\t\t" << w<<h<<blockBeginX;
+    
+    ImageCursor cursor;
+    cursor.setCanvas( &res );
+    cursor.initCanvas(QSize(w,h), QImage::Format_ARGB32_Premultiplied);
+    for (int i=0; i<blockBeginX; ++i)
+        cursor.addBlock(qRgba(0,0,0,0));
+    
+    for (auto itr=rc.pixels.begin(); itr!=rc.pixels.end(); )
+        cursor.addBlock( itr );
+        
+    while (!cursor.atEnd())
+        cursor.addBlock(qRgba(0,0,0,0));
+
+    return res;
 }
 
 } // eons Jpeg

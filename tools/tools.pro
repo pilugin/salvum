@@ -1,6 +1,6 @@
 TEMPLATE=subdirs
 SUBDIRS= \
-        decodutil \
+#        decodutil \
         allocate \
         bitmap
 
