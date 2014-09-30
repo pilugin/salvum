@@ -23,11 +23,14 @@ public:
         heartbeatTimer->setInterval(15000);
         heartbeatTimer->start();        
         
-        properties.cluster = properties.clustersDecoded = properties.blocksDecoded = properties.blocksTotal = 0;
+        properties.cluster = properties.baselineCluster = properties.clustersDecoded = properties.blocksDecoded 
+            = properties.blocksTotal = 0;
         properties.checked = properties.decoding = properties.decodingEnd = properties.decodingSuccess = false;
 
         QObject::connect(owner_, SIGNAL(decodedClustersUpdated(Common::DecodedClusters,Common::RejectedClusters,Common::ImageInfo)),
                          decodedClusters, SLOT(reset(Common::DecodedClusters,Common::RejectedClusters,Common::ImageInfo))      );
+        QObject::connect(decodedClusters, SIGNAL(currentClusterParamsChanged(int,int,int)),
+                         owner_, SLOT(clusterBaselined(int))  );
     }
 
     void createFSM()
@@ -63,7 +66,7 @@ public:
         st2_decoding    ->addTransition(owner, 
                             SIGNAL(decodedClustersUpdated(Common::DecodedClusters,Common::RejectedClusters,Common::ImageInfo)),
                             st2_check);
-        st2_check       ->addTransition(owner, SIGNAL(baseline(int)), st2_checked);
+        st2_check       ->addTransition(decodedClusters, SIGNAL(currentClusterChanged(int)), st2_checked);
         st2_checked     ->addTransition(owner, SIGNAL(progressChanged()), st2_decoding);
         
         fsm.setInitialState( st1_init );
@@ -85,6 +88,7 @@ public:
         bool checked;
         bool decoding;
         int cluster;
+        int baselineCluster;
         int clustersDecoded;
         int blocksDecoded;
         int blocksTotal;        
@@ -141,6 +145,11 @@ bool DecoderDbusController::decoding() const
 int DecoderDbusController::cluster() const
 {
     return m_d->properties.cluster;
+}
+
+int DecoderDbusController::baselineCluster() const
+{
+    return m_d->properties.checked ? m_d->properties.baselineCluster : 0;
 }
 
 int DecoderDbusController::clustersDecoded() const
@@ -253,4 +262,13 @@ void DecoderDbusController::progress(int clustersDecoded, int blocksDecoded, int
     
     emit progressChanged();
 }
+
+// decodedClustersModel
+
+void DecoderDbusController::clusterBaselined(int clusterNo)
+{
+    m_d->properties.baselineCluster = clusterNo;
+    emit baselineClusterChanged(clusterNo);
+}
+
 

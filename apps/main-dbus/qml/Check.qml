@@ -65,17 +65,31 @@ Rectangle {
                              }
         }
     }
-    Rectangle {
+    Row {
         id: controls
-        color: "green"
         anchors { left: parent.left; right: clustersView.left; top: imageView.bottom }
         height: 35
+        Rectangle {
+            color: "green"
+            height: parent.height - 10
+            width: 100
+            Text { 
+                text: "Back" 
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    
+                }
+            }
+        }
     }
 
     DecodedClustersView {
         id: clustersView
         anchors { left: imageView.right; right: parent.right; top: parent.top; bottom: decoderView.top }
-
+        onModelChanged: currentIndex = model.currentCluster
     }
 
     GridView {
@@ -84,19 +98,21 @@ Rectangle {
         model: decoderHub
         cellWidth: 160
         cellHeight: 45
-
+        clip: true
+        
         delegate: DecodrDelegate {
             width: 150
             height: 40
-
+            border.color: GridView.isCurrentItem ? "blue" : color
+            
             MouseArea {
                 anchors.fill: parent
-                onClicked: {
-
-                    checkView.setDecoderInfo(imagePath, decodedClusters)
-
-                }
+                onClicked: decoderView.currentIndex = index
             }
+            
+            GridView.onIsCurrentItemChanged: if (GridView.isCurrentItem) {
+                                                checkView.setDecoderInfo(imagePath, decodedClusters)            
+                                            }
         }
     }
 

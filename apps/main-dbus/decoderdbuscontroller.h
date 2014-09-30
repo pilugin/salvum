@@ -17,6 +17,7 @@ class DecoderDbusController : public QObject
     Q_PROPERTY(bool decoding        READ decoding   WRITE setDecoding   NOTIFY decodingChanged)     //< set by FSM
 
     Q_PROPERTY(int cluster          READ cluster                        NOTIFY clusterChanged)
+    Q_PROPERTY(int baselineCluster  READ baselineCluster                NOTIFY baselineClusterChanged)
 
     Q_PROPERTY(QObject* decodedClusters
                                     READ decodedClusters                CONSTANT)
@@ -41,6 +42,7 @@ public:
     bool checked() const;
     bool decoding() const;
     int cluster() const;
+    int baselineCluster() const;
     int clustersDecoded() const;
     int blocksDecoded() const;
     int blocksTotal() const;
@@ -68,6 +70,9 @@ private slots:
                     const Common::ImageInfo &imageInfo);
     void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);
     void heartbeat();    
+    
+    // decodedClustersModel
+    void clusterBaselined(int clusterNo);
 
 signals:    
     void connectedChanged(bool value);
@@ -75,6 +80,7 @@ signals:
     void checkedChanged(bool value);
     void decodingChanged(bool value);
     void clusterChanged(int value);    
+    void baselineClusterChanged(int value);
     void progressChanged();   
     void imagePathChanged();
     void decodingEndChanged();
