@@ -13,7 +13,7 @@ QMAKE_CXXFLAGS += -std=c++11
 
 INCLUDEPATH += ../../src ../.. $$OUT_PWD
 DEPENDPATH += ../../src ../..
-LIBS += -L../../lib -lsalv
+LIBS += -L../../lib -lsalv -lrt
 
 SOURCES += main.cpp \
     decoder.cpp

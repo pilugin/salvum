@@ -1,6 +1,8 @@
 #include <jpeg/imagehelpers.h>
 #include <jpeg/imagecursor.h>
 #include <QtDebug>
+#include <QFile>
+#include <QEventLoop>
 
 using namespace Common;
 
@@ -31,12 +33,29 @@ Pixmap dbusPixmap(const QImage &image)
 }
 
 ImageInfo storeImage(const QImage &image, const QString &path)
-{
+{    
+    class ELFile : public ::QFile 
+    {
+    protected:
+        qint64 writeData(const char *data, qint64 len) {
+            mEventLoop.processEvents();
+            return ::QFile::writeData(data, len);
+        }
+        QEventLoop mEventLoop;
+    };
+
     ImageInfo ii;
     ii.width = image.width();
     ii.height = image.height();
-    if (image.save(path, "PNG"))
+    
+    ELFile f;
+    f.setFileName(path);
+    if (!f.open(QFile::WriteOnly | QFile::Truncate))
+        qDebug()<<"Cannot open file for Write: "<<f.error();
+        
+    else if (image.save(&f, "PNG"))
         ii.imagePath = path;
+        
     return ii;
 }
 
@@ -95,9 +114,6 @@ QPair<QImage, int> imageFragment(int width, int height, const Common::RejectedCl
     int blockBeginX = rc.blockBegin % (width/8);
     int h = (  (blockBeginX + (rc.pixels.size()/8/8)) + (width/8) -1) / (width/8); //< int division w/ceiling; ceil(x/y) == (x+y-1)/y
     h *= 8;
-    
-    qDebug()<<"IMAGE_FRAGMENT!!"<<width<<height<<rc.pixels.size();
-    qDebug()<<"\t\t" << w<<h<<blockBeginX;
     
     ImageCursor cursor;
     cursor.setCanvas( &res );

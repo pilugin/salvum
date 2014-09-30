@@ -218,6 +218,7 @@ void DecoderDbusController::sendBaseline(int clusterNo)
 
 void DecoderDbusController::heartbeat()
 {
+//    qDebug()<<"<3";
     m_d->heartbeatTimer->start();
     emit heartbeatRecv();
 }

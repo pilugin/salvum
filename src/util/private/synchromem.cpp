@@ -11,7 +11,7 @@ SynchroMem<T, NMutexes, NConds> *SynchroMem<T, NMutexes, NConds>::create(const c
     if (fd_sync < 0)
         return nullptr;
 
-    int rv = ftruncate(fd_sync, sizeof(SynchroMem<T, NMutexes, NConds>));
+    int rv = ftruncate(fd_sync, sizeof(SynchroMem<T, NMutexes, NConds>));    
     if (rv == -1)
         return nullptr;
 

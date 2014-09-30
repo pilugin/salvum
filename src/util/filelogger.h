@@ -7,7 +7,7 @@
 class FileLogger : public ILog
 {
 public:
-    FileLogger(const QString &outputDir);
+    FileLogger(const QString &outputDir, bool unbuffered=false);
     ~FileLogger();
 
     bool setSession(const QString &session);
@@ -16,6 +16,7 @@ private:
     const QString mOutputDir;
 
     QFile mOut;
+    const bool mUnbuffered;
 };
 
 #endif // FILELOGGER_H

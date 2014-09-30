@@ -23,6 +23,8 @@ public slots:
     void baseline(int cluster);
 
     void onDecodeCluster();
+    
+    void checkDbusConn();
 private:
     org::salvum::DecodrCtrl *mDecodrCtrl;
 

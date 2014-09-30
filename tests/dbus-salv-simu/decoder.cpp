@@ -1,5 +1,6 @@
 #include "decoder.h"
 #include "jpeg/imagehelpers.h"
+#include <unistd.h>
 #include <QtDebug>
 #include <QDir>
 #include <QImage>
@@ -43,10 +44,14 @@ Decoder::Decoder(org::salvum::DecodrCtrl *dbus, QObject *parent)
         previ = i + 1;
         
     }
-    qDebug()<<mDC.size();
 
     connect(&mProgressTimer, SIGNAL(timeout()), this, SLOT(onDecodeCluster()) );
     mProgressTimer.setInterval(100);
+    
+    QTimer *t = new QTimer(this);
+    t->setInterval(5000);
+    connect(t, SIGNAL(timeout()), this, SLOT(checkDbusConn())   );
+    t->start();
 }
 
 void Decoder::start(int clusterNo, const QString &shmemPath, const QString &wspacePath)
@@ -92,8 +97,12 @@ void Decoder::startDecoding()
 
 void Decoder::stopDecoding()
 {
-    
     emit fetchAtEnd(false, mDC, mRC, Jpeg::storeImage(mImage, mImagePath));
     mProgressTimer.stop();
 }
 
+void Decoder::checkDbusConn()
+{
+    if (!mDecodrCtrl->isValid())
+        qApp->quit();
+}
