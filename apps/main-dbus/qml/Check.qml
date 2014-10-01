@@ -6,6 +6,7 @@ Rectangle {
 
     function setDecoderInfo(image, decodedClusters) {
         imageView.image = image
+        clustersView.currentIndex =-1
         clustersView.model = decodedClusters
         imageView.rect1 = decodedClusters.shadeRect1
         imageView.rect2 = decodedClusters.shadeRect2
@@ -69,18 +70,37 @@ Rectangle {
         id: controls
         anchors { left: parent.left; right: clustersView.left; top: imageView.bottom }
         height: 35
+        anchors.margins: 3
+        spacing: 3
         Rectangle {
-            color: "green"
-            height: parent.height - 10
+            color: "darkgreen"
+            height: parent.height - 2*parent.anchors.margins
             width: 100
             Text { 
-                text: "Back" 
+                text: "Prev"
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: decoderView.currentIndex = (decoderView.currentIndex+decoderView.count-1)%decoderView.count
+            }
+        }
+        Rectangle {
+            color: "darkgreen"
+            height: parent.height - 2*parent.anchors.margins
+            width: 100
+            Text { 
+                text: "Next"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
             }
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    
+                    var i = decoderHub.getUncheckedItemIndex( decoderView.currentIndex+1 );
+                    if (i != -1)
+                        decoderView.currentIndex = i;
                 }
             }
         }
@@ -88,6 +108,7 @@ Rectangle {
 
     DecodedClustersView {
         id: clustersView
+        clip: true
         anchors { left: imageView.right; right: parent.right; top: parent.top; bottom: decoderView.top }
         onModelChanged: currentIndex = model.currentCluster
     }
@@ -95,6 +116,7 @@ Rectangle {
     GridView {
         id: decoderView
         anchors { top: controls.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
+        flow: GridView.LeftToRight
         model: decoderHub
         cellWidth: 160
         cellHeight: 45

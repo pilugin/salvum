@@ -5,17 +5,8 @@ ListView {
 
     focus: false
 
-    highlight: Rectangle {
-        border.color: "red"
-        width: parent ? parent.width : 0
-        z: 10
-        color: "#00000000"
-    }
-
-    highlightFollowsCurrentItem: true
-    highlightMoveSpeed: 4000000
-
-    delegate: Item {
+    delegate: Rectangle {
+        color: ListView.isCurrentItem ? "lightblue" : "white"
         height: 24
         width: 300
         Image {
@@ -29,10 +20,11 @@ ListView {
         }
         MouseArea {
             anchors.fill: parent
-            onClicked: {
-                theView.model.currentCluster = index;
-                theView.currentIndex = index;
-            }
+            onClicked: theView.currentIndex = index;
         }
+        
+        ListView.onIsCurrentItemChanged: if (ListView.isCurrentItem) {        
+                                            theView.model.currentCluster = index
+                                        }
     }
 }

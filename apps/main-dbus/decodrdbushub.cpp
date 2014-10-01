@@ -141,3 +141,13 @@ int DecodrDbusHub::getRewindCluster() const
     return min==mHeads.end() ? -1 : *min;
 }
 
+int DecodrDbusHub::getUncheckedItemIndex(int currentIndex) const
+{
+    for (int i=0; i<rowCount(); ++i) {
+        int idx = (i+currentIndex) % rowCount();
+        if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(objectList()[ idx ])) 
+            if (ptr->checked() == false)
+                return idx;
+    }
+    return -1;
+}

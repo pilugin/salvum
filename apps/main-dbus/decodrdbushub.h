@@ -23,6 +23,7 @@ public:
     void setImageProvider(Ui::ImageProvider *imgProv) { mImgProv = imgProv; }
     
     Q_INVOKABLE int getRewindCluster() const;
+    Q_INVOKABLE int getUncheckedItemIndex(int currentIndex) const;
     
 public slots:
     QDBusObjectPath aquireClient(int clientId);
