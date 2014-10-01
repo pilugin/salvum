@@ -68,18 +68,22 @@ Rectangle {
     }
     Row {
         id: controls
+        
+        property bool allDecodersChecked: false
+        
         anchors { left: parent.left; right: clustersView.left; top: imageView.bottom }
         height: 35
         anchors.margins: 3
+        property real childHeight: height - 2*anchors.margins
+        
         spacing: 3
         Rectangle {
             color: "darkgreen"
-            height: parent.height - 2*parent.anchors.margins
-            width: 100
+            height: parent.childHeight
+            width: 60
             Text { 
                 text: "Prev"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.centerIn: parent
             }
             MouseArea {
                 anchors.fill: parent
@@ -88,12 +92,11 @@ Rectangle {
         }
         Rectangle {
             color: "darkgreen"
-            height: parent.height - 2*parent.anchors.margins
-            width: 100
+            height: parent.childHeight
+            width: 60
             Text { 
                 text: "Next"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.centerIn: parent
             }
             MouseArea {
                 anchors.fill: parent
@@ -104,7 +107,35 @@ Rectangle {
                 }
             }
         }
+        Rectangle {
+            color: "darkgreen"
+            height: parent.childHeight
+            width: 200    
+        }
+        Rectangle {
+            color: controls.allDecodersChecked ? "green" : "lightgray"
+            height: parent.childHeight
+            width: 100
+            Text {
+                text: "Proceed"
+                color: controls.allDecodersChecked ? "black" : "gray"
+                anchors.centerIn: parent
+            }
+            MouseArea {
+                anchors.fill: parent
+                enabled: controls.allDecodersChecked
+                onClicked: {
+                    decoderHub.baselineDecoders();
+                    supervisor.proceedDecode();
+                }
+            }
+        }
     }
+    
+    Connections {
+        target: decoderHub
+        onAllDecodersChecked: controls.allDecodersChecked = true
+    }    
 
     DecodedClustersView {
         id: clustersView

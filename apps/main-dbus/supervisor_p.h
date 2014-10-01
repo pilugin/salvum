@@ -23,6 +23,7 @@ signals:
     void allDecodersConnected();
     void allDecodersWaitForCheck();
     void broadcastAtEnd();
+    void proceedDecode();    
     
 };
 

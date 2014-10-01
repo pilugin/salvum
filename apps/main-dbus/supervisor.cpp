@@ -28,14 +28,11 @@ void Supervisor::Private::createFSM()
     st2_waitForDecoders ->addTransition(this, SIGNAL(allDecodersConnected()),   st2_broadcast);
 //    st1_decode          ->addTransition(this, SIGNAL(broadcastAtEnd()),         st1_check);
     st1_decode          ->addTransition(this, SIGNAL(allDecodersWaitForCheck()), st1_check);
+    st1_check           ->addTransition(this, SIGNAL(proceedDecode()),          st1_decode);
 
     connect(st1_setup,      SIGNAL(exited()),   owner, SIGNAL(setupStateExited())   );
     connect(st1_decode,     SIGNAL(entered()),  owner, SIGNAL(decodeStateEntered()) );
     connect(st2_broadcast,  SIGNAL(entered()),  owner, SIGNAL(broadcastStateEntered()) );
-    
-//    fsm.addState(st1_setup);
-//    fsm.addState(st1_decode);
-//    fsm.addState(st1_check);
     
     fsm.setInitialState(st1_setup);
 }
@@ -95,6 +92,11 @@ void Supervisor::allDecodersConnected()
 void Supervisor::allDecodersWaitForCheck()
 {
     emit m_d->allDecodersWaitForCheck();
+}
+
+void Supervisor::proceedDecode()
+{
+    emit m_d->proceedDecode();
 }
 
 void Supervisor::broadcastAtEnd()

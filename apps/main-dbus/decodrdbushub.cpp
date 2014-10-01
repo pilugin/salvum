@@ -45,6 +45,7 @@ QDBusObjectPath DecodrDbusHub::aquireClient(int clientId)
 
         connect(object, SIGNAL(connectedChanged(bool)), this, SLOT(decodrConnected(bool)) );
         connect(object, SIGNAL(decodingChanged(bool)), this, SLOT(decodingChanged(bool)) );
+        connect(object, SIGNAL(checkedChanged(bool)), this, SLOT(checkedChanged(bool))  );
 
         if (!QDBusConnection::sessionBus().registerObject(path.path(), object)) {
             qDebug()<<"Failed to register DecodrCtrl:"<<path.path();
@@ -90,16 +91,8 @@ void DecodrDbusHub::decodrConnected(bool connected)
 {
     if (!connected)
         return;
-
-    int c=0;
-    int total=0;
-    for (auto ptr_: objectList())
-        if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(ptr_)) {
-            ++total;
-            if (ptr->connected())
-                ++c;
-        }
-    if (c == total)
+    
+    if (allDone( [](DecoderDbusController *ptr)->bool { return ptr->connected(); } ))
         emit allDecodersConnected();
 }
 
@@ -108,17 +101,31 @@ void DecodrDbusHub::decodingChanged(bool decoding)
     if (decoding)
         return;
 
+    if (allDone( [](DecoderDbusController *ptr)->bool { return !ptr->decoding() && !ptr->checked(); } ))
+        emit allDecodersWaitForCheck();
+}
+
+void DecodrDbusHub::checkedChanged(bool checked)
+{
+    if (!checked)
+        return;
+        
+    if (allDone( [](DecoderDbusController *ptr)->bool { return ptr->checked(); }    ))
+        emit allDecodersChecked();           
+}
+
+bool DecodrDbusHub::allDone(std::function<bool (DecoderDbusController *)> f) const
+{
     int c=0;
     int total=0;
     for (auto ptr_: objectList())
         if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(ptr_)) {
             ++total;
-            if (!ptr->decoding() && !ptr->checked())
+            if (f(ptr))
                 ++c;
         }
 
-    if (c == total)
-        emit allDecodersWaitForCheck();
+    return (c == total);
 }
 
 void DecodrDbusHub::startProcessing()
@@ -132,6 +139,10 @@ void DecodrDbusHub::startProcessing()
                 mHeads.pop_back();
             }
 
+}
+
+void DecodrDbusHub::baselineDecoders()
+{
 }
 
 int DecodrDbusHub::getRewindCluster() const

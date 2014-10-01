@@ -30,6 +30,7 @@ public slots:
     void allDecodersConnected();  
     void allDecodersWaitForCheck();
     void broadcastAtEnd();
+    void proceedDecode();
     
 private:
     class Private;

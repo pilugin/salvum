@@ -7,6 +7,7 @@
 #include <ui/qobjectlistmodel.h>
 #include <QPair>
 #include <QMap>
+#include <functional>
 
 namespace Ui {
 class ImageProvider;
@@ -33,6 +34,7 @@ public slots:
     void createDecoders(const QString &shmemPath, const QVariant &heads);
     
     void startProcessing();
+    void baselineDecoders();
     
 signals:
     void allDecodersConnected();
@@ -42,8 +44,10 @@ signals:
 private slots:
     void decodrConnected(bool connected);
     void decodingChanged(bool decoding);
+    void checkedChanged(bool checked);
 
 private:    
+    bool allDone(std::function<bool (DecoderDbusController *)> f) const;
     const DecoderDbusController *decoderByClientId(int clientId) const;
 
     WorkspaceModel *mWspace;
