@@ -1,13 +1,17 @@
 import QtQuick 1.1
 
 Rectangle {
+    clip: true
 
     color: checked ? "green" : "darkgray"
     Image {    
         id: preview
         anchors {  left: parent.left; top: parent.top; bottom:parent.botton; margins: 4 }
+        height: parent.height
         width: height
-        source: ""
+        clip: true
+        fillMode: Image.PreserveAspectCrop
+        source: thumbnailPath
     }
 
     Text {

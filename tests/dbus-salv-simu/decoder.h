@@ -33,8 +33,11 @@ private:
 
     QTimer mProgressTimer;
 
-    QImage mImage;
+    QString mOriginalImagePath;
+    QImage mImage;    
     QString mImagePath;
+    QString mThumbnailPath;
+    Common::ImageInfo mII;
     Common::DecodedClusters mDC;
     Common::RejectedClusters mRC;
 

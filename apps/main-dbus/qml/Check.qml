@@ -149,13 +149,13 @@ Rectangle {
         anchors { top: controls.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
         flow: GridView.LeftToRight
         model: decoderHub
-        cellWidth: 160
-        cellHeight: 45
+        cellWidth: 210
+        cellHeight: 55
         clip: true
         
         delegate: DecodrDelegate {
-            width: 150
-            height: 40
+            width: 205
+            height: 50
             border.color: GridView.isCurrentItem ? "blue" : color
             
             MouseArea {

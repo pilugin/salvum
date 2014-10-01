@@ -5,12 +5,13 @@ Rectangle {
     GridView {
         anchors { top: parent.top; left: parent.left; right: parent.right; bottom: bcastProgress.bottom }
         model: decoderHub
-        cellWidth: 160
-        cellHeight: 45
+        flow: GridView.LeftToRight
+        cellWidth: 210
+        cellHeight: 55
         
         delegate: DecodrDelegate {
-            width: 150
-            height: 40            
+            width: 205
+            height: 50            
         }
     }
     

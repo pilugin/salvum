@@ -16,11 +16,13 @@ Decoder::Decoder(org::salvum::DecodrCtrl *dbus, QObject *parent)
     connect(dbus, SIGNAL(exit()), this, SLOT(exit()) );
 
     connect(this, SIGNAL(progress(int,int,int)), dbus, SLOT(progress(int,int,int)) );
+    connect(this, SIGNAL(thumbnailCreated(QString)), dbus, SLOT(thumbnailCreated(QString))    );
     connect(this, SIGNAL(decodingEnd(bool)), dbus, SLOT(decodingEnd(bool)) );
     connect(this, SIGNAL(fetchAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::ImageInfo)),
             dbus, SLOT(fetchAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::ImageInfo)) );
 
-    mImage.load("shared_resources/1.jpg");
+    mOriginalImagePath = "shared_resources/1.jpg";
+    mImage.load(mOriginalImagePath);
     if (mImage.isNull())
         qDebug()<<"Failed to load image:";
 
@@ -46,7 +48,7 @@ Decoder::Decoder(org::salvum::DecodrCtrl *dbus, QObject *parent)
     }
 
     connect(&mProgressTimer, SIGNAL(timeout()), this, SLOT(onDecodeCluster()) );
-    mProgressTimer.setInterval(100);
+    mProgressTimer.setInterval(200);
     
     QTimer *t = new QTimer(this);
     t->setInterval(5000);
@@ -54,12 +56,18 @@ Decoder::Decoder(org::salvum::DecodrCtrl *dbus, QObject *parent)
     t->start();
 }
 
+#include <QProcess>
 void Decoder::start(int clusterNo, const QString &shmemPath, const QString &wspacePath)
 {
     qDebug()<<__FUNCTION__<<clusterNo<<shmemPath<<wspacePath;
 
     QDir().mkpath(wspacePath);    
     mImagePath = wspacePath + "/image.png";
+    mThumbnailPath = wspacePath + "/thumbnail.jpg";
+    
+    mII = Jpeg::storeImage(mImage, mImagePath);
+    
+    QProcess::execute("jhead", QStringList() << "-st" << mThumbnailPath << mOriginalImagePath);
 
     startDecoding();
 }
@@ -84,6 +92,14 @@ void Decoder::onDecodeCluster()
     }
 
     emit progress(mCurrentCluster, mDC[mCurrentCluster].blockBegin, mDC.back().blockEnd +1);
+    
+    if (!mThumbnailPath.isEmpty() && QFile::exists(mThumbnailPath)) {
+        qDebug("SENDING THE THUMBNAIL");
+        emit thumbnailCreated(mThumbnailPath);
+        mThumbnailPath.clear();
+    }
+    
+    
     if ((++mCurrentCluster %10) == 0) {
 
         stopDecoding();
@@ -97,7 +113,7 @@ void Decoder::startDecoding()
 
 void Decoder::stopDecoding()
 {
-    emit fetchAtEnd(false, mDC, mRC, Jpeg::storeImage(mImage, mImagePath));
+    emit fetchAtEnd(false, mDC, mRC, mII);
     mProgressTimer.stop();
 }
 

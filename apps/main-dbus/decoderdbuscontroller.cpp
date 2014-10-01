@@ -80,7 +80,6 @@ public:
     DecodrCtrlAdaptor *dbus;
     Ui::DecodedClustersModel *decodedClusters;
     QTimer *heartbeatTimer;
-    QString imagePath;
 
     QStateMachine fsm;    
     struct {
@@ -95,6 +94,8 @@ public:
         int blocksTotal;        
         bool decodingEnd;
         bool decodingSuccess;
+        QString imagePath;
+        QString thumbnailPath;
     } properties;
 };
 
@@ -185,7 +186,12 @@ Ui::DecodedClustersModel *DecoderDbusController::decodedClusters() const
 
 QString DecoderDbusController::imagePath() const
 {
-    return m_d->imagePath;
+    return m_d->properties.imagePath;
+}
+
+QString DecoderDbusController::thumbnailPath() const
+{
+    return m_d->properties.thumbnailPath;
 }
     
 void DecoderDbusController::setConnected(bool value)
@@ -253,7 +259,7 @@ void DecoderDbusController::fetchAtEnd(bool complete,
 
     qDebug()<<cluster()<<__FUNCTION__<<imageInfo.imagePath;
 
-    m_d->imagePath = imageInfo.imagePath;
+    m_d->properties.imagePath = imageInfo.imagePath;
     emit imagePathChanged();
     emit decodedClustersUpdated(decodedClusters, rejectedClusters, imageInfo);
 }
@@ -265,6 +271,13 @@ void DecoderDbusController::progress(int clustersDecoded, int blocksDecoded, int
     m_d->properties.blocksTotal = blocksTotal;
     
     emit progressChanged();
+}
+
+void DecoderDbusController::thumbnailCreated(const QString &path)
+{
+    qDebug()<<__FUNCTION__<<path;
+    m_d->properties.thumbnailPath = path;
+    emit thumbnailPathChanged();
 }
 
 // decodedClustersModel
