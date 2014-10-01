@@ -54,7 +54,7 @@ public:
     
 public slots:
     void sendStart(int clusterNo, const QString &shmemPath, const QString &wspacePath);    
-    void sendBaseline(int clusterNo);
+    void sendBaseline();
 //    void exit();
            
 private slots:

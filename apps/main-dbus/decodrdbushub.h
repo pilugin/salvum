@@ -41,6 +41,9 @@ signals:
     void allDecodersWaitForCheck();
     void allDecodersChecked();
     
+    // for Decoders
+    void sendBaseline();
+    
 private slots:
     void decodrConnected(bool connected);
     void decodingChanged(bool decoding);

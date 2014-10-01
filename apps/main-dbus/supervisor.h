@@ -18,9 +18,8 @@ signals:
     void qmlScreenChanged();    
     void decodedHeadsChanged();
     
-    void setupStateExited();
-    void decodeStateEntered();
-    void broadcastStateEntered();
+    void prepareDecodersStateEntered();
+    void prepareDecodersStateExited();
     
 public slots:
     void init();

@@ -46,6 +46,8 @@ QDBusObjectPath DecodrDbusHub::aquireClient(int clientId)
         connect(object, SIGNAL(connectedChanged(bool)), this, SLOT(decodrConnected(bool)) );
         connect(object, SIGNAL(decodingChanged(bool)), this, SLOT(decodingChanged(bool)) );
         connect(object, SIGNAL(checkedChanged(bool)), this, SLOT(checkedChanged(bool))  );
+        
+        connect(this, SIGNAL(sendBaseline()), object, SLOT(sendBaseline())  );
 
         if (!QDBusConnection::sessionBus().registerObject(path.path(), object)) {
             qDebug()<<"Failed to register DecodrCtrl:"<<path.path();
@@ -143,6 +145,7 @@ void DecodrDbusHub::startProcessing()
 
 void DecodrDbusHub::baselineDecoders()
 {
+    emit sendBaseline();
 }
 
 int DecodrDbusHub::getRewindCluster() const

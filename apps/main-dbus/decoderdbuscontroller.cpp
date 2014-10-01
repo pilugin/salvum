@@ -53,6 +53,7 @@ public:
         st1_connected   ->assignProperty(owner, "connected", true);
         st1_disconnected->assignProperty(owner, "connected", false);
         st2_decoding    ->assignProperty(owner, "decoding", true);
+        st2_decoding    ->assignProperty(owner, "checked", false);
         st2_check       ->assignProperty(owner, "decoding", false);
         st2_end         ->assignProperty(owner, "decoding", false);
         st2_check       ->assignProperty(owner, "checked", false);
@@ -220,9 +221,12 @@ void DecoderDbusController::sendStart(int clusterNo, const QString &shmemPath, c
     emit start(clusterNo, shmemPath, wspacePath);
 }
 
-void DecoderDbusController::sendBaseline(int clusterNo)
+void DecoderDbusController::sendBaseline()
 {
-    emit baseline(clusterNo);
+    if (m_d->properties.checked)
+        emit baseline(m_d->properties.baselineCluster);
+    else
+        qDebug()<<"Failed to sendBaseline, as Decoder is not CHECKED";
 }
 
 void DecoderDbusController::heartbeat()
