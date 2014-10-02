@@ -18,7 +18,7 @@ void Fetch::fetch(int &clusterNo, QByteArray &cluster)
     doFetch(clusterNo, cluster);
 
     if (clusterNo != InvalidClusterNo)
-        emit fetched(clusterNo);
+        emit fetched(clusterNo, cluster);
 
     if (atEnd() || clusterNo == InvalidClusterNo)
         emit end();

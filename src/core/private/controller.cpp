@@ -27,7 +27,7 @@ void Controller::setEverybody(Fetch *fetch, Check *check, Decodr *decodr)
     mCheck = check;
     mDecodr = decodr;
 
-    connect(mFetch,     SIGNAL(fetched(int)),               mCheck,     SLOT(onFetch(int))              );
+    connect(mFetch,     SIGNAL(fetched(int,QByteArray)),    mCheck,     SLOT(onFetch(int,QByteArray))   );
     connect(mFetch,     SIGNAL(end()),                      mCheck,     SLOT(onFetchEnd())              );
     connect(mFetch,     SIGNAL(end()),                      this,       SLOT(fetchEnd())                );
 
@@ -45,8 +45,10 @@ void Controller::addResult(Result *result)
 {
     Q_ASSERT(result && mCheck);
 
-    connect(mCheck,     SIGNAL(skipClusters(int,int)),      result,     SLOT(addClusters(int,int))      );
-    connect(this,       SIGNAL(end(bool)),                  result,     SLOT(finalize(bool))            );
+    connect(mCheck,     SIGNAL(saveResults(QVector<QPair<int,QByteArray>)),
+            result,     SLOT(addClusters(QVector<QPair<int,QByteArray>>))   );
+    connect(this,       SIGNAL(end(bool)),
+            result,     SLOT(finalize(bool))            );
 }
 
 bool Controller::run(int clusterNo)
@@ -93,7 +95,7 @@ void Controller::fetchEnd()
     if (mDecodrAccepted) { // can resume
 
 
-    } else { // exit
+    } else { // exit    
         mRunning = false;
         mSuccess = false;
 

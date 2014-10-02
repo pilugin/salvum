@@ -34,7 +34,7 @@ public:
     ImageCursor cursor;
     
     // 
-    bool decodeOkValue;                
+    bool decodeOkValue;
     struct {
         int blockBegin;
         QList<int> pixels;

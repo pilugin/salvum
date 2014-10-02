@@ -13,7 +13,7 @@ public:
     {
     }
     
-    static Common::DecodedClusters decodedClusters(const Core::Check::FrameDescription_v &frames, const QVector<int> &clusters)
+    static Common::DecodedClusters decodedClusters(const Core::Check::FrameDescription_v &frames, const Core::Check::Clusters &clusters)
     {
         Common::DecodedClusters res;
         for (const Core::Check::FrameDescription &fd: frames) {
@@ -26,14 +26,14 @@ public:
             i.blockEnd = static_cast<Jpeg::PicoJpegDecodFrame *>(fd.frame)->cursor.currentBlockIndex() -1;
             
             for (int c=0; c<fd.clustersCount; ++c) {
-                i.clusterNo = clusters[ fd.clustersPos +c ];
+                i.clusterNo = clusters[ fd.clustersPos +c ].first;
                 res.push_back( i );
             }
         }
         return res;
     }
     
-    static Common::RejectedClusters rejectedClusters(const Core::Check::FrameDescription_v &frames, const QVector<int> &clusters)
+    static Common::RejectedClusters rejectedClusters(const Core::Check::FrameDescription_v &frames, const Core::Check::Clusters &clusters)
     {
         Common::RejectedClusters res;
         for (const Core::Check::FrameDescription &fd: frames) {
@@ -47,7 +47,7 @@ public:
             i.pixels = f->savedPixels.pixels;
             
             for (int c=0; c<fd.clustersCount; ++c) {
-                i.clusterNo = clusters[ fd.clustersPos +c ];
+                i.clusterNo = clusters[ fd.clustersPos +c ].first;
                 res.push_back( i );
             }
         }
@@ -102,7 +102,7 @@ SalvDbusCheck::FrameDescription_itr SalvDbusCheck::chooseBaseline(const SalvDbus
         // find appropriate frame
         for (auto itr=frames.begin(); itr!=frames.end(); ++itr) {
             for (int i=0; i<itr->clustersCount; ++i) {
-                if (m_d->baselineClusterNo == clusters()[ itr->clustersPos+i ])
+                if (m_d->baselineClusterNo == clusters()[ itr->clustersPos+i ].first)
                     return itr;
             }
         

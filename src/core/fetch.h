@@ -24,7 +24,7 @@ public slots:
     virtual void fastfwd() =0;
     
 signals:
-    void fetched(int clusterNo);
+    void fetched(int clusterNo, const QByteArray &cluster);
     void end();
     
 protected:

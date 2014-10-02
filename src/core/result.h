@@ -2,6 +2,9 @@
 #define CORE_RESULT_H
 
 #include <QObject>
+#include <QPair>
+#include <QByteArray>
+#include <QVector>
 
 namespace Core {
 
@@ -13,7 +16,7 @@ public:
     
 public slots:
     virtual void restart(const QString &sessionName) =0;
-    virtual void addClusters(int clusterNo, int length) =0;
+    virtual void addClusters(const QVector<QPair<int,QByteArray>> &clusters) =0;
     virtual void finalize(bool success) =0;
 };
 

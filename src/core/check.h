@@ -17,8 +17,8 @@ public:
     {
         FrameDescription(int clustersPos_ =0, int clustersCount_ =0, DecodrFrame *frame_ =nullptr, bool accepted_ =false);
         int clustersPos;
-        int clustersCount; 
-        DecodrFrame *frame;        
+        int clustersCount;
+        DecodrFrame *frame;
         bool accepted;
     };
     typedef QVector<FrameDescription> FrameDescription_v;
@@ -26,22 +26,25 @@ public:
 
 signals:
     void skipClusters(int clusterNo, int length);
+    void saveResults(const QVector<QPair<int, QByteArray>> &clusters);
     void baselineFrame(const DecodrFrame &frame);
 
 public slots:
-    void onFetch(int clusterNo);
+    void onFetch(int clusterNo, const QByteArray &cluster);
     void onAccept(const DecodrFrame &frame);
     void onReject(const DecodrFrame &frame);
     
     void onFetchEnd();
     
-protected:    
-    virtual void doAcceptFrame(const QVector<int> &pendingClusters, const DecodrFrame &frame);
-    virtual void doRejectFrame(const QVector<int> &pendingClusters, const DecodrFrame &frame);
+protected:
+    typedef QVector<QPair<int,QByteArray>> Clusters;
+
+    virtual void doAcceptFrame(const Clusters &pendingClusters, const DecodrFrame &frame);
+    virtual void doRejectFrame(const Clusters &pendingClusters, const DecodrFrame &frame);
         
     virtual FrameDescription_itr chooseBaseline(const FrameDescription_v &frames) =0;
     
-    const QVector<int> &clusters() const { return mClusters; }   
+    const Clusters &clusters() const { return mClusters; }   
 private:
     void processFetchEnd();
     
@@ -54,7 +57,7 @@ private:
         bool flushed;
     } mSkipClustersTmp;
 
-    QVector<int> mPendingClusters;
+    Clusters mPendingClusters;
     
     /*
     ** 0-1-2-3--------8-9----------4-6-7-----         <-- mClusters
@@ -67,7 +70,7 @@ private:
     ** Frame1 - {8..9}
     ** Frame2 - {4..7}
     */
-    QVector<int> mClusters;   
+    Clusters mClusters;   
     QVector<FrameDescription> mFrames;
     bool mPrevAccepted;
     bool mFetchEnd;

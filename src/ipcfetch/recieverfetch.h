@@ -37,10 +37,9 @@ protected:
     
     /// this routine is called from main thread, while doFetch is waiting. Use it for eventLoop, etc
     /// @return time in milliseconds to wait for
-    virtual int waiting4Fetch(); 
+    virtual int waiting4Fetch();
 
 private:
-//    SharedFeedback                  *mFeedback;
     int                             mWaitForCluster; //< set by rewind()
     bool                            mRegistered;
     bool                            mAtEnd;
