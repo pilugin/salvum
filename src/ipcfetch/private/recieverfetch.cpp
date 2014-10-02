@@ -69,6 +69,13 @@ RecieverFetch::~RecieverFetch()
     }
 }
 
+void RecieverFetch::appendBeginningCluster(int clusterNo, const QByteArray &cluster)
+{
+    QMutexLocker l( &mInternMtx );
+    
+    mRecvClusters.enqueue(qMakePair(clusterNo, cluster));
+}
+
 bool RecieverFetch::rewind(int clusterNo)
 {
     QMutexLocker l( &mInternMtx );
@@ -80,7 +87,15 @@ bool RecieverFetch::rewind(int clusterNo)
     if (!mRegistered && !mRecvThread) {
         mRecvThread = new RecvThread(*this);
         mRecvThread->start();
-        mWaitForCluster = clusterNo;
+        if (mRecvClusters.size() >0) {
+            if (mRecvClusters.head().first != clusterNo) {
+                Msg("\nFailed to RecieverFetch::rewind as head of queue does not correspond to requested cluster"
+                    "\nqueue=%08X cluster=%08X", mRecvClusters.head().first, clusterNo);
+                return false;
+            }
+            mWaitForCluster = InvalidClusterNo;
+        } else
+            mWaitForCluster = clusterNo;
     }
     return true;
 }
@@ -90,10 +105,6 @@ void RecieverFetch::duringReg()
     QMutexLocker l( &mInternMtx );
 
     mRegistered = true;
-
-//    if (sharedMem().regCount == 1 && sharedData().rewind == InvalidClusterNo) 
-//    if (mWaitForCluster != InvalidClusterNo && sharedData().rewind > mWaitForCluster)
-//        sharedData().rewind = mWaitForCluster;
 }
 
 void RecieverFetch::duringUnreg()

@@ -19,6 +19,8 @@ public:
     RecieverFetch(const char *shmemName, QObject *parent =nullptr);
     ~RecieverFetch();
     
+    void appendBeginningCluster(int clusterNo, const QByteArray &cluster);
+
     bool rewind(int clusterNo);
     void skip(int clusterNo, int length);
     void fastfwd();
