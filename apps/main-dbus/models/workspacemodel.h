@@ -21,6 +21,8 @@ public:
         Role_BlocksTotal
     };
     
+    Q_INVOKABLE QString getPathForDecoder(int clusterNo) const;
+    
     // Model stuff
 #if QT_VERSION >= 0x050000
     QHash<int, QByteArray> roleNames() const { return roleNames_internal(); }

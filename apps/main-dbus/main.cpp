@@ -30,12 +30,15 @@ int main(int argc, char **argv)
     // Everybody!
     Supervisor supervisor;
     
+    DecodrDbusHub decoderHub;
     BcastDbusController bcastCtrl;
     BitmapInfoModel bitmapInfo;
     JpegHeadsModel jpegHeadsModel;
     JpegHeadsModel goodHeadsModel;
     WorkspaceModel wspaceModel;
     SelectedHeadsModel selectedHeadsModel;    
+
+    decoderHub.setWorkspaceModel( &wspaceModel );
     selectedHeadsModel.setWorkspaceModel( &wspaceModel );
     
     QObject::connect(&bcastCtrl, SIGNAL(bitmapInfoUpdated(Common::BitmapInfo)), &bitmapInfo, SLOT(setInfo(Common::BitmapInfo)));
@@ -47,11 +50,6 @@ int main(int argc, char **argv)
     QObject::connect(&jpegHeadsModel, SIGNAL(headSelected(int,bool)), &selectedHeadsModel, SLOT(onHeadSelected(int,bool)));
     QObject::connect(&goodHeadsModel, SIGNAL(headSelected(int,bool)), &selectedHeadsModel, SLOT(onGoodHeadSelected(int,bool)));
         
-    DecodrDbusHub hub;
-    DecodrDbusCtrlModel decodrModel;
-    QObject::connect(&hub,          SIGNAL(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*)),
-                     &decodrModel,  SLOT(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*))    );
-    
 //    SalvJpegModel model;
 //    QObject::connect(&hub,      SIGNAL(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*)),
 //                     &model,    SLOT(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*))    );
@@ -68,8 +66,7 @@ int main(int argc, char **argv)
     view.engine()->rootContext()->setContextProperty("goodHeadsModel", &goodHeadsModel);
     view.engine()->rootContext()->setContextProperty("selectedHeadsModel", &selectedHeadsModel);
     view.engine()->rootContext()->setContextProperty("wspaceModel", &wspaceModel);
-    view.engine()->rootContext()->setContextProperty("clientsHub", &hub);
-    view.engine()->rootContext()->setContextProperty("decodrModel", &decodrModel);
+    view.engine()->rootContext()->setContextProperty("decoderHub", &decoderHub);
     
 //    view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
 

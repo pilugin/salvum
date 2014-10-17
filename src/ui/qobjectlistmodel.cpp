@@ -135,4 +135,12 @@ void QObjectListModelBase::objectUpdated()
     emit dataChanged(index(row), index(row));
 }
 
+const QObject *QObjectListModelBase::object(const QModelIndex &index) const
+{
+    if (index.column()!=0 || index.parent().isValid() || index.row()<0 || index.row()>=m_d->items.size())
+        return nullptr;
+    return m_d->items[index.row()];
+}
+
+
 }

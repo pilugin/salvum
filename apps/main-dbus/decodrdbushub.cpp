@@ -1,5 +1,4 @@
 #include "decodrdbushub.h"
-#include <QSignalMapper>
 #include <QProcess>
 #include <QtDebug>
 #include <algorithm>
@@ -7,64 +6,60 @@
 static const char *s_decodrExeName = "./salvum-decodr";
 
 DecodrDbusHub::DecodrDbusHub(QObject *parent)
-: QObject(parent)
-, mHeartbeatMapper(new QSignalMapper(this))
+: Ui::QObjectListModel<DecoderDbusController>(parent)
+, mWspace(nullptr)
 {
     new DecodrHubAdaptor(this);
 
-    qRegisterMetaType<DecodrDbusCtrl *>("DecodrDbusCtrl *");
-    
     if (!QDBusConnection::sessionBus().registerObject("/hub", this)) {
         qDebug()<<"Failed to register DecodrHub:/hub";
     }
-    
-//    connect(mHeartbeatMapper, SIGNAL(mapped(int)), this, SLOT(releaseClient(int)) );
 }
 
 DecodrDbusHub::~DecodrDbusHub()
 {
 }
 
+const DecoderDbusController *DecodrDbusHub::decoderByClientId(int clientId) const
+{
+    for (const QObject *obj: objectList()) {
+        if (const DecoderDbusController *ptr = qobject_cast<const DecoderDbusController *>(obj))
+            if (ptr->clientId() == clientId)
+                return ptr;
+    }
+    
+    return nullptr;
+}
+
 QDBusObjectPath DecodrDbusHub::aquireClient(int clientId)
 {
     qDebug()<<__FUNCTION__;
 
-    auto itr = mClients.find(clientId);
-    if (itr == mClients.end()) {
+    if (const DecoderDbusController *ptr = decoderByClientId(clientId))
+        return ptr->dbusObjectPath();
+    else {
         QDBusObjectPath path(QString("/salvum/%1").arg(clientId));
-        DecodrDbusCtrl *object = nullptr;//new DecodrDbusCtrl(this);
+        DecoderDbusController *object = new DecoderDbusController(clientId, path, this);
+
+        connect(object, SIGNAL(connectedChanged(bool)), this, SLOT(decodrConnected(bool)) );
 
         if (!QDBusConnection::sessionBus().registerObject(path.path(), object)) {
             qDebug()<<"Failed to register DecodrCtrl:"<<path.path();
         }
     
-        mClients.insert(clientId, qMakePair(path, object));
-        emit decodrClientAdded(clientId, path, object);
-        emit clientIdsChanged();
-        
-        mHeartbeatMapper->setMapping(object, clientId);
-        connect(object, SIGNAL(noHeartbeat()), mHeartbeatMapper, SLOT(map()) );
-        connect(object, SIGNAL(connected()), this, SLOT(decodrConnected()) );
+        appendObject(object);
 
         return path;
-    } else
-        return itr->first;
+    }
 }
 
 void DecodrDbusHub::releaseClient(int clientId)
 {
-    auto itr = mClients.find(clientId);
-    if (itr != mClients.end()) {
-        emit decodrClientReleased(clientId, itr->first);
-
-        delete itr->second;
-        mClients.erase(itr);
-        
-        emit clientIdsChanged();
-    }
+    if (const DecoderDbusController *ptr = decoderByClientId(clientId))
+        delete ptr;
 }
 
-void DecodrDbusHub::startDecoders(const QString &shmemPath, const QVariant &heads)
+void DecodrDbusHub::createDecoders(const QString &shmemPath, const QVariant &heads)
 {
     QList<int> c;
     bool ok;
@@ -73,12 +68,12 @@ void DecodrDbusHub::startDecoders(const QString &shmemPath, const QVariant &head
         if (ok)
             c.push_back(intc);
         else
-            qDebug()<<"ERR: DecodrDbusHub::startDecoders. failed to cast to int " << heads;
+            qDebug()<<"ERR: DecodrDbusHub::createDecoders. failed to cast to int " << heads;
     }
-    startDecoders(shmemPath, c);
+    createDecoders(shmemPath, c);
 }
 
-void DecodrDbusHub::startDecoders(const QString &shmemPath, const QList<int> &heads)
+void DecodrDbusHub::createDecoders(const QString &shmemPath, const QList<int> &heads)
 {
     mShmemPath = shmemPath;
     mHeads.append(heads);
@@ -88,29 +83,37 @@ void DecodrDbusHub::startDecoders(const QString &shmemPath, const QList<int> &he
             qDebug()<<"ERR: DecodrDbusHub::startDecoders: "<<strerror(errno);
 }
 
-void DecodrDbusHub::decodrConnected()
+void DecodrDbusHub::decodrConnected(bool connected)
 {
+    if (!connected)
+        return;
+
     int c=0;
-    for (const auto &p: mClients)
-        if (p.second->isConnected())
-            ++c;
-    if (c == mClients.size())
+    int total=0;
+    for (auto ptr_: objectList())
+        if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(ptr_)) {
+            ++total;
+            if (ptr->connected())
+                ++c;
+        }
+    if (c == total)
         emit allDecodersConnected();
 }
 
 void DecodrDbusHub::startProcessing()
 {
     qDebug()<<"START PROC";
-    for (auto itr=mClients.begin(); itr!=mClients.end(); ++itr) {
-        if (itr->second->isStarted()) {
+    for (auto ptr_ : objectList()) 
+        if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(ptr_)) {
+            if (ptr->started()) {
 //            itr->second->sendResume();
-            qDebug()<<"RESUMR";
-        } else if (mHeads.size() >0) {
-            qDebug()<<"START "<<mShmemPath<<mHeads.back();
-//            itr->second->sendStart( mHeads.back(), mShmemPath );
-            mHeads.pop_back();
+                qDebug()<<"RESUMR";
+            } else if (mHeads.size() >0) {
+                qDebug()<<"START "<<mShmemPath<<mHeads.back();
+                ptr->sendStart( mHeads.back(), mShmemPath, mWspace->getPathForDecoder(mHeads.back()) );
+                mHeads.pop_back();
+            }
         }
-    }
 }
 
 int DecodrDbusHub::getRewindCluster() const

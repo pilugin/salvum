@@ -7,8 +7,10 @@ class DecoderDbusController::Private
 {
 public:
 
-    Private(DecoderDbusController *owner_)
-    : owner(owner_)
+    Private(int clientId_, const QDBusObjectPath &dbusObjectPath_, DecoderDbusController *owner_)
+    : clientId(clientId_)
+    , dbusObjectPath(dbusObjectPath_)
+    , owner(owner_)
     , dbus(new DecodrCtrlAdaptor(owner_))
     , heartbeatTimer(new QTimer(owner_))
     {
@@ -53,6 +55,9 @@ public:
         fsm.start();
     }
 
+    const int clientId;
+    const QDBusObjectPath dbusObjectPath;
+    
     DecoderDbusController *owner;
     DecodrCtrlAdaptor *dbus;
     QTimer *heartbeatTimer;
@@ -72,15 +77,25 @@ public:
 
 ////////////////////////////////////////////
 
-DecoderDbusController::DecoderDbusController(QObject *parent)
+DecoderDbusController::DecoderDbusController(int clientId, const QDBusObjectPath &dbusObjectPath, QObject *parent)
 : QObject(parent)
-, m_d(new Private(this))
+, m_d(new Private(clientId, dbusObjectPath, this))
 {
 }
 
 DecoderDbusController::~DecoderDbusController()
 {
     delete m_d;
+}
+
+int DecoderDbusController::clientId() const
+{
+    return m_d->clientId;
+}
+
+QDBusObjectPath DecoderDbusController::dbusObjectPath() const
+{
+    return m_d->dbusObjectPath;
 }
     
 bool DecoderDbusController::connected() const

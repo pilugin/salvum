@@ -2,6 +2,7 @@
 #define DECODER_DBUS_CONTROLLER_H
 
 #include <QtCore/QObject>
+#include <QtDBus/QDBusObjectPath>
 #include <common/types.h>
 
 class DecoderDbusController : public QObject
@@ -19,9 +20,11 @@ class DecoderDbusController : public QObject
     Q_PROPERTY(bool decodingEnd     READ decodingEnd                    NOTIFY decodingEndChanged)
     Q_PROPERTY(bool decodingSuccess READ decodingSuccess                NOTIFY decodingEndChanged)
 public:
-    DecoderDbusController(QObject *parent =nullptr);
+    DecoderDbusController(int clientId, const QDBusObjectPath &dbusObjectPath, QObject *parent =nullptr);
     ~DecoderDbusController();
     
+    int clientId() const;
+    QDBusObjectPath dbusObjectPath() const;
     bool connected() const;
     bool started() const;
     int cluster() const;

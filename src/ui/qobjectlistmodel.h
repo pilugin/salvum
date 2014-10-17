@@ -16,6 +16,8 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;        
     
+    virtual const QObject *object(const QModelIndex &index) const;
+    
 #if QT_VERSION >= 0x050000
     QHash<int, QByteArray> roleNames() const;
 #endif    
@@ -45,6 +47,9 @@ class QObjectListModel : public QObjectListModelBase
 public:
     QObjectListModel<Object>(QObject *parent =nullptr) 
         : QObjectListModelBase(Object::staticMetaObject, parent) {}
+
+    const Object *object(const QModelIndex &index) const 
+        { return qobject_cast<const Object *>(QObjectListModelBase::object(index) ); }
 };
 
 }

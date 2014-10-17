@@ -116,7 +116,11 @@ WorkspaceModel::~WorkspaceModel()
 {
     delete m_d;
 }
-    
+
+QString WorkspaceModel::getPathForDecoder(int clusterNo) const
+{
+    return QString("%1/%2").arg(m_d->wspacePath, QString().sprintf("%08X", clusterNo));
+}
 
 int WorkspaceModel::rowCount(const QModelIndex &parent) const
 {
@@ -165,7 +169,7 @@ QVariant WorkspaceModel::data(const QModelIndex &index, int role) const
     
 QString WorkspaceModel::bitmapPath() const
 {
-    return m_d->bitmapPath;
+   return m_d->bitmapPath;
 }
     
 QImage WorkspaceModel::get(const QString &image) const

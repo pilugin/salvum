@@ -9,15 +9,15 @@ Loader {
         target: supervisor
 //        onDecodeStateEntered: {
         onSetupStateExited: {        
-            clientsHub.startDecoders( bcast.shmemPath, supervisor.decodedHeads )
-            bcast.start( clientsHub.getRewindCluster() )
+            decoderHub.createDecoders( bcast.shmemPath, supervisor.decodedHeads )
+            bcast.start( decoderHub.getRewindCluster() )
         }            
-        onBroadcastStateEntered: clientsHub.startProcessing() 
+        onBroadcastStateEntered: decoderHub.startProcessing()
         
     }
     
     Connections {
-        target: clientsHub
+        target: decoderHub
         onAllDecodersConnected: supervisor.allDecodersConnected();
     }
     
