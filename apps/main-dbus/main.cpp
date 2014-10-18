@@ -3,7 +3,7 @@
 #include "bcastdbuscontroller.h"
 #include "models/jpegheadsmodel.h"
 #include "models/selectedheadsmodel.h"
-#include "models/salvjpegmodel.h"
+//#include "models/salvjpegmodel.h"
 #include "models/workspacemodel.h"
 
 #include <ui/bitmapinfomodel.h>

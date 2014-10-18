@@ -20,7 +20,6 @@ SOURCES += \
     decoderdbuscontroller.cpp \
     bcastdbuscontroller.cpp \
     models/jpegheadsmodel.cpp \
-    models/salvjpegmodel.cpp \
     models/customclustersmodel.cpp \
     models/selectedheadsmodel.cpp \
     models/workspacemodel.cpp
@@ -31,14 +30,12 @@ HEADERS += \
     decodrdbushub.h \
     decoderdbuscontroller.h \
     bcastdbuscontroller.h \
-    models/salvjpegmodel.h \
     models/jpegheadsmodel.h \
     models/customclustersmodel.h \
     models/selectedheadsmodel.h \
     models/workspacemodel.h 
 
 OTHER_FILES += \
-    qml/SalvJpegView.qml \
     qml/Main.qml 
 
 RESOURCES += \

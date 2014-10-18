@@ -11,6 +11,7 @@ class DecoderDbusController : public QObject
 
     Q_PROPERTY(bool connected       READ connected  WRITE setConnected  NOTIFY connectedChanged)    //< set by FSM
     Q_PROPERTY(bool started         READ started    WRITE setStarted    NOTIFY startedChanged)      //< set by FSM
+    Q_PROPERTY(bool checked         READ checked    WRITE setChecked    NOTIFY checkedChanged)      //< set by FSM
     Q_PROPERTY(int cluster          READ cluster                        NOTIFY clusterChanged)
     
     Q_PROPERTY(int clustersDecoded  READ clustersDecoded                NOTIFY progressChanged)
@@ -27,6 +28,7 @@ public:
     QDBusObjectPath dbusObjectPath() const;
     bool connected() const;
     bool started() const;
+    bool checked() const;
     int cluster() const;
     int clustersDecoded() const;
     int blocksDecoded() const;
@@ -42,6 +44,7 @@ public slots:
 private slots:
     void setConnected(bool value);
     void setStarted(bool value);
+    void setChecked(bool value);
 
     void decodingEnd(bool success);
     void fetchAtEnd(bool complete, 
@@ -54,7 +57,8 @@ private slots:
 signals:    
     void connectedChanged(bool value);
     void startedChanged(bool value);
-    void clusterChanged(int value);
+    void checkedChanged(bool value);
+    void clusterChanged(int value);    
     void progressChanged();   
     void decodingEndChanged();
     void decodedClustersUpdated(const Common::DecodedClusters &decodedClusters, 
