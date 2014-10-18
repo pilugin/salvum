@@ -30,7 +30,7 @@ void SalvJpegObject::fetchAtEnd(bool complete, const DecodedClusters &decodedClu
     emit imageChanged(mImageId);
     emit shadeChanged(mShadeId);
 
-    mSubmodel->reset(decodedClusters, rejectedClusters);
+    mSubmodel->reset(decodedClusters, rejectedClusters, mImage);
 }
 
 void SalvJpegObject::fetchAtEnd(bool complete, const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const Pixmap &pixmap)
