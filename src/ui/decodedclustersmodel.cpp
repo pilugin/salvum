@@ -1,4 +1,5 @@
 #include <ui/decodedclustersmodel.h>
+#include <jpeg/imagehelpers.h>
 
 using namespace Common;
 
@@ -7,6 +8,8 @@ namespace Ui {
 DecodedClustersModel::DecodedClustersModel(QObject *parent)
 : QAbstractListModel(parent)
 , mCurrentCluster(-1)
+, mShadeRect1(new Rect(this))
+, mShadeRect2(new Rect(this))
 {
 
 #if QT_VERSION < 0x050000
@@ -64,10 +67,11 @@ QVariant DecodedClustersModel::data(const QModelIndex &index, int role) const
     }
 }
 
-void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters)
+void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const QImage &image)
 {
     beginResetModel();
     mClusters.clear(); 
+    mImage = image;
     
     auto dc_itr = decodedClusters.begin();
     auto rc_itr = rejectedClusters.begin();
@@ -89,6 +93,10 @@ void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const R
     }
     
     mCurrentCluster = -1;
+
+    mShadeRect1->reset();
+    mShadeRect2->reset();
+
     endResetModel();
 }
 
@@ -98,6 +106,16 @@ void DecodedClustersModel::setCurrentCluster(int row)
         emit currentClusterChanged(mCurrentCluster = row);
         const Clusters::value_type &v = mClusters[row];
         emit currentClusterParamsChanged( v.clusterNo, v.blockBegin, v.blockEnd );
+        
+        auto rects = Jpeg::shade( mImage, v.blockEnd );
+        mShadeRect1->setX(rects.first.x());
+        mShadeRect1->setY(rects.first.y());
+        mShadeRect1->setWidth(rects.first.width());
+        mShadeRect1->setHeight(rects.first.height());
+        mShadeRect2->setX(rects.second.x());
+        mShadeRect2->setY(rects.second.y());
+        mShadeRect2->setWidth(rects.second.width());
+        mShadeRect2->setHeight(rects.second.height());
     }
 }
 

@@ -52,7 +52,6 @@ public:
         st2_check       ->addTransition(owner, SIGNAL(baseline(int)), st2_decoding);
         
         fsm.setInitialState( st1_init );
-        fsm.start();
     }
 
     const int clientId;
@@ -81,6 +80,8 @@ DecoderDbusController::DecoderDbusController(int clientId, const QDBusObjectPath
 : QObject(parent)
 , m_d(new Private(clientId, dbusObjectPath, this))
 {
+    m_d->createFSM();
+    m_d->fsm.start();
 }
 
 DecoderDbusController::~DecoderDbusController()
