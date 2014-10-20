@@ -70,7 +70,7 @@ QPair<QRect, QRect> shade(const QImage &base, int blockEnd)
     
     rects.second.setLeft(0);
     rects.second.setTop( (blockY +1) *8 );
-    rects.second.setRight( base.width()-1 );
+    rects.second.setRight( rects.first.left() );
     rects.second.setBottom( base.height()-1 );
     
     return rects;
