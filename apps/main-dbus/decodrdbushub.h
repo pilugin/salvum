@@ -30,9 +30,12 @@ public slots:
     
 signals:
     void allDecodersConnected();
+    void allDecodersWaitForCheck();
+    void allDecodersChecked();
     
 private slots:
     void decodrConnected(bool connected);
+    void decodingChanged(bool decoding);
 
 private:    
     const DecoderDbusController *decoderByClientId(int clientId) const;

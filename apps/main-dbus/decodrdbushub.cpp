@@ -3,7 +3,7 @@
 #include <QtDebug>
 #include <algorithm>
 
-static const char *s_decodrExeName = "./salvum-decodr";
+static const char *s_decodrExeName = "./dbus-salv-simu"; //"./salvum-decodr";
 
 DecodrDbusHub::DecodrDbusHub(QObject *parent)
 : Ui::QObjectListModel<DecoderDbusController>(parent)
@@ -42,6 +42,7 @@ QDBusObjectPath DecodrDbusHub::aquireClient(int clientId)
         DecoderDbusController *object = new DecoderDbusController(clientId, path, this);
 
         connect(object, SIGNAL(connectedChanged(bool)), this, SLOT(decodrConnected(bool)) );
+        connect(object, SIGNAL(decodingChanged(bool)), this, SLOT(decodingChanged(bool)) );
 
         if (!QDBusConnection::sessionBus().registerObject(path.path(), object)) {
             qDebug()<<"Failed to register DecodrCtrl:"<<path.path();
@@ -100,20 +101,38 @@ void DecodrDbusHub::decodrConnected(bool connected)
         emit allDecodersConnected();
 }
 
+void DecodrDbusHub::decodingChanged(bool decoding)
+{
+    if (decoding)
+        return;
+
+    int c=0;
+    int total=0;
+    for (auto ptr_: objectList())
+        if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(ptr_)) {
+            ++total;
+            qDebug()<<ptr->decoding()<<ptr->checked();
+            if (!ptr->decoding() && !ptr->checked())
+                ++c;
+        }
+
+    qDebug()<<__FUNCTION__<<c<<total;
+
+    if (c == total)
+        emit allDecodersWaitForCheck();
+}
+
 void DecodrDbusHub::startProcessing()
 {
     qDebug()<<"START PROC";
     for (auto ptr_ : objectList()) 
-        if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(ptr_)) {
-            if (ptr->started()) {
-//            itr->second->sendResume();
-                qDebug()<<"RESUMR";
-            } else if (mHeads.size() >0) {
+        if (DecoderDbusController *ptr = qobject_cast<DecoderDbusController *>(ptr_))
+            if (!ptr->started() && mHeads.size() >0) {
                 qDebug()<<"START "<<mShmemPath<<mHeads.back();
                 ptr->sendStart( mHeads.back(), mShmemPath, mWspace->getPathForDecoder(mHeads.back()) );
                 mHeads.pop_back();
             }
-        }
+
 }
 
 int DecodrDbusHub::getRewindCluster() const

@@ -4,10 +4,11 @@
 
 #include <unistd.h>
 
-#include <dbus/org.salvum.DecodrHub.h>
-#include <dbus/org.salvum.DecodrCtrl.h>
+#include "org.salvum.DecodrHub.h"
+#include "org.salvum.DecodrCtrl.h"
 
 #include <jpeg/imagehelpers.h>
+#include "decoder.h"
 
 using namespace Common;
 using namespace Jpeg;
@@ -40,28 +41,12 @@ int main(int argc, char *argv[])
         return -3;
     }
 
-    QImage img("shared_resources/1.jpg");
-    if (img.isNull()) {
-        qDebug()<<"Failed to load image:";
-        return -4;
-    }
-    
-    DecodedClusters dc;
-    int nblocks = img.width()*img.height()/8/8;
-   
-    for (int i=0, c=0, previ=0; i<nblocks; ++c) {
-        i += (155+qrand()%155);
-        DecodedClusterInfo dci = { c, previ, qMin(nblocks-1, i) };
-        dc.push_back( dci );
-        previ = i + 1;
-    }
-
-    ctrl.fetchAtEnd(false, dc, RejectedClusters(), Jpeg::dbusPixmap(img));
-    
     QTimer timer;
     timer.setInterval(2000);
     QObject::connect(&timer, SIGNAL(timeout()), &ctrl, SLOT(heartbeat()) );
     timer.start();
+
+    Decoder d(&ctrl);
 
     return app.exec();
 }

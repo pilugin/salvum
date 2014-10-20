@@ -191,6 +191,7 @@ Rectangle {
                 enabled: selectedHeadsView.count>0
                 onClicked: { 
                     supervisor.startDecode( selectedHeadsModel.selectedHeads )
+                    console.log("HERE!")
                 }
             }
         }

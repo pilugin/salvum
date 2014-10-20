@@ -12,9 +12,9 @@ Supervisor::Private::Private(Supervisor *owner_)
 
 void Supervisor::Private::createFSM()
 {
-    QState *st1_setup = new QState;
-    QState *st1_decode = new QState;
-    QState *st1_check = new QState;
+    QState *st1_setup = new QState(&fsm);
+    QState *st1_decode = new QState(&fsm);
+    QState *st1_check = new QState(&fsm);
     QState *st2_waitForDecoders = new QState( st1_decode );
     QState *st2_broadcast = new QState( st1_decode );
     
@@ -26,15 +26,16 @@ void Supervisor::Private::createFSM()
         
     st1_setup           ->addTransition(this, SIGNAL(startDecode()),            st1_decode);
     st2_waitForDecoders ->addTransition(this, SIGNAL(allDecodersConnected()),   st2_broadcast);
-    st1_decode          ->addTransition(this, SIGNAL(broadcastAtEnd()),         st1_check);
-    
+//    st1_decode          ->addTransition(this, SIGNAL(broadcastAtEnd()),         st1_check);
+    st1_decode          ->addTransition(this, SIGNAL(allDecodersWaitForCheck()), st1_check);
+
     connect(st1_setup,      SIGNAL(exited()),   owner, SIGNAL(setupStateExited())   );
     connect(st1_decode,     SIGNAL(entered()),  owner, SIGNAL(decodeStateEntered()) );
     connect(st2_broadcast,  SIGNAL(entered()),  owner, SIGNAL(broadcastStateEntered()) );
     
-    fsm.addState(st1_setup);
-    fsm.addState(st1_decode);
-    fsm.addState(st1_check);
+//    fsm.addState(st1_setup);
+//    fsm.addState(st1_decode);
+//    fsm.addState(st1_check);
     
     fsm.setInitialState(st1_setup);
 }
@@ -89,6 +90,11 @@ QList<int> Supervisor::decodedHeads() const
 void Supervisor::allDecodersConnected()
 {
     emit m_d->allDecodersConnected();
+}
+
+void Supervisor::allDecodersWaitForCheck()
+{
+    emit m_d->allDecodersWaitForCheck();
 }
 
 void Supervisor::broadcastAtEnd()

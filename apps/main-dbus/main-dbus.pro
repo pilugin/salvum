@@ -1,16 +1,16 @@
 TARGET = salvum-main
 TEMPLATE = app
 
-QT += declarative
+QT += declarative dbus
 
 QMAKE_CXXFLAGS += -std=c++0x
 
-INCLUDEPATH += ../../src ../..
+INCLUDEPATH += ../../src ../.. $$OUT_PWD/../../lib
 DEPENDPATH += ../../src ../..
 LIBS += -L../../lib -lsalv
 
-include(../../src/dbus/dbus.pri)
-include(../../src/ui/ui.pri)
+#include(../../src/dbus/dbus.pri)
+#include(../../src/ui/ui.pri)
 include(../../src/common/colorgcc.pri)      
 
 SOURCES += \
@@ -36,7 +36,13 @@ HEADERS += \
     models/workspacemodel.h 
 
 OTHER_FILES += \
-    qml/Main.qml 
+    qml/Main.qml \ 
+    qml/Check.qml \
+    qml/Decode.qml \
+    qml/DecodrDelegate.qml \
+    qml/ProgressBar.qml \
+    qml/SalvJpegView.qml \
+    qml/Setup.qml
 
 RESOURCES += \
     resources.qrc

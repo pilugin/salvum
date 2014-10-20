@@ -28,6 +28,7 @@ public slots:
     void startDecode(const QList<int> &clusters);
     void startDecode(const QVariant &clusters);
     void allDecodersConnected();  
+    void allDecodersWaitForCheck();
     void broadcastAtEnd();
     
 private:

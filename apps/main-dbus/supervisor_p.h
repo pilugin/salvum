@@ -21,6 +21,7 @@ class Supervisor::Private : public QObject
 signals:
     void startDecode();    
     void allDecodersConnected();
+    void allDecodersWaitForCheck();
     void broadcastAtEnd();
     
 };

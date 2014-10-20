@@ -7,13 +7,19 @@
 TARGET = dbus-salv-simu
 TEMPLATE = app
 
+include(../../src/dbus/dbus.pri)
+
 QMAKE_CXXFLAGS += -std=c++11
 
-INCLUDEPATH += ../../src ../.. $$OUT_PWD/../../src
+INCLUDEPATH += ../../src ../.. $$OUT_PWD
 DEPENDPATH += ../../src ../..
 LIBS += -L../../lib -lsalv
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    decoder.cpp
 
 QT += dbus
+
+HEADERS += \
+    decoder.h
 

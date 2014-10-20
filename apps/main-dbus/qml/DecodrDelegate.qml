@@ -20,7 +20,7 @@ Rectangle {
         id: clustersDecodedCaption
         anchors { left: preview.right; top: clusterCaption.bottom; right: parent.right }
         color: "gray"
-        text: "#C: " + clustersDecoded + " " + status
+        text: "#C: " + clustersDecoded + " " + (decoding ? "running" : "check...")
     }
     
     ProgressBar {
@@ -28,5 +28,7 @@ Rectangle {
         anchors { left: preview.right; top: clustersDecodedCaption.bottom; right: parent.right; bottom:parent.bottom }
         totalColor: parent.color
         currentColor: "black"
+        current: blocksDecoded
+        total: blocksTotal
     }
 }

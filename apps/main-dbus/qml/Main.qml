@@ -7,7 +7,7 @@ Loader {
     
     Connections {
         target: supervisor
-//        onDecodeStateEntered: {
+        onDecodeStateEntered: console.log("DECODE STATE ENTERED")
         onSetupStateExited: {        
             decoderHub.createDecoders( bcast.shmemPath, supervisor.decodedHeads )
             bcast.start( decoderHub.getRewindCluster() )
@@ -19,6 +19,8 @@ Loader {
     Connections {
         target: decoderHub
         onAllDecodersConnected: supervisor.allDecodersConnected();
+        onAllDecodersWaitForCheck: supervisor.allDecodersWaitForCheck();
+        onAllDecodersChecked: console.log("ALL_DEC_CHECKD")
     }
     
     Component.onCompleted: supervisor.init()        

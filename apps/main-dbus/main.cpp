@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 //    view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
 
     // init view
-    view.setSource(QUrl("qml/Check.qml"));
+    view.setSource(QUrl("qml/Main.qml"));
     view.setGeometry(0, 0, 600, 600);
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);    
     

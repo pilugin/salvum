@@ -19,7 +19,7 @@ public:
         heartbeatTimer->start();        
         
         properties.cluster = properties.clustersDecoded = properties.blocksDecoded = properties.blocksTotal = 0;
-        properties.checked = properties.decodingEnd = properties.decodingSuccess = false;
+        properties.checked = properties.decoding = properties.decodingEnd = properties.decodingSuccess = false;
     }
 
     void createFSM()
@@ -41,16 +41,19 @@ public:
         st1_init        ->assignProperty(owner, "started", false);
         st1_connected   ->assignProperty(owner, "connected", true);
         st1_disconnected->assignProperty(owner, "connected", false);
+        st2_decoding    ->assignProperty(owner, "decoding", true);
+        st2_check       ->assignProperty(owner, "decoding", false);
+        st2_end         ->assignProperty(owner, "decoding", false);
         st2_check       ->assignProperty(owner, "checked", false);
         st2_checked     ->assignProperty(owner, "checked", true);
         
-        st1_init        ->addTransition(dbus, SIGNAL(heartbeat()), st1_connected);
+        st1_init        ->addTransition(owner, SIGNAL(heartbeatRecv()), st1_connected);
         st1_connected   ->addTransition(heartbeatTimer, SIGNAL(timeout()), st1_disconnected);        
         st2_init        ->addTransition(owner, SIGNAL(start(int,QString,QString)), st2_started);
         st2_started     ->addTransition(owner, SIGNAL(progressChanged()), st2_decoding);
         st2_decoding    ->addTransition(owner, SIGNAL(decodingEndChanged()), st2_end);
         st2_decoding    ->addTransition(owner, 
-                            SIGNAL(decodedClustersChanged(Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap)), 
+                            SIGNAL(decodedClustersUpdated(Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap)),
                             st2_check);
         st2_check       ->addTransition(owner, SIGNAL(baseline(int)), st2_checked);
         st2_checked     ->addTransition(owner, SIGNAL(progressChanged()), st2_decoding);
@@ -70,6 +73,7 @@ public:
         bool connected;
         bool started;
         bool checked;
+        bool decoding;
         int cluster;
         int clustersDecoded;
         int blocksDecoded;
@@ -117,6 +121,11 @@ bool DecoderDbusController::started() const
 bool DecoderDbusController::checked() const
 {
     return m_d->properties.checked;
+}
+
+bool DecoderDbusController::decoding() const
+{
+    return m_d->properties.decoding;
 }
 
 int DecoderDbusController::cluster() const
@@ -167,6 +176,12 @@ void DecoderDbusController::setChecked(bool value)
     emit checkedChanged(value);
 }
 
+void DecoderDbusController::setDecoding(bool value)
+{
+    m_d->properties.decoding = value;
+    emit decodingChanged(value);
+}
+
 // dbus
 
 void DecoderDbusController::sendStart(int clusterNo, const QString &shmemPath, const QString &wspacePath)
@@ -184,6 +199,7 @@ void DecoderDbusController::sendBaseline(int clusterNo)
 void DecoderDbusController::heartbeat()
 {
     m_d->heartbeatTimer->start();
+    emit heartbeatRecv();
 }
 
 void DecoderDbusController::decodingEnd(bool success)
@@ -201,11 +217,15 @@ void DecoderDbusController::fetchAtEnd(bool complete,
     if (complete)
         decodingEnd(true);
 
+    qDebug()<<cluster()<<__FUNCTION__;
+
     emit decodedClustersUpdated(decodedClusters, rejectedClusters, pixmap);
 }
                     
 void DecoderDbusController::progress(int clustersDecoded, int blocksDecoded, int blocksTotal)
 {
+    qDebug()<<cluster()<<__FUNCTION__<<clustersDecoded<<blocksDecoded<<blocksTotal;
+
     m_d->properties.clustersDecoded = clustersDecoded;
     m_d->properties.blocksDecoded = blocksDecoded;
     m_d->properties.blocksTotal = blocksTotal;
