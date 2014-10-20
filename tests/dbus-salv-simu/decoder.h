@@ -2,6 +2,7 @@
 #define DECODER_H
 
 #include <QObject>
+#include <QImage>
 #include "org.salvum.DecodrCtrl.h"
 
 class Decoder : public QObject
@@ -12,7 +13,7 @@ public:
 
 signals:
     void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);
-    void fetchAtEnd(bool complete, Common::DecodedClusters decodedClusters, Common::RejectedClusters rejectedClusters, Common::Pixmap pixmap);
+    void fetchAtEnd(bool complete, Common::DecodedClusters decodedClusters, Common::RejectedClusters rejectedClusters, Common::ImageInfo imageInfo);
     void thumbnailCreated(const QString &path);
     void decodingEnd(bool success);
 
@@ -30,7 +31,8 @@ private:
 
     QTimer mProgressTimer;
 
-    Common::Pixmap mPixmap;
+    QImage mImage;
+    QString mImagePath;
     Common::DecodedClusters mDC;
     Common::RejectedClusters mRC;
 

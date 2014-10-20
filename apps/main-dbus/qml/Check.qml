@@ -26,9 +26,6 @@ Rectangle {
 
         clip: true
 
-        onContentXChanged: console.log("CX="+contentX)
-        onContentYChanged: console.log("CY="+contentY)
-
         Image {
             id: innerImageView
             transformOrigin: Item.TopLeft
@@ -38,7 +35,6 @@ Rectangle {
             source: imageView.image
 
             Rectangle {
-                onHeightChanged: console.log("x,y,w,h="+x+","+y+","+width+","+height);
                 x: imageView.rect1 ? imageView.rect1.x : 0
                 y: imageView.rect1 ? imageView.rect1.y : 0
                 width: imageView.rect1 ? imageView.rect1.width : 0
@@ -47,7 +43,6 @@ Rectangle {
                 opacity: 0.7
             }
             Rectangle {
-                onHeightChanged: console.log("x,y,w,h="+x+","+y+","+width+","+height);
                 x: imageView.rect2 ? imageView.rect2.x : 0
                 y: imageView.rect2 ? imageView.rect2.y : 0
                 width: imageView.rect2 ? imageView.rect2.width : 0
@@ -90,7 +85,7 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
 
-                    checkView.setDecoderInfo(image, decodedClusters)
+                    checkView.setDecoderInfo(imagePath, decodedClusters)
 
                 }
             }

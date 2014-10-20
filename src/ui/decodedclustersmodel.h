@@ -34,8 +34,7 @@ public:
 public slots:
     void setCurrentCluster(int row);
     void baseline();
-    void reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const QImage &image);
-    void reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
+    void reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::ImageInfo &imageInfo);
 
 signals:
     void currentClusterChanged(int row);
@@ -66,7 +65,7 @@ protected:
     Clusters mClusters;
     
     QMap<int /*clusterNo*/, QList<int>/*pixels; order @see dbustypes.h*/> mRejectedPieces;
-    QImage mImage;
+    Common::ImageInfo mImageInfo;
 
     int mCurrentCluster;
     

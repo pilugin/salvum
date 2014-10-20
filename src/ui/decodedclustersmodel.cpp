@@ -67,16 +67,11 @@ QVariant DecodedClustersModel::data(const QModelIndex &index, int role) const
     }
 }
 
-void DecodedClustersModel::reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap)
-{
-    reset(decodedClusters, rejectedClusters, Jpeg::image(pixmap));
-}
-
-void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const QImage &image)
+void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const ImageInfo &imageInfo)
 {
     beginResetModel();
     mClusters.clear(); 
-    mImage = image;
+    mImageInfo = imageInfo;
     
     auto dc_itr = decodedClusters.begin();
     auto rc_itr = rejectedClusters.begin();
@@ -112,7 +107,7 @@ void DecodedClustersModel::setCurrentCluster(int row)
         const Clusters::value_type &v = mClusters[row];
         emit currentClusterParamsChanged( v.clusterNo, v.blockBegin, v.blockEnd );
         
-        auto rects = Jpeg::shade( mImage, v.blockEnd );
+        auto rects = Jpeg::shade( mImageInfo, v.blockEnd );
         mShadeRect1->setX(rects.first.x());
         mShadeRect1->setY(rects.first.y());
         mShadeRect1->setWidth(rects.first.width());

@@ -29,6 +29,16 @@ Pixmap dbusPixmap(const QImage &image)
     return res;
 }
 
+ImageInfo storeImage(const QImage &image, const QString &path)
+{
+    ImageInfo ii;
+    ii.width = image.width();
+    ii.height = image.height();
+    if (image.save(path, "PNG"))
+        ii.imagePath = path;
+    return ii;
+}
+
 QImage highlight(const QImage &base, int blockEnd)
 {
     QImage res( base.width(), base.height(), QImage::Format_ARGB32 );
@@ -56,22 +66,22 @@ QImage highlight(const QImage &base, int blockEnd)
     return res;
 }
 
-QPair<QRect, QRect> shade(const QImage &base, int blockEnd)
+QPair<QRect, QRect> shade(int width, int height, int blockEnd)
 {
-    int blockX = (blockEnd +1) % (base.width() / 8);
-    int blockY = (blockEnd +1) / (base.width() / 8);
+    int blockX = (blockEnd +1) % (width / 8);
+    int blockY = (blockEnd +1) / (width / 8);
     
     QPair<QRect, QRect> rects;
     
     rects.first.setLeft( blockX *8 );
     rects.first.setTop( blockY *8 );
-    rects.first.setRight( base.width()-1 );
-    rects.first.setBottom( base.height()-1 );
+    rects.first.setRight( width-1 );
+    rects.first.setBottom( height-1 );
     
     rects.second.setLeft(0);
     rects.second.setTop( (blockY +1) *8 );
     rects.second.setRight( rects.first.left() );
-    rects.second.setBottom( base.height()-1 );
+    rects.second.setBottom( height-1 );
     
     return rects;
 }

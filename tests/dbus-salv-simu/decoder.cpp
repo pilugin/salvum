@@ -1,6 +1,7 @@
 #include "decoder.h"
 #include "jpeg/imagehelpers.h"
 #include <QtDebug>
+#include <QDir>
 #include <QImage>
 
 using namespace Common;
@@ -15,19 +16,17 @@ Decoder::Decoder(org::salvum::DecodrCtrl *dbus, QObject *parent)
 
     connect(this, SIGNAL(progress(int,int,int)), dbus, SLOT(progress(int,int,int)) );
     connect(this, SIGNAL(decodingEnd(bool)), dbus, SLOT(decodingEnd(bool)) );
-    connect(this, SIGNAL(fetchAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap)),
-            dbus, SLOT(fetchAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap)) );
+    connect(this, SIGNAL(fetchAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::ImageInfo)),
+            dbus, SLOT(fetchAtEnd(bool,Common::DecodedClusters,Common::RejectedClusters,Common::ImageInfo)) );
 
-    QImage img("shared_resources/1.jpg");
-    if (img.isNull())
+    mImage.load("shared_resources/1.jpg");
+    if (mImage.isNull())
         qDebug()<<"Failed to load image:";
-
-    mPixmap = Jpeg::dbusPixmap(img);
 
     mCurrentCluster = 0;
     mTotalClusters = 30;
 
-    int nblocks = img.width()*img.height()/8/8;
+    int nblocks = mImage.width()*mImage.height()/8/8;
     for (int i=0, c=0, previ=0; i<nblocks; ++c) {
         i += nblocks/mTotalClusters;
         DecodedClusterInfo dci = { c, previ, qMin(nblocks-1, i) };
@@ -44,6 +43,11 @@ void Decoder::start(int clusterNo, const QString &shmemPath, const QString &wspa
 {
     qDebug()<<__FUNCTION__<<clusterNo<<shmemPath<<wspacePath;
 
+    QDir().mkpath(wspacePath);    
+    mImagePath = wspacePath + "/image.png";
+    
+    
+    
     startDecoding();
 }
 
@@ -80,7 +84,8 @@ void Decoder::startDecoding()
 
 void Decoder::stopDecoding()
 {
-    emit fetchAtEnd(false, mDC, RejectedClusters(), mPixmap);
+    
+    emit fetchAtEnd(false, mDC, RejectedClusters(), Jpeg::storeImage(mImage, mImagePath));
     mProgressTimer.stop();
 }
 

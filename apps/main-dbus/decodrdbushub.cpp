@@ -15,14 +15,17 @@ DecodrDbusHub::DecodrDbusHub(QObject *parent)
         qDebug()<<"Failed to register DecodrHub:/hub";
     }
 
+#if 0
 #if QT_VERSION < 0x050000
     auto rn = Ui::QObjectListModel<DecoderDbusController>::roleNames();
     rn.insert(firstUserRole(), "image");
     setRoleNames(rn);
 #endif
+#endif
 
 }
 
+#if 0
 #if QT_VERSION >= 0x050000
 QHash<int, QByteArray> DecodrDbusHub::roleNames() const
 {
@@ -30,6 +33,7 @@ QHash<int, QByteArray> DecodrDbusHub::roleNames() const
     rn.insert(firstUserRole(), "image");
     return rn;
 }
+#endif
 #endif
 
 DecodrDbusHub::~DecodrDbusHub()
@@ -155,6 +159,7 @@ int DecodrDbusHub::getRewindCluster() const
     return min==mHeads.end() ? -1 : *min;
 }
 
+#if 0
 QVariant DecodrDbusHub::data(const QModelIndex &index, int role) const
 {
     if (index.parent().isValid() || index.column()!=0 || index.row()<0 || index.row()>=rowCount())
@@ -168,9 +173,11 @@ QVariant DecodrDbusHub::data(const QModelIndex &index, int role) const
 
     return QVariant();
 }
+#endif
 
 QImage DecodrDbusHub::get(const QString &image) const
 {
+#if 0
     QStringList sl = image.split("/", QString::KeepEmptyParts);
 
     if (sl.size() == 2) {
@@ -181,7 +188,7 @@ QImage DecodrDbusHub::get(const QString &image) const
     }
 
     qDebug()<<"Failed to parse"<<sl;
-
+#endif
     return QImage();
 }
 

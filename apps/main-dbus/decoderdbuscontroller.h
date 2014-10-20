@@ -25,6 +25,7 @@ class DecoderDbusController : public QObject
     Q_PROPERTY(int clustersDecoded  READ clustersDecoded                NOTIFY progressChanged)
     Q_PROPERTY(int blocksDecoded    READ blocksDecoded                  NOTIFY progressChanged)
     Q_PROPERTY(int blocksTotal      READ blocksTotal                    NOTIFY progressChanged)
+    Q_PROPERTY(QString imagePath    READ imagePath                      NOTIFY imagePathChanged)
     
     // after decoding
     Q_PROPERTY(bool decodingEnd     READ decodingEnd                    NOTIFY decodingEndChanged)
@@ -47,7 +48,7 @@ public:
     bool decodingSuccess() const;
 
     Ui::DecodedClustersModel *decodedClusters() const;
-    QImage image() const;
+    QString imagePath() const;
     
 public slots:
     void sendStart(int clusterNo, const QString &shmemPath, const QString &wspacePath);    
@@ -64,7 +65,7 @@ private slots:
     void fetchAtEnd(bool complete, 
                     const Common::DecodedClusters &decodedClusters, 
                     const Common::RejectedClusters &rejectedClusters, 
-                    const Common::Pixmap &pixmap);
+                    const Common::ImageInfo &imageInfo);
     void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);
     void heartbeat();    
 
@@ -75,10 +76,11 @@ signals:
     void decodingChanged(bool value);
     void clusterChanged(int value);    
     void progressChanged();   
+    void imagePathChanged();
     void decodingEndChanged();
     void decodedClustersUpdated(const Common::DecodedClusters &decodedClusters, 
                                 const Common::RejectedClusters &rejectedClusters, 
-                                const QImage &image);
+                                const Common::ImageInfo &imageInfo);
 
     void start(int clusterNo, const QString &shmemPath, const QString &wspacePath);
     void baseline(int clusterNo);

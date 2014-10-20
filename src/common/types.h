@@ -34,6 +34,13 @@ struct Pixmap
     QList<int> pixels;
 };
 
+struct ImageInfo
+{
+    int width;
+    int height;
+    QString imagePath;
+};
+
 struct Result
 {
     operator bool() const { return errorCode == 0; }
@@ -62,6 +69,7 @@ Q_DECLARE_METATYPE(Common::DecodedClusters)
 Q_DECLARE_METATYPE(Common::RejectedClusterInfo)
 Q_DECLARE_METATYPE(Common::RejectedClusters)
 Q_DECLARE_METATYPE(Common::Pixmap)
+Q_DECLARE_METATYPE(Common::ImageInfo)
 Q_DECLARE_METATYPE(Common::Result)
 Q_DECLARE_METATYPE(Common::BitmapInfo)
 
