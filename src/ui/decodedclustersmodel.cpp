@@ -67,6 +67,11 @@ QVariant DecodedClustersModel::data(const QModelIndex &index, int role) const
     }
 }
 
+void DecodedClustersModel::reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap)
+{
+    reset(decodedClusters, rejectedClusters, Jpeg::image(pixmap));
+}
+
 void DecodedClustersModel::reset(const DecodedClusters &decodedClusters, const RejectedClusters &rejectedClusters, const QImage &image)
 {
     beginResetModel();

@@ -7,6 +7,7 @@ ListView {
 
     highlight: Rectangle {
         border.color: "red"
+        width: parent.width
         z: 10
         color: "#00000000"
     }
@@ -14,8 +15,18 @@ ListView {
     highlightFollowsCurrentItem: true
     highlightMoveSpeed: 4000000
 
-    delegate: Text {
-        text: clusterNo + "\t | " + blockBegin + "\t | " + blockEnd
+    delegate: Item {
+        height: 24
+        width: 300
+        Image {
+            id: delegateIcon
+            source: icon
+        }
+        Text {
+            anchors.left: delegateIcon.right
+            text: clusterNo + "\t| " + blockBegin + "\t| " + blockEnd
+            anchors.verticalCenter: parent.verticalCenter
+        }
         MouseArea {
             anchors.fill: parent
             onClicked: {

@@ -2,7 +2,7 @@ import QtQuick 1.1
 
 Rectangle {
 
-    color: "darkgray"
+    color: checked ? "green" : "darkgray"
     Image {    
         id: preview
         anchors {  left: parent.left; top: parent.top; bottom:parent.botton; margins: 4 }
@@ -19,7 +19,7 @@ Rectangle {
     Text {
         id: clustersDecodedCaption
         anchors { left: preview.right; top: clusterCaption.bottom; right: parent.right }
-        color: "gray"
+        color: connected ? "white" : "gray"
         text: "#C: " + clustersDecoded + " " + (decoding ? "running" : "check...")
     }
     

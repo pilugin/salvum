@@ -37,7 +37,7 @@ Decoder::Decoder(org::salvum::DecodrCtrl *dbus, QObject *parent)
     qDebug()<<mDC.size();
 
     connect(&mProgressTimer, SIGNAL(timeout()), this, SLOT(onDecodeCluster()) );
-    mProgressTimer.setInterval(1000);
+    mProgressTimer.setInterval(100);
 }
 
 void Decoder::start(int clusterNo, const QString &shmemPath, const QString &wspacePath)

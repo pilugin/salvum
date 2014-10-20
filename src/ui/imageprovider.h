@@ -39,6 +39,7 @@ public:
     ImageProvider();
     ~ImageProvider();
     
+    QString name() const { return mName; }
     void setName(const QString &name) { mName=name; }
     QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
     

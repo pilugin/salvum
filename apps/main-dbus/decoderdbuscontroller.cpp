@@ -1,5 +1,7 @@
 #include "decoderdbuscontroller.h"
 #include "org.salvum.DecodrCtrlAdp.h"
+#include <jpeg/imagehelpers.h>
+#include "models/customclustersmodel.h"
 #include <QStateMachine>
 #include <QTimer>
 
@@ -12,14 +14,18 @@ public:
     , dbusObjectPath(dbusObjectPath_)
     , owner(owner_)
     , dbus(new DecodrCtrlAdaptor(owner_))
+    , decodedClusters(new CustomClustersModel(owner_))
     , heartbeatTimer(new QTimer(owner_))
     {
         heartbeatTimer->setSingleShot(true);
-        heartbeatTimer->setInterval(5000);
+        heartbeatTimer->setInterval(15000);
         heartbeatTimer->start();        
         
         properties.cluster = properties.clustersDecoded = properties.blocksDecoded = properties.blocksTotal = 0;
         properties.checked = properties.decoding = properties.decodingEnd = properties.decodingSuccess = false;
+
+        QObject::connect(owner_, SIGNAL(decodedClustersUpdated(Common::DecodedClusters,Common::RejectedClusters,QImage)),
+                         decodedClusters, SLOT(reset(Common::DecodedClusters,Common::RejectedClusters,QImage))      );
     }
 
     void createFSM()
@@ -53,7 +59,7 @@ public:
         st2_started     ->addTransition(owner, SIGNAL(progressChanged()), st2_decoding);
         st2_decoding    ->addTransition(owner, SIGNAL(decodingEndChanged()), st2_end);
         st2_decoding    ->addTransition(owner, 
-                            SIGNAL(decodedClustersUpdated(Common::DecodedClusters,Common::RejectedClusters,Common::Pixmap)),
+                            SIGNAL(decodedClustersUpdated(Common::DecodedClusters,Common::RejectedClusters,QImage)),
                             st2_check);
         st2_check       ->addTransition(owner, SIGNAL(baseline(int)), st2_checked);
         st2_checked     ->addTransition(owner, SIGNAL(progressChanged()), st2_decoding);
@@ -66,7 +72,9 @@ public:
     
     DecoderDbusController *owner;
     DecodrCtrlAdaptor *dbus;
+    Ui::DecodedClustersModel *decodedClusters;
     QTimer *heartbeatTimer;
+    QImage image;
 
     QStateMachine fsm;    
     struct {
@@ -157,6 +165,16 @@ bool DecoderDbusController::decodingSuccess() const
 {
     return m_d->properties.decodingSuccess;
 }
+
+Ui::DecodedClustersModel *DecoderDbusController::decodedClusters() const
+{
+    return m_d->decodedClusters;
+}
+
+QImage DecoderDbusController::image() const
+{
+    return m_d->image;
+}
     
 void DecoderDbusController::setConnected(bool value)
 {
@@ -219,13 +237,12 @@ void DecoderDbusController::fetchAtEnd(bool complete,
 
     qDebug()<<cluster()<<__FUNCTION__;
 
-    emit decodedClustersUpdated(decodedClusters, rejectedClusters, pixmap);
+    m_d->image = Jpeg::image(pixmap);
+    emit decodedClustersUpdated(decodedClusters, rejectedClusters, m_d->image);
 }
                     
 void DecoderDbusController::progress(int clustersDecoded, int blocksDecoded, int blocksTotal)
 {
-    qDebug()<<cluster()<<__FUNCTION__<<clustersDecoded<<blocksDecoded<<blocksTotal;
-
     m_d->properties.clustersDecoded = clustersDecoded;
     m_d->properties.blocksDecoded = blocksDecoded;
     m_d->properties.blocksTotal = blocksTotal;

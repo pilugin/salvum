@@ -2,7 +2,6 @@ import QtQuick 1.1
 import SalvUi 1.0
 
 Rectangle {
-    color: "green"    
     GridView {
         anchors { top: parent.top; left: parent.left; right: parent.right; bottom: bcastProgress.bottom }
         model: decoderHub

@@ -142,5 +142,10 @@ const QObject *QObjectListModelBase::object(const QModelIndex &index) const
     return m_d->items[index.row()];
 }
 
+int QObjectListModelBase::firstUserRole(const QMetaObject &mo)
+{
+    return mo.propertyCount();
+}
+
 
 }

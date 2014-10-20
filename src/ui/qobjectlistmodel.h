@@ -13,7 +13,7 @@ public:
     ~QObjectListModelBase();
     
     QModelIndex index(int row, int column =0, const QModelIndex &parent =QModelIndex()) const;
-    int rowCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent =QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;        
     
     virtual const QObject *object(const QModelIndex &index) const;
@@ -30,6 +30,7 @@ public slots:
 
 protected:
     const QObjectList &objectList() const;
+    static int firstUserRole(const QMetaObject &mo);
 
 private slots:
     void objectUpdated();
@@ -50,6 +51,10 @@ public:
 
     const Object *object(const QModelIndex &index) const 
         { return qobject_cast<const Object *>(QObjectListModelBase::object(index) ); }
+
+protected:
+    static int firstUserRole()
+        { return QObjectListModelBase::firstUserRole(Object::staticMetaObject); }
 };
 
 }

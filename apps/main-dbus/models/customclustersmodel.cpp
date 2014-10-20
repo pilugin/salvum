@@ -9,12 +9,12 @@ CustomClustersModel::CustomClustersModel(QObject *parent)
     setRoleNames(roleNames_internal());
 #endif
 
-    setIcons(   "qrc://res/icons/clustersmodel/FA.png",
-                "qrc://res/icons/clustersmodel/MA.png",
-                "qrc://res/icons/clustersmodel/LA_R.png",
-                "qrc://res/icons/clustersmodel/R.png",
-                "qrc://res/icons/clustersmodel/LR.png",
-                "qrc://res/icons/clustersmodel/LA.png" );
+    setIcons(   "qrc:///res/icons/clustersmodel/FA.png",
+                "qrc:///res/icons/clustersmodel/MA.png",
+                "qrc:///res/icons/clustersmodel/LA_R.png",
+                "qrc:///res/icons/clustersmodel/R.png",
+                "qrc:///res/icons/clustersmodel/LR.png",
+                "qrc:///res/icons/clustersmodel/LA.png" );
 }
 
 QHash<int, QByteArray> CustomClustersModel::roleNames_internal() const

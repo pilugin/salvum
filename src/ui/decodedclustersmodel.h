@@ -12,8 +12,8 @@ class DecodedClustersModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int              currentCluster  READ currentCluster WRITE setCurrentCluster NOTIFY currentClusterChanged)
-    Q_PROPERTY(const Ui::Rect*  shadeRect1      READ shadeRect1     CONSTANT)
-    Q_PROPERTY(const Ui::Rect*  shadeRect2      READ shadeRect2     CONSTANT)
+    Q_PROPERTY(QObject*         shadeRect1      READ shadeRect1     CONSTANT)
+    Q_PROPERTY(QObject*         shadeRect2      READ shadeRect2     CONSTANT)
 public:
     
     DecodedClustersModel(QObject *parent =nullptr);
@@ -21,22 +21,22 @@ public:
     QModelIndex index(int row, int column =0, const QModelIndex &parent =QModelIndex()) const;
     int rowCount(const QModelIndex &parent =QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
-    
-    void reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const QImage &image);
-    
+        
 #if QT_VERSION >= 0x050000
     QHash<int, QByteArray> roleNames() const { return roleNames_internal(); }
 #endif
     
     int currentCluster() const { return mCurrentCluster; }
     
-    const Rect *shadeRect1() const { return mShadeRect1; }
-    const Rect *shadeRect2() const { return mShadeRect2; }
+    Rect *shadeRect1() { return mShadeRect1; }
+    Rect *shadeRect2() { return mShadeRect2; }
 
 public slots:
     void setCurrentCluster(int row);
     void baseline();
-    
+    void reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const QImage &image);
+    void reset(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
+
 signals:
     void currentClusterChanged(int row);
     void currentClusterParamsChanged(int clusterNo, int blockBegin, int blockEnd);

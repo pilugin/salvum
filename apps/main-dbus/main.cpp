@@ -8,6 +8,7 @@
 
 #include <ui/bitmapinfomodel.h>
 #include <ui/qobjectlistmodel.h>
+#include <ui/imageprovider.h>
 
 #include <QtCore>
 #include <QtDeclarative>
@@ -40,7 +41,7 @@ int main(int argc, char **argv)
 
     decoderHub.setWorkspaceModel( &wspaceModel );
     selectedHeadsModel.setWorkspaceModel( &wspaceModel );
-    
+
     QObject::connect(&bcastCtrl, SIGNAL(bitmapInfoUpdated(Common::BitmapInfo)), &bitmapInfo, SLOT(setInfo(Common::BitmapInfo)));
     QObject::connect(&bcastCtrl, SIGNAL(jpegHeadsUpdated(QList<int>)), &jpegHeadsModel, SLOT(setHeads(QList<int>)));
     QObject::connect(&bcastCtrl, SIGNAL(goodHeadsUpdated(QList<int>)), &goodHeadsModel, SLOT(setHeads(QList<int>)));
@@ -50,17 +51,10 @@ int main(int argc, char **argv)
     QObject::connect(&jpegHeadsModel, SIGNAL(headSelected(int,bool)), &selectedHeadsModel, SLOT(onHeadSelected(int,bool)));
     QObject::connect(&goodHeadsModel, SIGNAL(headSelected(int,bool)), &selectedHeadsModel, SLOT(onGoodHeadSelected(int,bool)));
         
-//    SalvJpegModel model;
-//    QObject::connect(&hub,      SIGNAL(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*)),
-//                     &model,    SLOT(decodrClientAdded(int,QDBusObjectPath,DecodrDbusCtrl*))    );
-//    QObject::connect(&hub,      SIGNAL(decodrClientReleased(int,QDBusObjectPath)),
-//                     &model,    SLOT(decodrClientReleased(int,QDBusObjectPath))                 );
-
     // export to QML
     QDeclarativeView view;
     view.engine()->rootContext()->setContextProperty("supervisor", &supervisor);
     view.engine()->rootContext()->setContextProperty("bcast", &bcastCtrl);
-//    view.engine()->rootContext()->setContextProperty("salvJpegModel", &model);
     view.engine()->rootContext()->setContextProperty("bitmapInfo", &bitmapInfo);    
     view.engine()->rootContext()->setContextProperty("jpegHeadsModel", &jpegHeadsModel);
     view.engine()->rootContext()->setContextProperty("goodHeadsModel", &goodHeadsModel);
@@ -68,7 +62,10 @@ int main(int argc, char **argv)
     view.engine()->rootContext()->setContextProperty("wspaceModel", &wspaceModel);
     view.engine()->rootContext()->setContextProperty("decoderHub", &decoderHub);
     
-//    view.engine()->addImageProvider(model.imageProviderName(), new SalvJpegImageProvider(&model));
+    Ui::ImageProvider *imgPrv = new Ui::ImageProvider;
+    imgPrv->setName("prov");
+    imgPrv->addAdaptor("decoderHub", &decoderHub);
+    view.engine()->addImageProvider(imgPrv->name(), imgPrv);
 
     // init view
     view.setSource(QUrl("qml/Main.qml"));

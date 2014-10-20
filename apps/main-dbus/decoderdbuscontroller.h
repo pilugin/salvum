@@ -4,6 +4,7 @@
 #include <QtCore/QObject>
 #include <QtDBus/QDBusObjectPath>
 #include <common/types.h>
+#include <ui/decodedclustersmodel.h>
 
 class DecoderDbusController : public QObject
 {
@@ -16,6 +17,9 @@ class DecoderDbusController : public QObject
     Q_PROPERTY(bool decoding        READ decoding   WRITE setDecoding   NOTIFY decodingChanged)     //< set by FSM
 
     Q_PROPERTY(int cluster          READ cluster                        NOTIFY clusterChanged)
+
+    Q_PROPERTY(QObject* decodedClusters
+                                    READ decodedClusters                CONSTANT)
     
     // progress
     Q_PROPERTY(int clustersDecoded  READ clustersDecoded                NOTIFY progressChanged)
@@ -41,6 +45,9 @@ public:
     int blocksTotal() const;
     bool decodingEnd() const;
     bool decodingSuccess() const;
+
+    Ui::DecodedClustersModel *decodedClusters() const;
+    QImage image() const;
     
 public slots:
     void sendStart(int clusterNo, const QString &shmemPath, const QString &wspacePath);    
@@ -60,7 +67,7 @@ private slots:
                     const Common::Pixmap &pixmap);
     void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);
     void heartbeat();    
-    
+
 signals:    
     void connectedChanged(bool value);
     void startedChanged(bool value);
@@ -71,7 +78,7 @@ signals:
     void decodingEndChanged();
     void decodedClustersUpdated(const Common::DecodedClusters &decodedClusters, 
                                 const Common::RejectedClusters &rejectedClusters, 
-                                const Common::Pixmap &pixmap);    
+                                const QImage &image);
 
     void start(int clusterNo, const QString &shmemPath, const QString &wspacePath);
     void baseline(int clusterNo);
