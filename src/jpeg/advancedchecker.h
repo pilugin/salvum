@@ -2,21 +2,28 @@
 #define ADVANCEDCHECKER_H
 
 #include <jpeg/icheck.h>
+#include <QImage>
 
 namespace Jpeg {
 
 class AdvancedChecker : public ICheck
 {
+    Q_OBJECT
 public:
     AdvancedChecker();
     bool check(const QImage &image, int blockBegin, int blockEnd, double *relevance =nullptr);
     double minRelevance() const;
+    
+public slots:
+    void addThumbnail(const QString &path);
 
 private:
     double processRow(const QImage &image, int blockBeginX, int blockEndX, int blockY) const;
 
     double processRow_Xtremum(const QImage &image, int blockBeginX, int blockEndX, int blockY) const;
     double processRow_Colors(const QImage &image, int blockBeginX, int blockEndX, int blockY) const;
+    
+    QImage mThumbnail;
 };
 
 } // eons Jpeg

@@ -6,6 +6,7 @@
 #include <core/controller.h>
 #include <jpeg/picojpegdecodr.h>
 #include <jpeg/advancedchecker.h>
+#include <jpeg/thumbnailcreator.h>
 #include <util/ilog.h>
 
 #include <QTimer>
@@ -22,8 +23,15 @@ public:
     , controller(new Core::Controller(parent))
     , fetch(new EventLoopRecieverFetch(parent))    
     , check(new SalvDbusCheck(parent))
-    , decodr(new Jpeg::PicoJpegDecodr(new Jpeg::AdvancedChecker, parent))
+    , decodr(nullptr) //new Jpeg::PicoJpegDecodr(new Jpeg::AdvancedChecker, parent))
+    , thumb(nullptr)
     {
+        Jpeg::AdvancedChecker *jpegChecker = new Jpeg::AdvancedChecker;
+        thumb = new Jpeg::ThumbnailCreator(parent);
+        decodr = new Jpeg::PicoJpegDecodr(jpegChecker, parent);
+        thumb->setSelfDelete();
+        thumb->init(fetch, decodr, jpegChecker);
+    
         QObject::connect(dbus, SIGNAL(exit()), parent, SLOT(onExit()) );
         QObject::connect(dbus, SIGNAL(start(int,QString,QString)), parent, SLOT(onStart(int,QString,QString)) );
         QObject::connect(dbus, SIGNAL(baseline(int)), check, SLOT(baseline(int)) );
@@ -50,6 +58,7 @@ public:
     EventLoopRecieverFetch  *fetch;
     SalvDbusCheck           *check;
     Jpeg::PicoJpegDecodr    *decodr;
+    Jpeg::ThumbnailCreator  *thumb;
     
     QString                 wspacePath;
 };
@@ -87,6 +96,7 @@ void DbusDecodeProcessor::onStart(int clusterNo, const QString &shmemPath, const
     
     m_d->wspacePath = workspacePath;
     
+    m_d->thumb->start(workspacePath + "/thumbnail.jpg");
     m_d->fetch->init(shmemPath.toUtf8().data());
     
     m_d->dbus->progress(0, -1, -1);

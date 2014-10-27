@@ -26,7 +26,7 @@ public:
     int type() const { return mType; }
     int id() const { return mId; }
 private:
-    int mId;    
+    int mId;
     int mType;
 };
 

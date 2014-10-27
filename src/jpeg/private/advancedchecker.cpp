@@ -160,6 +160,11 @@ double AdvancedChecker::processRow_Colors(const QImage &image, int blockBeginX, 
     return 1. - (double(badColors)/blocks);
 }
 
+void AdvancedChecker::addThumbnail(const QString &path)
+{
+    mThumbnail.load(path);
+}
+
 } // eons Jpeg
 
 
