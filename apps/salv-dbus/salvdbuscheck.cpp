@@ -13,6 +13,7 @@ class SalvDbusCheck::Private
 public:
     explicit Private(QObject *parent)
     : eventLoop(new QEventLoop(parent))
+    , checkedClusters(0)
     {
     }
     
@@ -64,6 +65,7 @@ public:
     QEventLoop *eventLoop;    
     int baselineClusterNo;
     QString imagePath;
+    int checkedClusters;
 };
 
 ////////////////////////////
@@ -111,8 +113,10 @@ SalvDbusCheck::FrameDescription_itr SalvDbusCheck::chooseBaseline(const SalvDbus
         // find appropriate frame
         for (auto itr=frames.begin(); itr!=frames.end(); ++itr) {
             for (int i=0; i<itr->clustersCount; ++i) {
-                if (m_d->baselineClusterNo == clusters()[ itr->clustersPos+i ].first)
+                if (m_d->baselineClusterNo == clusters()[ itr->clustersPos+i ].first) {
+                    m_d->checkedClusters += itr - frames.begin();
                     return itr;
+                }
             }
         
         }
@@ -134,5 +138,15 @@ void SalvDbusCheck::breakEventLoop(int retcod)
 bool SalvDbusCheck::isWaiting() const
 {
     return m_d->eventLoop->isRunning();
+}
+
+void SalvDbusCheck::doAcceptFrame(const Common::Clusters &pendingClusters_, const Core::DecodrFrame &frame)
+{
+    Core::Check::doAcceptFrame(pendingClusters_, frame);
+    
+    const Jpeg::ImageCursor &cursor = static_cast<const Jpeg::PicoJpegDecodFrame &>(frame).cursor;
+    
+    emit progress( m_d->checkedClusters + clusters().size() + pendingClusters().size(),
+        cursor.currentBlockIndex(), cursor.totalBlocks() );
 }
 

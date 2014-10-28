@@ -15,6 +15,7 @@ public:
     void setWorkspacePath(const QString &path);
 signals: 
     void atEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::ImageInfo &ii);
+    void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);
     
 public slots:
     void baseline(int clusterNo);
@@ -22,6 +23,7 @@ public slots:
     
 protected:
     FrameDescription_itr chooseBaseline(const FrameDescription_v &frames);
+    void doAcceptFrame(const Common::Clusters &pendingClusters, const Core::DecodrFrame &frame);
 private:        
     class Private;
     Private *m_d;

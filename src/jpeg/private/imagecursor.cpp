@@ -104,4 +104,9 @@ void ImageCursor::incBlock()
         }
 }
 
+int ImageCursor::totalBlocks() const
+{
+    return mCanvas->width()*mCanvas->height()/8/8;
+}
+
 } // eons Jpeg

@@ -27,6 +27,7 @@ public:
 
     void setCurrentBlockIndex(int block);
     int currentBlockIndex() const;
+    int totalBlocks() const;
     QImage *canvas() const { return mCanvas; }
 private:
 

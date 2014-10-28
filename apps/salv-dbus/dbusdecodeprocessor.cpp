@@ -34,6 +34,7 @@ public:
         thumb->setSelfDelete();
         thumb->init(fetch, decodr, jpegChecker);
         QObject::connect(thumb, SIGNAL(thumbnailCreated(QString)), dbus, SLOT(thumbnailCreated(QString))    );
+        QObject::connect(check, SIGNAL(progress(int,int,int)), dbus, SLOT(progress(int,int,int))            );
     
         QObject::connect(dbus, SIGNAL(exit()), parent, SLOT(onExit()) );
         QObject::connect(dbus, SIGNAL(start(int,QString,QString)), parent, SLOT(onStart(int,QString,QString)) );

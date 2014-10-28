@@ -45,6 +45,7 @@ protected:
     virtual FrameDescription_itr chooseBaseline(const FrameDescription_v &frames) =0;
     
     const Common::Clusters &clusters() const { return mClusters; }   
+    const Common::Clusters &pendingClusters() const { return mPendingClusters; }   
 private:
     void processFetchEnd();
     
