@@ -33,6 +33,7 @@ private slots:
 private:
     QTemporaryFile mJhead;
     QString mOutputPath;
+    bool mSuicide;
 };
 
 }

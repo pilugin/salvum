@@ -27,8 +27,8 @@ void Broadcast::write(Fetch *fetch, int clusterNo)
         mFetch = fetch;
 
     mFetch->rewind(clusterNo);
-    if (clusterNo == 0)
-        mFetch->fastfwd();
+//    if (clusterNo == 0)
+//        mFetch->fastfwd();
 
     Writer< BroadcastMessage > ::write();
 }

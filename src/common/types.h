@@ -2,9 +2,12 @@
 #define DBUS_TYPES_H
 
 #include <QtCore/QList>
+#include <QtCore/QPair>
 #include <QMetaType>
 
 namespace Common {
+
+typedef QList<QPair<int, QByteArray>> Clusters;
 
 struct DecodedClusterInfo
 {
@@ -64,6 +67,7 @@ struct BitmapInfo
 
 }
 
+Q_DECLARE_METATYPE(Common::Clusters)
 Q_DECLARE_METATYPE(Common::DecodedClusterInfo)
 Q_DECLARE_METATYPE(Common::DecodedClusters)
 Q_DECLARE_METATYPE(Common::RejectedClusterInfo)

@@ -4,18 +4,20 @@ ListView {
     id: theView
 
     focus: false
-
+    
     delegate: Rectangle {
         color: ListView.isCurrentItem ? "lightblue" : "white"
-        height: 24
+        height: 16
         width: 300
         Image {
+            fillMode: Image.PreserveAspectFit
+            height: parent.height
             id: delegateIcon
             source: icon
         }
         Text {
             anchors.left: delegateIcon.right
-            text: clusterNo + "\t| " + blockBegin + "\t| " + blockEnd
+            text: clusterNo.toString(16) + "\t| " + blockBegin + "\t| " + blockEnd
             anchors.verticalCenter: parent.verticalCenter
         }
         MouseArea {

@@ -24,7 +24,7 @@ void RangeFileResult::restart(const QString &name)
         Log::Msg("Failed to create file %s\n", mDataFile.fileName().toUtf8().data());
 }
 
-void RangeFileResult::addClusters(const QVector<QPair<int, QByteArray>> &clusters)
+void RangeFileResult::addClusters(const Common::Clusters &clusters)
 {
     int len=0;
     int beginCluster=0;

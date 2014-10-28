@@ -1,6 +1,7 @@
 #ifndef CORE_CHECK_H
 #define CORE_CHECK_H
 
+#include <common/types.h>
 #include <core/decodr.h>
 #include <QPair>
 #include <QVector>
@@ -26,7 +27,7 @@ public:
 
 signals:
     void skipClusters(int clusterNo, int length);
-    void saveResults(const QVector<QPair<int, QByteArray>> &clusters);
+    void saveResults(const Common::Clusters &clusters);
     void baselineFrame(const DecodrFrame &frame);
 
 public slots:
@@ -35,16 +36,15 @@ public slots:
     void onReject(const DecodrFrame &frame);
     
     void onFetchEnd();
+    void onDecodrEnd();
     
 protected:
-    typedef QVector<QPair<int,QByteArray>> Clusters;
-
-    virtual void doAcceptFrame(const Clusters &pendingClusters, const DecodrFrame &frame);
-    virtual void doRejectFrame(const Clusters &pendingClusters, const DecodrFrame &frame);
+    virtual void doAcceptFrame(const Common::Clusters &pendingClusters, const DecodrFrame &frame);
+    virtual void doRejectFrame(const Common::Clusters &pendingClusters, const DecodrFrame &frame);
         
     virtual FrameDescription_itr chooseBaseline(const FrameDescription_v &frames) =0;
     
-    const Clusters &clusters() const { return mClusters; }   
+    const Common::Clusters &clusters() const { return mClusters; }   
 private:
     void processFetchEnd();
     
@@ -57,7 +57,7 @@ private:
         bool flushed;
     } mSkipClustersTmp;
 
-    Clusters mPendingClusters;
+    Common::Clusters mPendingClusters;
     
     /*
     ** 0-1-2-3--------8-9----------4-6-7-----         <-- mClusters
@@ -70,7 +70,7 @@ private:
     ** Frame1 - {8..9}
     ** Frame2 - {4..7}
     */
-    Clusters mClusters;   
+    Common::Clusters mClusters;   
     QVector<FrameDescription> mFrames;
     bool mPrevAccepted;
     bool mFetchEnd;

@@ -16,11 +16,10 @@ Rectangle {
 
     Flickable {
         id: imageView
-        anchors { left: parent.left; top: parent.top }
-        width: 500
-        height: 500
+        anchors { left: parent.left; top: parent.top; right: clustersView.left; bottom: controls.top }
         contentHeight: innerImageView.height * innerImageView.scale
         contentWidth: innerImageView.width * innerImageView.scale
+        
 
         property variant rect1: null
         property variant rect2: null
@@ -71,7 +70,7 @@ Rectangle {
         
         property bool allDecodersChecked: false
         
-        anchors { left: parent.left; right: clustersView.left; top: imageView.bottom }
+        anchors { left: parent.left; right: clustersView.left; bottom: decoderView.top }
         height: 35
         anchors.margins: 3
         property real childHeight: height - 2*anchors.margins
@@ -140,13 +139,17 @@ Rectangle {
     DecodedClustersView {
         id: clustersView
         clip: true
-        anchors { left: imageView.right; right: parent.right; top: parent.top; bottom: decoderView.top }
+        anchors { right: parent.right; top: parent.top; bottom: decoderView.top }
+        width: 300
         onModelChanged: currentIndex = model.currentCluster
+        
+        Component.onCompleted: positionViewAtEnd()
     }
 
     GridView {
         id: decoderView
-        anchors { top: controls.bottom; left: parent.left; right: parent.right; bottom: parent.bottom }
+        anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
+        height: 200
         flow: GridView.LeftToRight
         model: decoderHub
         cellWidth: 210

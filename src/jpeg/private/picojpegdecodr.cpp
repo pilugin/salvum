@@ -112,13 +112,15 @@ void PicoJpegDecodr::resume()
         }
     }
 
-    if (isDone())
+    if (isDone()) {
+        Msg("\nEMIT DONE");
         emit done();
+    }        
 }
 
 bool PicoJpegDecodr::decodeCluster()
 {
-    qDebug("DECODE_CLUSTER");
+//    qDebug("DECODE_CLUSTER");
     bool retval = true;
     mWasFetched = false;
     uchar rv = 0;
@@ -165,7 +167,7 @@ bool PicoJpegDecodr::decodeCluster()
         retval = false;
     }
 
-    qDebug("DECOD_CLUSTER EXIT");
+//    qDebug("DECOD_CLUSTER EXIT");
     return retval;
 }
 
@@ -177,7 +179,7 @@ void PicoJpegDecodr::saveFrame(PicoJpegDecodFrame &outFrame)
 
 void PicoJpegDecodr::loadFrame(const DecodrFrame &frame)
 {
-    qDebug("LOAD_FRAME");
+//    qDebug("LOAD_FRAME");
     if (frame.type() == PicoJpegDecodFrame::JpegContextType) {
         mFrame = static_cast<const PicoJpegDecodFrame &>(frame);
         pjpeg_load_ctxt(mFrame.pjpegCtxt.data());

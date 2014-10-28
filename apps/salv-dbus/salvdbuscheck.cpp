@@ -1,9 +1,12 @@
 #include "salvdbuscheck.h"
 #include <jpeg/imagehelpers.h>
 #include <jpeg/picojpegdecodr.h>
+#include <util/ilog.h>
 
 #include <QtCore/QEventLoop>
 #include <QtDebug>
+
+using namespace Log;
 
 class SalvDbusCheck::Private
 {
@@ -13,7 +16,7 @@ public:
     {
     }
     
-    static Common::DecodedClusters decodedClusters(const Core::Check::FrameDescription_v &frames, const Core::Check::Clusters &clusters)
+    static Common::DecodedClusters decodedClusters(const Core::Check::FrameDescription_v &frames, const Common::Clusters &clusters)
     {
         Common::DecodedClusters res;
         for (const Core::Check::FrameDescription &fd: frames) {
@@ -33,7 +36,7 @@ public:
         return res;
     }
     
-    static Common::RejectedClusters rejectedClusters(const Core::Check::FrameDescription_v &frames, const Core::Check::Clusters &clusters)
+    static Common::RejectedClusters rejectedClusters(const Core::Check::FrameDescription_v &frames, const Common::Clusters &clusters)
     {
         Common::RejectedClusters res;
         for (const Core::Check::FrameDescription &fd: frames) {
@@ -60,6 +63,7 @@ public:
     
     QEventLoop *eventLoop;    
     int baselineClusterNo;
+    QString imagePath;
 };
 
 ////////////////////////////
@@ -83,17 +87,22 @@ void SalvDbusCheck::baseline(int clusterNo)
     
 SalvDbusCheck::FrameDescription_itr SalvDbusCheck::chooseBaseline(const SalvDbusCheck::FrameDescription_v &frames)
 {
+    Msg("\nCHECK::CHOOSE_BASELINE");
+
     // sending atEnd by DBus
     emit atEnd(false, 
             Private::decodedClusters(frames, clusters()),
             Private::rejectedClusters(frames, clusters()),
-            Jpeg::dbusPixmap( *static_cast<Jpeg::PicoJpegDecodFrame *>(frames.back().frame)->cursor.canvas() ) 
+            Jpeg::storeImage( 
+                *static_cast<Jpeg::PicoJpegDecodFrame *>(frames.back().frame)->cursor.canvas(),
+                m_d->imagePath
+                )                 
             );
             
     // wait baseline or interrupt
     m_d->baselineClusterNo = -1;            
     qDebug("~~~STARTING NESTED EVENTLOOP");            
-    int rc = m_d->eventLoop->processEvents();
+    int rc = m_d->eventLoop->exec();
     qDebug("~~~Exit NESTED EVENTLOOP: retcod=%d; baselineCluster=%08X", rc, m_d->baselineClusterNo);
     
     // check baseline; exit if -1
@@ -110,6 +119,11 @@ SalvDbusCheck::FrameDescription_itr SalvDbusCheck::chooseBaseline(const SalvDbus
     }    
      
     return frames.end();
+}
+
+void SalvDbusCheck::setWorkspacePath(const QString &path)
+{
+    m_d->imagePath = path + "/image.png";
 }
 
 void SalvDbusCheck::breakEventLoop(int retcod)

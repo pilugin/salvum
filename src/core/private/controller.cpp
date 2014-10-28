@@ -35,18 +35,18 @@ void Controller::setEverybody(Fetch *fetch, Check *check, Decodr *decodr)
     connect(mDecodr,    SIGNAL(accepted(DecodrFrame)),      this,       SLOT(decodrAccepted())          );
     connect(mDecodr,    SIGNAL(rejected(DecodrFrame)),      mCheck,     SLOT(onReject(DecodrFrame))     );
     connect(mDecodr,    SIGNAL(done()),                     this,       SLOT(decodrDone())              );
-    connect(mDecodr,    SIGNAL(done()),                     mCheck,     SLOT(onFetchEnd())              );
+    connect(mDecodr,    SIGNAL(done()),                     mCheck,     SLOT(onDecodrEnd())             );
 
     connect(mCheck,     SIGNAL(skipClusters(int,int)),      mFetch,     SLOT(skip(int,int))             );
-    connect(mCheck,     SIGNAL(baselineFrame(DecodrFrame)), mDecodr,    SLOT(loadFrame(DecodrFrame))    );
+    connect(mCheck,     SIGNAL(baselineFrame(DecodrFrame)), mDecodr,    SLOT(loadFrame(DecodrFrame))    );    
 }
 
 void Controller::addResult(Result *result)
 {
     Q_ASSERT(result && mCheck);
 
-    connect(mCheck,     SIGNAL(saveResults(QVector<QPair<int,QByteArray>)),
-            result,     SLOT(addClusters(QVector<QPair<int,QByteArray>>))   );
+    connect(mCheck,     SIGNAL(saveResults(Common::Clusters)),
+            result,     SLOT(addClusters(Common::Clusters)) );
     connect(this,       SIGNAL(end(bool)),
             result,     SLOT(finalize(bool))            );
 }

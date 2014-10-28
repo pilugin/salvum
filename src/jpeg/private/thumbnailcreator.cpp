@@ -9,15 +9,15 @@
 
 namespace Jpeg {
 
-ThumbnailCreator::ThumbnailCreator(QObject *parent) : QObject(parent)
+ThumbnailCreator::ThumbnailCreator(QObject *parent) : QObject(parent), mSuicide(false)
 {
 }
     
 void ThumbnailCreator::init(Core::Fetch *fetch, Core::Decodr *decodr, AdvancedChecker *checker)
 {
-    connect(fetch, SIGNAL(fetched(int,QString)), this, SLOT(onFetched(int,QString)) );
+    connect(fetch, SIGNAL(fetched(int,QByteArray)), this, SLOT(onFetched(int,QByteArray)) );
     connect(decodr, SIGNAL(accepted(DecodrFrame)), this, SLOT(onDecodrAccepted())   );
-    connect(this, SIGNAL(thumbnailCreator(QString)), checker, SLOT(addThumbnail(QString))   );
+    connect(this, SIGNAL(thumbnailCreated(QString)), checker, SLOT(addThumbnail(QString))   );
 }
 
 void ThumbnailCreator::start(const QString &outputPath)
@@ -29,11 +29,10 @@ void ThumbnailCreator::start(const QString &outputPath)
 
 void ThumbnailCreator::setSelfDelete()
 {
-    connect(this, SIGNAL(thumbnailCreated(QString)), this, SLOT(deleteLater())  );
+//    connect(this, SIGNAL(thumbnailCreated(QString)), this, SLOT(deleteLater())  );
+    mSuicide = true;
 }
     
-//    void thumbnailCreated(const QString &path);
-
 void ThumbnailCreator::onDecodrAccepted()
 {
     mJhead.close();
@@ -44,6 +43,8 @@ void ThumbnailCreator::onDecodrAccepted()
         
     if (QFile::exists(mOutputPath)) 
         emit thumbnailCreated(mOutputPath);
+    if (mSuicide)
+        delete this;        
 }
 
 void ThumbnailCreator::onFetched(int, const QByteArray &cluster)

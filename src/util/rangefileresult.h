@@ -10,7 +10,7 @@ public:
     RangeFileResult(const QString &dir =".", QObject *parent =nullptr);
 
     void restart(const QString &name);
-    void addClusters(const QVector<QPair<int, QByteArray>> &clusters);
+    void addClusters(const Common::Clusters &clusters);
     void finalize(bool success);
 
 private:

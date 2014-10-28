@@ -1,6 +1,8 @@
 #include <core/check.h>
 #include <QtDebug>
 
+using namespace Common;
+
 namespace Core {
 
 Check::Check(QObject *parent) : QObject(parent), mPrevAccepted(false)
@@ -56,6 +58,11 @@ void Check::onReject(const DecodrFrame &frame)
 void Check::onFetchEnd()
 {
     mFetchEnd = true;
+}
+
+void Check::onDecodrEnd()
+{
+    processFetchEnd();
 }
 
 void Check::processFetchEnd()
@@ -126,11 +133,11 @@ void Check::endSkipClusters()
     mSkipClustersTmp.flushed = true;        
 }
 
-void Check::doAcceptFrame(const Check::Clusters &/*pendingClusters*/, const DecodrFrame &/*frame*/)
+void Check::doAcceptFrame(const Clusters &/*pendingClusters*/, const DecodrFrame &/*frame*/)
 {
 }
 
-void Check::doRejectFrame(const Check::Clusters &/*pendingClusters*/, const DecodrFrame &/*frame*/)
+void Check::doRejectFrame(const Clusters &/*pendingClusters*/, const DecodrFrame &/*frame*/)
 {
 }
 

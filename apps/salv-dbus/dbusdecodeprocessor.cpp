@@ -7,6 +7,7 @@
 #include <jpeg/picojpegdecodr.h>
 #include <jpeg/advancedchecker.h>
 #include <jpeg/thumbnailcreator.h>
+#include <util/rangefileresult.h>
 #include <util/ilog.h>
 
 #include <QTimer>
@@ -21,6 +22,7 @@ public:
     : dbus(new org::salvum::DecodrCtrl(service, path, connection, parent))
     
     , controller(new Core::Controller(parent))
+    , result(nullptr)
     , fetch(new EventLoopRecieverFetch(parent))    
     , check(new SalvDbusCheck(parent))
     , decodr(nullptr) //new Jpeg::PicoJpegDecodr(new Jpeg::AdvancedChecker, parent))
@@ -31,12 +33,13 @@ public:
         decodr = new Jpeg::PicoJpegDecodr(jpegChecker, parent);
         thumb->setSelfDelete();
         thumb->init(fetch, decodr, jpegChecker);
+        QObject::connect(thumb, SIGNAL(thumbnailCreated(QString)), dbus, SLOT(thumbnailCreated(QString))    );
     
         QObject::connect(dbus, SIGNAL(exit()), parent, SLOT(onExit()) );
         QObject::connect(dbus, SIGNAL(start(int,QString,QString)), parent, SLOT(onStart(int,QString,QString)) );
         QObject::connect(dbus, SIGNAL(baseline(int)), check, SLOT(baseline(int)) );
-        QObject::connect(check, SIGNAL(atEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)),
-                        dbus, SLOT(fetchAtEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::Pixmap)) );
+        QObject::connect(check, SIGNAL(atEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::ImageInfo)),
+                        dbus, SLOT(fetchAtEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::ImageInfo)) );
 
         QTimer *t = new QTimer(parent);
         QObject::connect(t, SIGNAL(timeout()), dbus, SLOT(heartbeat()) );
@@ -49,15 +52,16 @@ public:
         t2->start();
         
         // init
-        controller->setEverybody(fetch, check, decodr);               
+        controller->setEverybody(fetch, check, decodr);        
     }
     
     org::salvum::DecodrCtrl *dbus;
     
     Core::Controller        *controller;
+    RangeFileResult         *result;
     EventLoopRecieverFetch  *fetch;
     SalvDbusCheck           *check;
-    Jpeg::PicoJpegDecodr    *decodr;
+    Jpeg::PicoJpegDecodr    *decodr;    
     Jpeg::ThumbnailCreator  *thumb;
     
     QString                 wspacePath;
@@ -96,8 +100,12 @@ void DbusDecodeProcessor::onStart(int clusterNo, const QString &shmemPath, const
     
     m_d->wspacePath = workspacePath;
     
+    m_d->result = new RangeFileResult(workspacePath, this);
+    m_d->result->restart( "clusters" );
+    m_d->controller->addResult( m_d->result );    
     m_d->thumb->start(workspacePath + "/thumbnail.jpg");
     m_d->fetch->init(shmemPath.toUtf8().data());
+    m_d->check->setWorkspacePath(workspacePath);
     
     m_d->dbus->progress(0, -1, -1);
     m_d->controller->run(clusterNo);

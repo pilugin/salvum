@@ -5,6 +5,7 @@ static struct QtMetatypesRegistrer
 {
     QtMetatypesRegistrer()
     {
+        qRegisterMetaType<Common::Clusters>("Common::Clusters");
         qRegisterMetaType<Common::Pixmap>("Common::Pixmap");
         qRegisterMetaType<Common::ImageInfo>("Common::ImageInfo");
         qRegisterMetaType<Common::DecodedClusterInfo>("Common::DecodedClusterInfo");

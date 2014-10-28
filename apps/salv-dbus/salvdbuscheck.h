@@ -12,8 +12,9 @@ public:
     ~SalvDbusCheck();
     
     bool isWaiting() const;
+    void setWorkspacePath(const QString &path);
 signals: 
-    void atEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::Pixmap &pixmap);
+    void atEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::ImageInfo &ii);
     
 public slots:
     void baseline(int clusterNo);

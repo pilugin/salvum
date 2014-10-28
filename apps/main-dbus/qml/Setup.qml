@@ -19,7 +19,7 @@ Rectangle {
                 width: 1
             }
         
-            text: "/dev/urandom"
+            text: "./shared_resources/WSPACE.mesh/DATA"
         }
     
         TextInput {
@@ -27,7 +27,7 @@ Rectangle {
             anchors { left: mediaPath.right; top: parent.top; bottom: parent.bottom  }
             width: parent.width*0.4
         
-            text: "./shared_resources/WSPACE"
+            text: "./shared_resources/WSPACE.mesh"
         }
     
         Rectangle {

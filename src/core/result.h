@@ -6,6 +6,8 @@
 #include <QByteArray>
 #include <QVector>
 
+#include <common/types.h>
+
 namespace Core {
 
 class Result : public QObject
@@ -16,7 +18,7 @@ public:
     
 public slots:
     virtual void restart(const QString &sessionName) =0;
-    virtual void addClusters(const QVector<QPair<int,QByteArray>> &clusters) =0;
+    virtual void addClusters(const Common::Clusters &clusters) =0;
     virtual void finalize(bool success) =0;
 };
 

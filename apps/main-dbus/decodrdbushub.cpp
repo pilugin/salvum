@@ -3,7 +3,10 @@
 #include <QtDebug>
 #include <algorithm>
 
-static const char *s_decodrExeName = "./dbus-salv-simu"; //"./salvum-decodr";
+static const char *s_decodrExeName = 
+    //"./dbus-salv-simu"
+    "./salvum-decodr"
+    ;
 
 DecodrDbusHub::DecodrDbusHub(QObject *parent)
 : Ui::QObjectListModel<DecoderDbusController>(parent)

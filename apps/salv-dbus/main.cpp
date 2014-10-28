@@ -1,5 +1,4 @@
 #include "org.salvum.DecodrHub.h"
-//#include "org.salvum.DecodrCtrl.h"
 #include "dbusdecodeprocessor.h"
 
 #include <util/filelogger.h>
@@ -16,7 +15,7 @@ int main(int argc, char **argv)
 {
     // singletons
     QCoreApplication app(argc, argv);
-    FileLogger l("res");
+    FileLogger l("res", true);
     DefaultSettings s;
     
     Log::Session(QString("TMP_%1").arg(getpid()));
@@ -31,20 +30,8 @@ int main(int argc, char **argv)
         return -1;
     }        
     
-
-#if 0        
-    org::salvum::DecodrCtrl decodrClient("org.salvum.Decodr", path.value().path(), QDBusConnection::sessionBus());
-    QTimer timer;
-    QObject::connect(&timer, SIGNAL(timeout()), &decodrClient, SLOT(heartbeat()) );
-    timer.setInterval(1000);
-    timer.start();
-    qDebug()<<"HEARTBEAT START";        
-#else
-
     DbusDecodeProcessor proc("org.salvum.Decodr", path.value().path(), QDBusConnection::sessionBus());
     QObject::connect(&proc, SIGNAL(exitApp()), &app, SLOT(quit()) );
-
-#endif    
     
     return app.exec();
 }
