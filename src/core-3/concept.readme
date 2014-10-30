@@ -1,0 +1,62 @@
+bool Decoding() {
+    Fetch F;
+    Decodr D;
+    Archive A;
+    Checker C;
+    
+
+    F.rewind(cluster);    
+    A.setInitFrame(cluster);
+    
+    D.init();
+    while (!D.initDone())
+        D.feed(F.fetch());
+        
+    A.addNewFrame(F.lastFetched());            
+        
+    if (!D.decodOk())
+        return false;
+        
+    A.setLastFrameState(D);    
+
+    while (!D.finished()) {        
+       
+    
+        if (F.atEnd() || D.finished()) {
+            Decodr D_s = C.select(A);
+            if (D_s == null)
+                return false;
+                
+            if (D != D_s)
+                D = D_s; //load
+            A.clear();                
+            
+            if (D_s.finished())
+                return true;
+            
+                
+            F.rewind(-1);   
+            F.ffwd();              
+        }        
+        
+                        
+        D.decod();
+        D.feed(F.fetch);
+        A.addNewFrame(F.lastFetched());
+        
+        if (D.decodOk()) {
+        
+            if (D.checkOk()) {
+                A.setLastFrameState(D);
+            } else {
+                A.setLastStateCheckFailed(D);
+                D = A.lastOkState();
+            }
+            
+        } else
+            D = A.lastOkState();                           
+    
+    }
+    
+    return D.decodOk();
+}
