@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 {
     // singletons
     QCoreApplication app(argc, argv);
-    FileLogger l("res", true);
+    FileLogger l("res");
     DefaultSettings s;
     
     Log::Session(QString("TMP_%1").arg(getpid()));

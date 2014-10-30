@@ -91,7 +91,7 @@ void Check::processFetchEnd()
         emit saveResults(results);
         endSkipClusters();    
         emit baselineFrame(*chosenOne->frame);        
-    }        
+    }
     
     // clear all
     for (auto frame : mFrames)

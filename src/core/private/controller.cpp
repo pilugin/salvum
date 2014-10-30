@@ -79,6 +79,7 @@ bool Controller::run(int clusterNo)
 
     }
 
+    qDebug("END !!!!! %s", success() ? "OK" : "FAIL");
     emit end(success());
     return success();
 }

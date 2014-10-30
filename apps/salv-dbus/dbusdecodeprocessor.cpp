@@ -102,7 +102,7 @@ void DbusDecodeProcessor::onStart(int clusterNo, const QString &shmemPath, const
     m_d->wspacePath = workspacePath;
     
     m_d->result = new RangeFileResult(workspacePath, this);
-    m_d->result->restart( "clusters" );
+    m_d->result->restart( "result" );
     m_d->controller->addResult( m_d->result );    
     m_d->thumb->start(workspacePath + "/thumbnail.jpg");
     m_d->fetch->init(shmemPath.toUtf8().data());

@@ -26,6 +26,7 @@ Rectangle {
         color: connected ? "white" : "gray"
         text: "#C: " + clustersDecoded + " " 
             + (!connected   ? "connecting..." :
+                decodingEnd ? (decodingSuccess ? "DECODED" : "DECODE END") :
                 decoding    ? "running" : 
                 checked     ? "checked" :
                             "check..."

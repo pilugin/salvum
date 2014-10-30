@@ -244,6 +244,8 @@ void DecoderDbusController::heartbeat()
 
 void DecoderDbusController::decodingEnd(bool success)
 {
+    qDebug()<<cluster()<<__FUNCTION__<<success;
+
     m_d->properties.decodingEnd = true;
     m_d->properties.decodingSuccess = success;
     emit decodingEndChanged();
@@ -254,10 +256,10 @@ void DecoderDbusController::fetchAtEnd(bool complete,
                     const Common::RejectedClusters &rejectedClusters, 
                     const Common::ImageInfo &imageInfo)
 {
+    qDebug()<<cluster()<<__FUNCTION__<<imageInfo.imagePath;
+
     if (complete)
         decodingEnd(true);
-
-    qDebug()<<cluster()<<__FUNCTION__<<imageInfo.imagePath;
 
     m_d->properties.imagePath = imageInfo.imagePath;
     emit imagePathChanged();
