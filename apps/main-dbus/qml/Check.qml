@@ -13,14 +13,26 @@ Rectangle {
         imageView.rejImg = decodedClusters.rejectedImage
     }
 
-
     Flickable {
         id: imageView
         anchors { left: parent.left; top: parent.top; right: clustersView.left; bottom: controls.top }
-        contentHeight: innerImageView.height * innerImageView.scale
-        contentWidth: innerImageView.width * innerImageView.scale
+        contentHeight: innerImageView.height * contentScale
+        contentWidth: innerImageView.width * contentScale
         
-
+        property bool scaledMode : false
+        property real contentScale : (scaledMode ? 6 : 0.25)
+        
+        function positionViewOnEdge() {
+            var x = rect1 ? rect1.x : 0
+            var y = rect1 ? rect1.y : 0
+            if (scaledMode) {
+                contentX = x*contentScale - width*0.75
+                contentY = y*contentScale - height*0.75
+            }   
+        }            
+        
+        onScaledModeChanged: positionViewOnEdge()
+        
         property variant rect1: null
         property variant rect2: null
         property variant rejImg: null
@@ -31,7 +43,7 @@ Rectangle {
         Image {
             id: innerImageView
             transformOrigin: Item.TopLeft
-            scale: 0.25
+            scale: imageView.contentScale
 
             fillMode: Image.PreserveAspectFit
             source: imageView.image
@@ -47,7 +59,7 @@ Rectangle {
             Rectangle {
                 x: imageView.rect2 ? imageView.rect2.x : 0
                 y: imageView.rect2 ? imageView.rect2.y : 0
-                width: imageView.rect2 ? imageView.rect2.width : 0
+                width: imageView.rect2 ? imageView.rect2.width-1 : 0
                 height: imageView.rect2 ? imageView.rect2.height : 0
                 color: "#808080"
                 opacity: 0.7
@@ -109,7 +121,43 @@ Rectangle {
         Rectangle {
             color: "darkgreen"
             height: parent.childHeight
-            width: 200    
+            width: 60
+            Text {
+                text: "Scale:" + (imageView.scaledMode ? "On" : "Off")
+                anchors.centerIn: parent
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    imageView.scaledMode = !imageView.scaledMode;
+                }
+            }
+        }
+        Rectangle {
+            color: "lightgray"
+            height: parent.childHeight
+            width: height * imageView.contentWidth / imageView.contentHeight
+            clip: true
+            Rectangle {
+                id: currentViewportIndicator
+                color: "green"
+                x: imageView.contentX / imageView.contentWidth * parent.width
+                y: imageView.contentY / imageView.contentHeight * parent.height
+                width:  imageView.width  / imageView.contentWidth  * parent.width
+                height: imageView.height / imageView.contentHeight * parent.height
+            }
+            Rectangle {
+                color: "darkgray"
+                x: 0
+                y: currentViewportIndicator.y + currentViewportIndicator.height
+                width: parent.width
+                height: parent.height
+            }
+        }
+        Rectangle {
+            color: "darkgreen"
+            height: parent.childHeight
+            width: 140                
         }
         Rectangle {
             color: controls.allDecodersChecked ? "green" : "lightgray"
@@ -144,6 +192,8 @@ Rectangle {
         onModelChanged: currentIndex = model.currentCluster
         
         Component.onCompleted: positionViewAtEnd()
+        
+        onCurrentIndexChanged: imageView.positionViewOnEdge()
     }
 
     GridView {
