@@ -2,6 +2,7 @@
 #include <core-3/fetch.h>
 #include <core-3/check.h>
 #include <core-3/decodr.h>
+#include <core-3/decoding.h>
 
 using namespace Core3;
 
