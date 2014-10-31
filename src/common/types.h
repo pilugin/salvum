@@ -7,7 +7,11 @@
 
 namespace Common {
 
-typedef QList<QPair<int, QByteArray>> Clusters;
+enum { InvalidClusterNo =-1 };
+
+typedef QPair<int, QByteArray> Cluster;
+
+typedef QList<Cluster> Clusters;
 
 struct DecodedClusterInfo
 {
@@ -67,6 +71,7 @@ struct BitmapInfo
 
 }
 
+Q_DECLARE_METATYPE(Common::Cluster)
 Q_DECLARE_METATYPE(Common::Clusters)
 Q_DECLARE_METATYPE(Common::DecodedClusterInfo)
 Q_DECLARE_METATYPE(Common::DecodedClusters)

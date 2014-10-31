@@ -1,0 +1,40 @@
+#ifndef CORE_3_DECODR_H
+#define CORE_3_DECODR_H
+
+#include <common/types.h>
+
+namespace Core3 {
+
+template <class DecodrState>
+class Decodr
+{
+public:
+//    struct State {};
+    typedef DecodrState State;
+
+    virtual ~Decodr()                               {}
+    
+    // init 
+    virtual void init() =0;
+    virtual void feed(const Common::Cluster &cluster) =0;    
+    virtual bool initialized() const =0;
+    
+    // decode
+    virtual void decode() =0;
+    void decode(const Common::Cluster &cluster)     { decode(); feed(cluster); }
+    
+    // check
+    virtual bool decodOk() const =0;
+    virtual bool checkOk() const =0;
+    virtual bool end() const =0;
+    
+    // save+restore
+    virtual const State &state() const =0;
+    void restore(const State &state_)               { if (state_!=state()) doRestore(state_); }
+protected:
+    virtual void doRestore(const State &state) =0;
+};
+
+}
+
+#endif

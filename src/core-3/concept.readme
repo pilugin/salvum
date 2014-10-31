@@ -1,60 +1,54 @@
 bool Decoding() {
     Fetch F;
     Decodr D;
-    Archive A;
+    Archiver A;
     Checker C;
     
 
     F.rewind(cluster);    
-    A.setInitFrame(cluster);
     
-    D.init();
-    while (!D.initDone())
+    D.init();                       // { create thread for picojpeg }
+    while (!D.initOk()) {
         D.feed(F.fetch());
-        
-    A.addNewFrame(F.lastFetched());            
+        A.addInitFrame(F.lastFetched());        
+    }        
         
     if (!D.decodOk())
         return false;
         
-    A.setLastFrameState(D);    
+    A.setNewState(D.state(), true);
 
     while (!D.finished()) {        
-       
-    
+           
         if (F.atEnd() || D.finished()) {
-            Decodr D_s = C.select(A);
+            DecodrState D_s, int cluster = C.select(A);
             if (D_s == null)
                 return false;
                 
-            if (D != D_s)
-                D = D_s; //load
-            A.clear();                
+            F.skipClusters(A.baseline(cluster));  
+            D.loadState(D_s); /// { if (D_s != state()) load(D_s); }
             
             if (D_s.finished())
-                return true;
-            
+                return true;            
                 
             F.rewind(-1);   
             F.ffwd();              
         }        
         
                         
-        D.decod();
-        D.feed(F.fetch);
+        D.decod(F.fetch); // { ... ; feed(fetched) }
         A.addNewFrame(F.lastFetched());
         
-        if (D.decodOk()) {
-        
-            if (D.checkOk()) {
-                A.setLastFrameState(D);
-            } else {
-                A.setLastStateCheckFailed(D);
-                D = A.lastOkState();
-            }
-            
-        } else
-            D = A.lastOkState();                           
+        bool fit = false;
+        if (D.decodOk()) {       
+            if (D.checkOk()) 
+                fit = true;
+            A.setLastFrameState(D.state(), D.checkOk());
+        }
+        if (!fit) {
+            D.load( A.lastOkState() );
+            F.ffwd();
+        }
     
     }
     
