@@ -13,18 +13,10 @@ bool decoding(int clusterNo, Fetch &f, Decodr<DecodrState> &d, Check<DecodrState
 {
     f.rewind(clusterNo);
     d.init();
-    while (d.initialized()) {
-        d.feed( f.fetch() );
-        a.addInitCluster( f.lastFetched() );
-    }
-
-    if (!d.decodOk())
-        return false;
-
-    a.setNewState( d.state(), true );
-
-    while (!d.end()) {
-        if (f.atEnd() || d.end()) {
+    
+    for (;;) {
+    
+        if ( f.atEnd() || e.end() ) {
             typename Check<DecodrState>::SelectResult selected = c.select( a );
             if (selected.first == Common::InvalidClusterNo)
                 return false;
@@ -38,22 +30,27 @@ bool decoding(int clusterNo, Fetch &f, Decodr<DecodrState> &d, Check<DecodrState
             f.rewind();
             f.fastfwd();
         }
-
-
-        d.decode(f.fetch());
-        a.addNewCluster(f.lastFetched());
-
+        
+        do {
+            bool sync = d.feed( f.fetch() );
+            a.addNewCluster( f.lastFetched() );
+        } while ( !sync );
+        
+        
         bool fit = false;
         if (d.decodOk()) {
             fit = d.checkOk();
             a.setNewState(d.state(), fit);
         }
         if (!fit) {
+            if (!d.initialized())
+                return false;
             d.restore(a.lastOkState());
             f.fastfwd();
         }
     }
-
+    
+    Q_ASSERT(false);
     return true;
 }
 

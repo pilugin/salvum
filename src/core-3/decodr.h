@@ -16,12 +16,8 @@ public:
     
     // init 
     virtual void init() =0;
-    virtual void feed(const Common::Cluster &cluster) =0;    
+    virtual bool feed(const Common::Cluster &cluster) =0;    //< return true if decodr is Serailizable 
     virtual bool initialized() const =0;
-    
-    // decode
-    virtual void decode() =0;
-    void decode(const Common::Cluster &cluster)     { decode(); feed(cluster); }
     
     // check
     virtual bool decodOk() const =0;
@@ -33,7 +29,10 @@ public:
     void restore(const State &state_)               { if (state_!=state()) doRestore(state_); }
 protected:
     virtual void doRestore(const State &state) =0;
+    
 };
+
+///////////////////////////////////////////////////
 
 }
 
