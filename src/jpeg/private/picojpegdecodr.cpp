@@ -1,14 +1,295 @@
 #include <jpeg/picojpegdecodr.h>
-#include <core/fetch.h>
+#include <core-3/fetch.h>
 #include <util/ilog.h>
 #include <jpeg/icheck.h>
 
+#include <functional>
+
+#include <QtCore/CThread>
+#include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
+#include <QtCore/QMutexLocker>
 #include <QtDebug>
 
 using namespace Log;
-using namespace Core;
+using namespace Core3;
 
 namespace Jpeg {
+
+DecodrState::DecodrState(QImage *image)
+{
+    pjpegCtxt.resize(pjpeg_ctxt_buffer_size);
+
+    bufferPos = 0;
+    bytesRead = 0;
+    buffer.clear();
+    lastWasFF = false;
+    if (image) {
+        cursor.setCanvas(image);
+        cursor.restart();
+    }
+    decodOk = true;
+    checkOk = true;
+}
+
+static void saveBlock(int block, const QImage *src, QList<int> &dest)
+{
+    int blockX = block % (src->width()/8);
+    int blockY = block / (src->width()/8);
+    int x = blockX * 8;
+    int y = blockY * 8;
+    for (int dx=0; dx<8; ++dx)
+        for (int dy=0; dy<8; ++dy)
+            dest.push_back( src->pixel(x+dx, y+dy) );
+}
+
+void DecodrState::savePixels(const DecodrState &prevFrame)
+{
+    savedPixels.blockBegin = prevFrame.cursor.currentBlockIndex();
+    savedPixels.pixels.clear();
+    for (int b=prevFrame.cursor.currentBlockIndex(); b<cursor.currentBlockIndex(); ++b)
+        saveBlock(b, cursor.canvas(), savedPixels.pixels);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Thread : public QThread
+{
+public:
+    Thread(std::function<void()> f_) : f(f_) {}
+private:
+    void run() { f(); }
+    std::function<void()> f;
+};
+
+struct PicoJpegDecodr::Private
+{
+    Private(ICheck *checkr);
+
+    ~Private();
+
+    ICheck *checkr;
+    QImage image;
+    State state;
+
+    int blockCount;
+    bool wasFetched;
+    bool end;
+    bool inited;
+
+    QThread *thread;
+    QMutex mutex;
+    QWaitCondition cond;
+
+    Common::Cluster inCluster;
+    enum Status { Init, Decode, Exiting, Idle };
+    Status status;
+
+    bool innerBufferEnough() const { return (state.buffer.size() - state.bufferPos) >= pjpeg_max_in_buf_size; }
+    bool innerBufferEmpty() const { return state.buffer.size() >0; }
+    bool outerBufferEmpty() const { return inCluster.size() >0; }
+    bool checkFFD9() const;
+    int latestBlock() const;
+
+
+    void threadFunc();
+
+    void processInit();
+    void processDecode();
+
+    static unsigned char fetchCallback(unsigned char* pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read, void *param);
+    unsigned char fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read);
+};
+
+PicoJpegDecodr::PicoJpegDecodr(ICheck *checkr)
+{
+    m_d = new Private(checkr);
+}
+
+PicoJpegDecodr::~PicoJpegDecodr()
+{
+    delete m_d;
+}
+
+PicoJpegDecodr::Private::Private(ICheck *checkr)
+: checkr(checkr)
+, image()
+, state(&image)
+, blockCount(0)
+, wasFetched(false)
+, end(false)
+, inited(false)
+, thread(new Thread(std::bind(this, &PicoJpegDecodr::Private::threadFunc)) )
+, status( Idle )
+{
+    mutex.lock();
+}
+
+void PicoJpegDecodr::init()
+{
+    m_d->inited = false;
+
+    m_d->thread->start();
+    // wait until thread is started
+    m_d->cond.wait( &m_d->mutex );
+}
+
+bool PicoJpegDecodr::feed(const Common::Cluster &cluster)
+{
+    if (m_d->status == Private::Idle)
+        m_d->status = m_d->inited ? Private::Decode : Private::Init;
+
+    m_d->inCluster = cluster;
+    m_d->cond.wakeAll();
+    m_d->cond.wait( &m_d->mutex );
+    return m_d->status == Private::Idle;
+}
+
+PicoJpegDecodr::Private::~Private()
+{
+    status = Exiting;
+    mutex.unlock();
+    cond.wakeAll();
+
+    thread->wait();
+}
+
+void PicoJpegDecodr::Private::threadFunc()
+{
+    QMutexLocker( &mutex );
+
+    for (;;) {
+        cond.wakeAll();
+        cond.wait( &mutex );
+
+        switch (status) {
+        case Init:
+            processInit();
+            processDecode();
+            break;
+        case Decode:
+            processDecode();
+            break;
+        case Exiting:
+            return false;
+        }
+        status = Idle;
+    }
+}
+
+void PicoJpegDecodr::Private::processInit()
+{
+    uchar rv = pjpeg_decode_init(state.imgInfo, &PicoJpegDecodr::Private::fetchCallback, this, 0);
+    if (rv != 0) {
+        Msg("PicoJpegDecodr:init picojpeg err: %d\n", rv);
+        end = true;
+        decodOk = false;
+    } else {
+        state.cursor.initCanvas( state.imgInfo.m_width, state.imgInfo.m_height));
+        end = false;
+    }
+}
+
+void PicoJpegDecodr::Private::processDecode()
+{
+}
+
+unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char* pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read, void *param)
+{
+    return static_cast<PicoJpegDecodr::Private *>(param)->fetchCallback(pBuf, buf_size, pBytes_actually_read);
+}
+
+unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read)
+{
+    if (status == Init) {
+        while (!enoughData()) {
+            cond.wakeAll();
+            cond.wait( &mutex );
+            if (status != Init)
+                return PJPG_NO_MORE_BLOCKS;
+        }
+    }
+
+    if () {
+        // fetch
+        if (inputEmpty())
+    }
+    
+    state.bytesRead = *pBytes_actually_read = qMin( state.buffer.size() - state.bufferPos, (int)buf_size );
+    memcpy( pBuf, state.buffer.data() + state.bufferPos, *pBytes_actually_read );
+    state,bufferPos += *pBytes_actually_read;
+
+    return 0;
+}
+
+bool PicoJpegDecodr::initialized() const
+{
+    return m_d->inited;
+}
+
+bool PicoJpegDecodr::checkOk() const
+{
+    return m_d->checkOk();
+}
+
+bool PicoJpegDecodr::decodOk() const
+{
+    return m_d->decodOk;
+}
+
+bool PicoJpegDecodr::end() const
+{
+    return m_d->done;
+}
+
+const PicoJpegDecodr::State &PicoJpegDecodr::state() const
+{
+    pjpeg_save_ctxt( m_d->state.pjpegCtxt.data() );
+    return m_d->state;
+}
+
+void PicoJpegDecodr::doRestore(const PicoJpegDecodr::State &state)
+{
+    m_d->state = state;
+    pjpeg_load_ctxt( m_d->state.pjpegCtxt.data() );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
 
 int PicoJpegDecodFrame::id_gen = 1;
 
@@ -246,6 +527,6 @@ unsigned char PicoJpegDecodr::fetchCallback(unsigned char *pBuf, unsigned char b
 }
 
 
-
+#endif
 
 } // eons Jpeg
