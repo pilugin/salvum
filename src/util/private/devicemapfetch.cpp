@@ -4,9 +4,10 @@
 
 using namespace Log;
 using namespace Settings;
-using namespace Core;
+using namespace Core3;
+using namespace Common;
 
-DeviceMapFetch::DeviceMapFetch(QObject *parent) : Fetch(parent)
+DeviceMapFetch::DeviceMapFetch()
 {
 }
 
@@ -21,7 +22,7 @@ bool DeviceMapFetch::init(const QString &file, const QByteArray &map, bool brute
 
     mMap = map;
     mBrute = brute;
-    
+
     return true;
 }
 
@@ -40,32 +41,34 @@ bool DeviceMapFetch::init(const QString &file, const QString &mapFile, bool brut
 
     mMap = map.readAll();
     mBrute = brute;
-    
+
     return true;
 }
 
 void DeviceMapFetch::clear()
 {
     mFile.close();
-    mMap.clear();    
+    mMap.clear();
 }
 
-void DeviceMapFetch::doFetch(int &clusterNo, QByteArray &cluster)
+Cluster DeviceMapFetch::doFetch()
 {
-    cluster.clear();
+    Cluster cluster;
 
     Msg("\n[% 8X", mCurrentCluster);
     if (! mFile.seek(qint64(mCurrentCluster) * Get(ClusterSize).toInt())) {
         Msg(":Failed]");
-        clusterNo = InvalidClusterNo;
+        cluster.first = InvalidClusterNo;
 
     } else {
-        cluster = mFile.read(Get(ClusterSize).toInt());
-        clusterNo = mCurrentCluster;
+        cluster.second = mFile.read(Get(ClusterSize).toInt());
+        cluster.first = mCurrentCluster;
         Msg("]");
-        
+
         postfetch();
     }
+
+    return cluster;
 }
 
 void DeviceMapFetch::postfetch()
@@ -77,10 +80,10 @@ void DeviceMapFetch::postfetch()
         fastfwd();
 }
 
-bool DeviceMapFetch::rewind(int clusterNo)
+void DeviceMapFetch::rewind(int clusterNo)
 {
     mCurrentCluster = clusterNo;
-    return !atEnd()     && !mMap.isEmpty()      && mFile.isOpen();
+//    return !atEnd()     && !mMap.isEmpty()      && mFile.isOpen();
 }
 
 void DeviceMapFetch::fastfwd()
@@ -106,15 +109,15 @@ bool DeviceMapFetch::atEnd() const
     return mCurrentCluster >= mMap.size();
 }
 
-void DeviceMapFetch::skip(int clusterNo, int length)
+void DeviceMapFetch::skipClusters(const QList<int> &clusters)
 {
     static const char used = Get( UsedCluster ).toChar().toAscii();
 
-    Msg("\n[FSKIP: #=%d, (%08X, %08X)]", length, clusterNo, clusterNo +length -1);
+    Msg("\n[FSKIP: #=%d, (%08X, %08X)]", clusters.size(), clusters.front(), clusters.back());
 
-    for (int i=0; i<length; ++i)
-        if ((clusterNo +i) < mMap.size())
-            mMap[ clusterNo +i ] = used;
+    for (int i=0; i<clusters.size(); ++i)
+        if (clusters[i] < mMap.size())
+            mMap[ clusters[i] ] = used;
 
 }
 

@@ -1,10 +1,10 @@
 #ifndef SALV_DBUS_CHECK_H
 #define SALV_DBUS_CHECK_H
 
-#include <core/check.h>
+#include <core3/check.h>
 #include <common/types.h>
 
-class SalvDbusCheck : public Core::Check
+class SalvDbusCheck : public Core3::Check
 {
     Q_OBJECT
 public:
@@ -14,7 +14,7 @@ public:
     bool isWaiting() const;
     void setWorkspacePath(const QString &path);
 signals: 
-    void atEnd(bool complete, const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::ImageInfo &ii);
+    void atEnd(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::ImageInfo &ii);
     void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);
     
 public slots:

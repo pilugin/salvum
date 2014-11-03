@@ -39,8 +39,8 @@ public:
         QObject::connect(dbus, SIGNAL(exit()), parent, SLOT(onExit()) );
         QObject::connect(dbus, SIGNAL(start(int,QString,QString)), parent, SLOT(onStart(int,QString,QString)) );
         QObject::connect(dbus, SIGNAL(baseline(int)), check, SLOT(baseline(int)) );
-        QObject::connect(check, SIGNAL(atEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::ImageInfo)),
-                        dbus, SLOT(fetchAtEnd(bool, Common::DecodedClusters, Common::RejectedClusters, Common::ImageInfo)) );
+        QObject::connect(check, SIGNAL(atEnd(Common::DecodedClusters, Common::RejectedClusters, Common::ImageInfo)),
+                        dbus, SLOT(fetchAtEnd(Common::DecodedClusters, Common::RejectedClusters, Common::ImageInfo)) );
 
         QTimer *t = new QTimer(parent);
         QObject::connect(t, SIGNAL(timeout()), dbus, SLOT(heartbeat()) );

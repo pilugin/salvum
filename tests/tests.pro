@@ -2,8 +2,8 @@ TEMPLATE=subdirs
 SUBDIRS= \
 #    devicemapfetch \
     salv \
-    ipc \    
+    ipc \
 #    ipcfetch \
 #    jpegcheckbench
     dbus-salv-simu \
-    jpegimagefragment
+#    jpegimagefragment

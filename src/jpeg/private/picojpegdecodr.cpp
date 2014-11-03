@@ -86,7 +86,7 @@ struct PicoJpegDecodr::Private
     Status status;
 
     bool innerBufferEnough() const { return (state.buffer.size() - state.bufferPos) >= pjpeg_max_in_buf_size; }
-    bool innerBufferEmpty() const { return state.buffer.size() >0; }
+    bool innerBufferEmpty() const { return state.buffer.size() == state.bufferPos; }
     bool outerBufferEmpty() const { return inCluster.size() >0; }
     bool checkFFD9() const;
     int latestBlock() const;
@@ -202,19 +202,32 @@ unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char* pBuf, unsign
 unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read)
 {
     if (status == Init) {
-        while (!enoughData()) {
+        while (innerBufferEmpty()) {
             cond.wakeAll();
             cond.wait( &mutex );
             if (status != Init)
                 return PJPG_NO_MORE_BLOCKS;
+            if (!outerBufferEmpty()) {
+                state.buffer = inCluster.second;
+                inCluster.second.clear();
+                state.bufferPos = 0;
+                wasFetch = true;
+            }
+        }
+
+
+    } else {
+        // fetch
+        if (innerBufferEmpty()) {
+            if (outerBufferEmpty())
+                return PJPG_NO_MORE_BLOCKS;
+            state.buffer = inCluster.second;
+            inCluster.second.clear();
+            state.bufferPos = 0;
+            wasFetched = true;
         }
     }
 
-    if () {
-        // fetch
-        if (inputEmpty())
-    }
-    
     state.bytesRead = *pBytes_actually_read = qMin( state.buffer.size() - state.bufferPos, (int)buf_size );
     memcpy( pBuf, state.buffer.data() + state.bufferPos, *pBytes_actually_read );
     state,bufferPos += *pBytes_actually_read;

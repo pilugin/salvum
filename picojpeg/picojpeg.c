@@ -141,6 +141,9 @@ static const int8 ZAG[] =
 };
 
 #define PJPG_MAX_IN_BUF_SIZE 256
+
+const int pjpeg_max_in_buf_size = PJPG_MAX_IN_BUF_SIZE;
+
 typedef struct HuffTableT
 {
    uint16 mMinCode[16];

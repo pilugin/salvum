@@ -12,7 +12,7 @@ class Archive
 public:
     Archive();
     virtual ~Archive();
-    
+
     void addNewCluster(const Common::Cluster &cluster);
     void setNewState(const DecodrState &decodrState, bool isOk);
 
@@ -75,11 +75,6 @@ void Archive<DecodrState>::setNewState(const DecodrState &decodrState, bool isOk
     mPendingClusters.back().decodrState = decodrState;
     mPendingClusters.back().decodrStateSet = true;
     mPendingClusters.back().isOk = isOk;
-
-    if (!mInitialized) {
-        mInitialized = true;
-        onInitialized();
-    }
 }
 
 template <class DecodrState>
@@ -110,6 +105,11 @@ QList<int> Archive<DecodrState>::baseline(int clusterNo)
         archiveBaselined( i->cluster );
     }
     mPendingClusters.clear();
+
+    if (!mInitialized) {
+        mInitialized = true;
+        onInitialized();
+    }
 
     return rv;
 }

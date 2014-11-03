@@ -1,36 +1,33 @@
 #ifndef DEVICEMAPFETCH_H
 #define DEVICEMAPFETCH_H
 
-#include <core/fetch.h>
+#include <core-3/fetch.h>
 #include <QByteArray>
 #include <QQueue>
 #include <QPair>
 #include <QFile>
 
-class DeviceMapFetch : public Core::Fetch
+class DeviceMapFetch : public Core3::Fetch
 {
 public:
-    DeviceMapFetch(QObject *parent =nullptr);    
+    DeviceMapFetch();
     bool init(const QString &file, const QString &mapFile, bool brute=false);
     bool init(const QString &file, const QByteArray &map, bool brute=false);
+    void setBrute(bool brute) { mBrute = brute; }
 
-    bool rewind(int clusterNo);
-    void skip(int clusterNo, int length);
+    void rewind(int clusterNo =Common::InvalidClusterNo);
+    void skipClusters(const QList<int> &clusters);
     void fastfwd();
     bool atEnd() const;
     QByteArray bitmap() const { return mMap; }
 
-    void setBrute(bool brute) { mBrute = brute; }
-
 protected:
     QByteArray mMap;
     int mCurrentCluster;
-
     QFile mFile;
-
     bool mBrute;
 
-    void doFetch(int &clusterNo, QByteArray &cluster);
+    Common::Cluster doFetch();
     void postfetch();
     void clear();
 };

@@ -1,9 +1,10 @@
 #ifndef UTIL_SIMPLE_CHECK_H
 #define UTIL_SIMPLE_CHECK_H
 
-#include <core/check.h>
+#include <core3/check.h>
 
-class SimpleCheck : public Core::Check
+template <class DecodrState>
+class SimpleCheck : public Core3::Check<DecodrState>
 {
 public:
     SimpleCheck(bool verbose =false, QObject *parent =nullptr);

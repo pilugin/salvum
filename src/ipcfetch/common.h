@@ -9,10 +9,10 @@ namespace IPCFetch {
 
 typedef Array<char, 4096> ClusterData; //< TBD: parameterize 4096 somehow
 
-struct Cluster 
+struct Cluster
 {
-    int         clusterNo;  
-    ClusterData cluster; 
+    int         clusterNo;
+    ClusterData cluster;
 };
 
 typedef Array<Cluster, 1024> Clusters;

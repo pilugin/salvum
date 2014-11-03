@@ -1,7 +1,7 @@
 #ifndef IPCFETCH_BROADCAST_H
 #define IPCFETCH_BROADCAST_H
 
-#include <core/fetch.h>
+#include <core-3/fetch.h>
 #include <util/ipc.h>
 #include <rdwr/writer.h>
 #include <ipcfetch/common.h>
@@ -19,15 +19,15 @@ class Broadcast : public RdWr::Writer<BroadcastMessage>
 {
     typedef RdWr::Writer<BroadcastMessage> Super;
 public:
-    Broadcast(const char *shmemName, Core::Fetch *fetch =nullptr);
-    
-    void write(Core::Fetch *fetch =nullptr, int clusterNo =0);
+    Broadcast(const char *shmemName, Core3::Fetch *fetch =nullptr);
+
+    void write(Core3::Fetch *fetch =nullptr, int clusterNo =0);
 
     QByteArray dumpStats();
     QPair<bool, QString> saveBitmap(const QString &filename);
     void rewind(int clusterNo);
-protected:   
-    enum InternalOperation { 
+protected:
+    enum InternalOperation {
         DumpStats = Super::Custom,
         SaveBitmap,
         Custom,
@@ -37,10 +37,10 @@ protected:
 
     bool prepare(BroadcastMessage &message);
     void postRead(const BroadcastMessage &message);
-    
-    Core::Fetch *fetch() { return mFetch; }
+
+    Core3::Fetch *fetch() { return mFetch; }
 private:
-    Core::Fetch    *mFetch;
+    Core3::Fetch    *mFetch;
 
     QByteArray      mStats;
     bool            mSaveBitmapSuccess;

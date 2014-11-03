@@ -120,6 +120,7 @@ unsigned char pjpeg_decode_init(pjpeg_image_info_t *pInfo, pjpeg_need_bytes_call
 extern const int pjpeg_ctxt_buffer_size;
 void pjpeg_save_ctxt(char *buf);
 void pjpeg_load_ctxt(const char *buf);
+extern const int pjpeg_max_in_buf_size;
 
 // Decompresses the file's next MCU. Returns 0 on success, PJPG_NO_MORE_BLOCKS if no more blocks are available, or an error code.
 // Must be called a total of m_MCUSPerRow*m_MCUSPerCol times to completely decompress the image.

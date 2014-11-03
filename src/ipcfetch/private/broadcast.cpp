@@ -9,7 +9,7 @@
 using namespace Log;
 using namespace IPC;
 using namespace RdWr;
-using namespace Core;
+using namespace Core3;
 
 namespace IPCFetch {
 
@@ -22,7 +22,7 @@ Broadcast::Broadcast(const char *shmemName, Fetch *fetch)
 void Broadcast::write(Fetch *fetch, int clusterNo)
 {
     Msg("BCAST:write(%08X)\n", clusterNo);
-    
+
     if (fetch)
         mFetch = fetch;
 
@@ -43,18 +43,17 @@ bool Broadcast::prepare(BroadcastMessage &message)
 
     } else {
         message.clusters.clear();
-        
-        int fetchClusterNo;
-        QByteArray fetchCluster;
+
+        Common::Cluster fetchCluster;
         while (!message.clusters.full()  && !mFetch->atEnd() ) {
 
-            mFetch->fetch(fetchClusterNo, fetchCluster);
-            if (fetchClusterNo == Fetch::InvalidClusterNo || fetchCluster.size() == 0)
+            fetchCluster = mFetch->fetch();
+            if (fetchCluster.first == Common::InvalidClusterNo || fetchCluster.second.size() == 0)
                 break;
 
             message.clusters.push_back_empty();
-            message.clusters.back().cluster.set( fetchCluster.data(), fetchCluster.size() );
-            message.clusters.back().clusterNo = fetchClusterNo;
+            message.clusters.back().cluster.set( fetchCluster.second.data(), fetchCluster.second.size() );
+            message.clusters.back().clusterNo = fetchCluster.first;
         }
 
         message.status = (message.clusters.size() > 0) ? InProgress : AtEnd;
@@ -113,15 +112,15 @@ bool Broadcast::processInternalMsg(int internalMsg)
             QByteArray statsText;
             snprintf( tmpstr, sizeof(tmpstr)-1, "REG:%d\n", sharedMem().regCount);
             statsText.append(tmpstr);
-            for (int i=0; i<stats.size(); ++i) 
+            for (int i=0; i<stats.size(); ++i)
                 if (stats[i] > 0) {
                     char c = i;
                     if ( isascii(c) )
                         snprintf( tmpstr, sizeof(tmpstr)-1, "%c=%d\n", c, stats[i] );
-                    else 
+                    else
                         snprintf( tmpstr, sizeof(tmpstr)-1, "0x%X=%d\n", i, stats[i] );
-                        
-                    statsText.append(tmpstr);                
+
+                    statsText.append(tmpstr);
                 }
             mStats = statsText;
         }
@@ -145,7 +144,7 @@ bool Broadcast::processInternalMsg(int internalMsg)
     case Rewind:
         Msg("BCAST:processInternalMsg rewind(%08X)\n", mRewind );
         mFetch->rewind( mRewind );
-            
+
     default:
         return Super::processInternalMsg(internalMsg);
     }

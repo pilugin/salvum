@@ -66,8 +66,7 @@ private slots:
     void setDecoding(bool value);
 
     void decodingEnd(bool success);
-    void fetchAtEnd(bool complete, 
-                    const Common::DecodedClusters &decodedClusters, 
+    void fetchAtEnd(const Common::DecodedClusters &decodedClusters, 
                     const Common::RejectedClusters &rejectedClusters, 
                     const Common::ImageInfo &imageInfo);
     void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);

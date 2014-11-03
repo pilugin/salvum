@@ -24,7 +24,7 @@ public:
 
     const Common::Cluster &lastFetched() const  { return mLastFetched; }
 protected:
-    virtual Common::Cluster &doFetch() const =0;
+    virtual Common::Cluster doFetch() =0;
 
     Common::Cluster mLastFetched;
 };

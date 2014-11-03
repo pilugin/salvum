@@ -4,7 +4,7 @@ TARGET = salv
 LIBS += -L$$OUT_PWD/../picojpeg -lpicojpeg 
 
 include(../src/common/common.pri)
-include(../src/core/core.pri)
+include(../src/core-3/core-3.pri)
 include(../src/dbus/dbus.pri)
 include(../src/rdwr/rdwr.pri)
 include(../src/util/util.pri)

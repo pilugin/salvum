@@ -1,7 +1,7 @@
 #ifndef IPCFETCH_RECIEVERFETCH_H
 #define IPCFETCH_RECIEVERFETCH_H
 
-#include <core/fetch.h>
+#include <core-3/fetch.h>
 #include <rdwr/reader.h>
 #include <ipcfetch/common.h>
 
@@ -12,29 +12,29 @@
 
 namespace IPCFetch {
 
-class RecieverFetch : public Core::Fetch, public RdWr::Reader<BroadcastMessage>
+class RecieverFetch : public Core3::Fetch, public RdWr::Reader<BroadcastMessage>
 {
 public:
-    RecieverFetch(QObject *parent =nullptr);
-    RecieverFetch(const char *shmemName, QObject *parent =nullptr);
+    RecieverFetch();
+    RecieverFetch(const char *shmemName);
     ~RecieverFetch();
-    
+
     void appendBeginningCluster(int clusterNo, const QByteArray &cluster);
 
-    bool rewind(int clusterNo);
-    void skip(int clusterNo, int length);
+    void rewind(int clusterNo);
+    void skipClusters(const QList<int> &clusters);
     void fastfwd();
     bool atEnd() const;
 
 protected:
-    void doFetch(int &clusterNo, QByteArray &cluster);
+    Common::Cluster doFetch();
     bool process(const BroadcastMessage &msg);
     void duringReg();
     void duringUnreg();
-    
+
     void setExiting(bool exiting)   { mExiting = exiting; }
     bool exiting() const            { return mExiting; }
-    
+
     /// this routine is called from main thread, while doFetch is waiting. Use it for eventLoop, etc
     /// @return time in milliseconds to wait for
     virtual int waiting4Fetch();
@@ -51,7 +51,6 @@ private:
     RecvThread                      *mRecvThread;
     mutable QMutex                  mInternMtx;
     mutable QWaitCondition          mInternCnd;
-    
 };
 
 } // ns IPCFetch

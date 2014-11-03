@@ -71,7 +71,7 @@ public:
 ////////////////////////////
 
 SalvDbusCheck::SalvDbusCheck(QObject *parent)
-: Core::Check(parent)
+: QObject(parent)
 , m_d(new Private(this))
 {
 }
@@ -92,7 +92,7 @@ SalvDbusCheck::FrameDescription_itr SalvDbusCheck::chooseBaseline(const SalvDbus
     Msg("\nCHECK::CHOOSE_BASELINE");
 
     // sending atEnd by DBus
-    emit atEnd(false, 
+    emit atEnd(
             Private::decodedClusters(frames, clusters()),
             Private::rejectedClusters(frames, clusters()),
             Jpeg::storeImage( 

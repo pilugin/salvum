@@ -9,7 +9,7 @@ using namespace Core3;
 void F()
 {
     Archive<QByteArray> ar;
-    ar.addInitCluster(qMakePair(123, QByteArray()));
+    ar.addNewCluster(qMakePair(123, QByteArray()));
     ar.setNewState(QByteArray(), true);
 
 }

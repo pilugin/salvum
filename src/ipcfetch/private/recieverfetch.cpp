@@ -6,16 +6,16 @@
 using namespace Log;
 using namespace IPC;
 using namespace RdWr;
-using namespace Core;
+using namespace Core3;
 
 namespace IPCFetch {
 
 class RecieverFetch::RecvThread : public QThread
 {
 public:
-    RecvThread(Reader<BroadcastMessage> &reader) 
+    RecvThread(Reader<BroadcastMessage> &reader)
     : mReader(reader)
-    {   
+    {
     }
 protected:
     void run()
@@ -33,9 +33,9 @@ protected:
     Reader<BroadcastMessage> &mReader;
 };
 
-RecieverFetch::RecieverFetch(QObject *parent)
-: Fetch(parent)
-, mWaitForCluster(Fetch::InvalidClusterNo)
+RecieverFetch::RecieverFetch()
+: Fetch()
+, mWaitForCluster(Common::InvalidClusterNo)
 , mRegistered(false)
 , mAtEnd(true)
 , mExiting(false)
@@ -43,9 +43,9 @@ RecieverFetch::RecieverFetch(QObject *parent)
 {
 }
 
-RecieverFetch::RecieverFetch(const char *shmemName, QObject *parent)
-: Fetch(parent)
-, mWaitForCluster(Fetch::InvalidClusterNo)
+RecieverFetch::RecieverFetch(const char *shmemName)
+: Fetch()
+, mWaitForCluster(Common::InvalidClusterNo)
 , mRegistered(false)
 , mAtEnd(true)
 , mExiting(false)
@@ -72,11 +72,11 @@ RecieverFetch::~RecieverFetch()
 void RecieverFetch::appendBeginningCluster(int clusterNo, const QByteArray &cluster)
 {
     QMutexLocker l( &mInternMtx );
-    
+
     mRecvClusters.enqueue(qMakePair(clusterNo, cluster));
 }
 
-bool RecieverFetch::rewind(int clusterNo)
+void RecieverFetch::rewind(int clusterNo)
 {
     QMutexLocker l( &mInternMtx );
 
@@ -91,13 +91,13 @@ bool RecieverFetch::rewind(int clusterNo)
             if (mRecvClusters.head().first != clusterNo) {
                 Msg("\nFailed to RecieverFetch::rewind as head of queue does not correspond to requested cluster"
                     "\nqueue=%08X cluster=%08X", mRecvClusters.head().first, clusterNo);
-                return false;
+                return ;//false;
             }
-            mWaitForCluster = InvalidClusterNo;
+            mWaitForCluster = Common::InvalidClusterNo;
         } else
             mWaitForCluster = clusterNo;
     }
-    return true;
+    return ;//true;
 }
 
 void RecieverFetch::duringReg()
@@ -118,7 +118,7 @@ void RecieverFetch::fastfwd()
 {
 }
 
-void RecieverFetch::skip(int /*clusterNo*/, int /*length*/)
+void RecieverFetch::skipClusters(const QList<int> &)
 {
 }
 
@@ -129,12 +129,13 @@ bool RecieverFetch::atEnd() const
     return mAtEnd;
 }
 
-void RecieverFetch::doFetch(int &clusterNo, QByteArray &cluster)
+Common::Cluster RecieverFetch::doFetch()
 {
+    Common::Cluster cluster;
     Msg("\n");
 
     QMutexLocker l( &mInternMtx );
-    clusterNo = InvalidClusterNo;
+    cluster.first = Common::InvalidClusterNo;
 
     if (mRecvClusters.size() < Clusters::capacity()/4) {
         Msg("q");
@@ -146,24 +147,26 @@ void RecieverFetch::doFetch(int &clusterNo, QByteArray &cluster)
         if (to < 0) {
             mAtEnd = true;
             mExiting = true;
-            return;
+            return cluster;
         }
-        mInternCnd.wait( &mInternMtx, to ); 
+        mInternCnd.wait( &mInternMtx, to );
     }
 
-    clusterNo = mRecvClusters.head().first;
-    cluster = mRecvClusters.head().second;
+    cluster.first = mRecvClusters.head().first;
+    cluster.second = mRecvClusters.head().second;
     mRecvClusters.dequeue();
-    
-    if (clusterNo == Fetch::InvalidClusterNo) {
-        cluster.clear();
+
+    if (cluster.first == Common::InvalidClusterNo) {
+        cluster.second.clear();
         mAtEnd = true;
-        
+
         Msg("[AtEnd]");
     } else {
         mAtEnd = false;
-        Msg("[%08X]", clusterNo);
+        Msg("[%08X]", cluster.first);
     }
+
+    return cluster;
 }
 
 int RecieverFetch::waiting4Fetch()
@@ -186,12 +189,12 @@ bool RecieverFetch::process(const BroadcastMessage &message)
     }
 
     // process
-    if (message.status == AtEnd || message.clusters.size() == 0) {     
-        mRecvClusters.enqueue( qMakePair((int)Fetch::InvalidClusterNo, QByteArray() ) );
+    if (message.status == AtEnd || message.clusters.size() == 0) {
+        mRecvClusters.enqueue( qMakePair((int)Common::InvalidClusterNo, QByteArray() ) );
         Msg("BCAST:AtEnd");
-        
+
     } else if (message.status == About2Quit) {
-        mRecvClusters.enqueue( qMakePair((int)Fetch::InvalidClusterNo, QByteArray() ) );
+        mRecvClusters.enqueue( qMakePair((int)Common::InvalidClusterNo, QByteArray() ) );
         Msg("BCAST:About2Quit");
         mExiting = true;
 
@@ -200,19 +203,19 @@ bool RecieverFetch::process(const BroadcastMessage &message)
         int i=0;
 
         // if rewind was called, skip bad clusters
-        if (mWaitForCluster != Fetch::InvalidClusterNo) {
+        if (mWaitForCluster != Common::InvalidClusterNo) {
             Msg("skip until %08X. Current=%08X\n", mWaitForCluster, message.clusters[0].clusterNo);
-                
+
             for (; i<message.clusters.size(); ++i) 
                 if (message.clusters[i].clusterNo == mWaitForCluster) {
-                    mWaitForCluster = Fetch::InvalidClusterNo;
+                    mWaitForCluster = Common::InvalidClusterNo;
                     break;
-                }            
+                }
         }
 
         Msg("copy %d", message.clusters.size() -i);
         for (; i<message.clusters.size(); ++i) {
-    
+
             QPair<int, QByteArray> pair( message.clusters[i].clusterNo, QByteArray() );
             int clsize = message.clusters[i].cluster.size();
             pair.second.resize( clsize );

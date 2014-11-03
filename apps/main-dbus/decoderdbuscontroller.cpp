@@ -251,15 +251,12 @@ void DecoderDbusController::decodingEnd(bool success)
     emit decodingEndChanged();
 }
 
-void DecoderDbusController::fetchAtEnd(bool complete, 
+void DecoderDbusController::fetchAtEnd( 
                     const Common::DecodedClusters &decodedClusters, 
                     const Common::RejectedClusters &rejectedClusters, 
                     const Common::ImageInfo &imageInfo)
 {
     qDebug()<<cluster()<<__FUNCTION__<<imageInfo.imagePath;
-
-    if (complete)
-        decodingEnd(true);
 
     m_d->properties.imagePath = imageInfo.imagePath;
     emit imagePathChanged();
