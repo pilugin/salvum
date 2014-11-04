@@ -2,15 +2,16 @@
 #define ADVANCEDCHECKER_H
 
 #include <jpeg/icheck.h>
+#include <QObject>
 #include <QImage>
 
 namespace Jpeg {
 
-class AdvancedChecker : public ICheck
+class AdvancedChecker : public QObject, public ICheck
 {
     Q_OBJECT
 public:
-    AdvancedChecker();
+    AdvancedChecker(QObject *parent =nullptr);
     bool check(const QImage &image, int blockBegin, int blockEnd, double *relevance =nullptr);
     double minRelevance() const;
     

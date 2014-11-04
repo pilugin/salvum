@@ -1,19 +1,21 @@
 #ifndef UTIL_SIMPLE_CHECK_H
 #define UTIL_SIMPLE_CHECK_H
 
-#include <core3/check.h>
+#include <core-3/check.h>
+#include <core-3/archive.h>
 
 template <class DecodrState>
 class SimpleCheck : public Core3::Check<DecodrState>
 {
 public:
-    SimpleCheck(bool verbose =false, QObject *parent =nullptr);
+    typedef Core3::Check<DecodrState> Parent;
+    typename Parent::SelectResult select(const Core3::Archive<DecodrState> &archive)
+    {
+        typename Core3::Archive<DecodrState>::ClusterStored cs;
+        archive.lastOkState(&cs);
+        return typename Parent::SelectResult(cs.cluster.first, cs.decodrState);
+    }
 
-    void doAcceptFrame(const QVector<int> &pendingClusters, const Core::DecodrFrame &frame);
-    void doRejectFrame(const QVector<int> &pendingClusters);
-    FrameDescription_itr chooseBaseline(const FrameDescription_v &frames);
-private:
-    const bool mVerbose;
 };
 
 #endif // UTIL_SIMPLE_CHECK_H

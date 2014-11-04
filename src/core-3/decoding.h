@@ -44,7 +44,7 @@ bool decoding(int clusterNo, Fetch &f, Decodr<DecodrState> &d, Check<DecodrState
             fit = d.checkOk();
             a.setNewState(d.state(), fit);
             if (!initialized && d.initialized() && fit) {
-                f.skipClusters( a.baseline(f.lastFetched()) );
+                f.skipClusters( a.baseline(f.lastFetched().first) );
                 initialized = true;
             }
         }

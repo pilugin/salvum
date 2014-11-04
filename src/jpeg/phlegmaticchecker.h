@@ -7,8 +7,7 @@ namespace Jpeg {
 
 class PhlegmaticChecker : public ICheck
 {
-public:
-    PhlegmaticChecker(QObject *parent =nullptr) : ICheck(parent) {}
+public:    
     bool check(const QImage &, int, int, double *relevance =nullptr)
     {
         if (relevance)

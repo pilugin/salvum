@@ -5,7 +5,7 @@
 
 #include <functional>
 
-#include <QtCore/CThread>
+#include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 #include <QtCore/QMutexLocker>
@@ -51,6 +51,23 @@ void DecodrState::savePixels(const DecodrState &prevFrame)
         saveBlock(b, cursor.canvas(), savedPixels.pixels);
 }
 
+bool DecodrState::operator ==(const DecodrState &other) const
+{
+    return
+               lastWasFF    == other.lastWasFF
+            && buffer       == other.buffer
+            && bufferPos    == other.bufferPos
+            && bytesRead    == other.bytesRead
+            && pjpegCtxt    == other.pjpegCtxt
+//            && imgInfo      == other.imgInfo
+//            && cursor       == other.cursor
+            && decodOk      == other.decodOk
+            && checkOk      == other.checkOk
+            && savedPixels.blockBegin   == other.savedPixels.blockBegin
+            && savedPixels.pixels       == other.savedPixels.pixels
+                    ;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Thread : public QThread
@@ -70,10 +87,10 @@ struct PicoJpegDecodr::Private
 
     ICheck *checkr;
     QImage image;
-    State state;
+//    PicoJpegDecodr::State state;
+    DecodrState state;
 
     int blockCount;
-    bool wasFetched;
     bool end;
     bool inited;
 
@@ -85,17 +102,17 @@ struct PicoJpegDecodr::Private
     enum Status { Init, Decode, Exiting, Idle };
     Status status;
 
-    bool innerBufferEnough() const { return (state.buffer.size() - state.bufferPos) >= pjpeg_max_in_buf_size; }
-    bool innerBufferEmpty() const { return state.buffer.size() == state.bufferPos; }
-    bool outerBufferEmpty() const { return inCluster.size() >0; }
+    void shiftBuffers();
+    bool innerBufferEnough() const  { return (state.buffer.size() - state.bufferPos) >= pjpeg_max_in_buf_size; }
+    bool innerBufferEmpty() const   { return state.buffer.size() == state.bufferPos; }
+    bool outerBufferEmpty() const   { return inCluster.second.size() == 0; }
     bool checkFFD9() const;
-    int latestBlock() const;
-
+    int latestBlock() const;   
 
     void threadFunc();
 
     void processInit();
-    void processDecode();
+    void processDecode(bool makeCheck=true);
 
     static unsigned char fetchCallback(unsigned char* pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read, void *param);
     unsigned char fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read);
@@ -116,10 +133,9 @@ PicoJpegDecodr::Private::Private(ICheck *checkr)
 , image()
 , state(&image)
 , blockCount(0)
-, wasFetched(false)
 , end(false)
 , inited(false)
-, thread(new Thread(std::bind(this, &PicoJpegDecodr::Private::threadFunc)) )
+, thread(new Thread(std::bind(&PicoJpegDecodr::Private::threadFunc, this)) )
 , status( Idle )
 {
     mutex.lock();
@@ -156,7 +172,7 @@ PicoJpegDecodr::Private::~Private()
 
 void PicoJpegDecodr::Private::threadFunc()
 {
-    QMutexLocker( &mutex );
+    QMutexLocker l( &mutex );
 
     for (;;) {
         cond.wakeAll();
@@ -165,13 +181,13 @@ void PicoJpegDecodr::Private::threadFunc()
         switch (status) {
         case Init:
             processInit();
-            processDecode();
+            processDecode(false);
             break;
         case Decode:
             processDecode();
             break;
         case Exiting:
-            return false;
+            return;
         }
         status = Idle;
     }
@@ -179,19 +195,95 @@ void PicoJpegDecodr::Private::threadFunc()
 
 void PicoJpegDecodr::Private::processInit()
 {
-    uchar rv = pjpeg_decode_init(state.imgInfo, &PicoJpegDecodr::Private::fetchCallback, this, 0);
+    uchar rv = pjpeg_decode_init(&state.imgInfo, &PicoJpegDecodr::Private::fetchCallback, this, 0);
     if (rv != 0) {
         Msg("PicoJpegDecodr:init picojpeg err: %d\n", rv);
         end = true;
-        decodOk = false;
+        state.decodOk = false;
     } else {
-        state.cursor.initCanvas( state.imgInfo.m_width, state.imgInfo.m_height));
+        state.cursor.initCanvas( QSize(state.imgInfo.m_width, state.imgInfo.m_height) );
         end = false;
+        inited = true;
     }
 }
 
-void PicoJpegDecodr::Private::processDecode()
+void PicoJpegDecodr::Private::processDecode(bool makeCheck)
 {
+    static const int MAX_BLOCKS_PER_CLUSTER = 450; // empirical
+
+    while (!outerBufferEmpty()
+           || innerBufferEnough()) {
+        uchar rv = pjpeg_decode_mcu();
+        if (rv == 0) {
+
+            for (int i=0; i<2; ++i, ++blockCount) { //< copy pixels
+                state.cursor.addBlock(  state.imgInfo.m_pMCUBufR +i*64,
+                                        state.imgInfo.m_pMCUBufG +i*64,
+                                        state.imgInfo.m_pMCUBufB +i*64  );
+            }
+
+            if (state.cursor.atEnd() && checkFFD9()) {
+                Msg("END+FFD9");
+                end = true;
+                break;
+            }
+
+            if (blockCount > MAX_BLOCKS_PER_CLUSTER) {
+                Msg("[BlockCount overflow %d]", blockCount);
+                state.decodOk = false;
+                break;
+            }
+
+        } else if (rv == PJPG_NO_MORE_BLOCKS) {
+            Msg("[PJPG_NO_MORE_BLOCKS]");
+            Q_ASSERT(false);
+        } else {
+            Msg("[Decod Err-%d]", rv);
+            state.decodOk = false;
+            break;
+        }
+
+    }
+
+    Msg("[Decod Ok]");
+    if (makeCheck && state.decodOk) {
+        state.checkOk = checkr->check(image, latestBlock()-blockCount, latestBlock());
+        Msg("[Check %s]", state.checkOk ? "Ok" : "Fail");
+    }
+}
+
+bool PicoJpegDecodr::Private::checkFFD9() const
+{
+    if (state.bufferPos == state.bytesRead
+        && state.lastWasFF
+        && state.buffer[0] == (char)0xD9)
+                                            return true;
+
+    for (int i=state.bufferPos - state.bytesRead; i<state.bufferPos; ++i) // find D9
+        if (state.buffer[i] == (char)0xD9) // check FF
+            if (i != 0 && state.buffer[i-1] == (char)0xFF)
+                return true;
+
+    return false;
+}
+
+int PicoJpegDecodr::Private::latestBlock() const
+{
+    return state.cursor.currentBlockIndex() -1;
+}
+
+
+void PicoJpegDecodr::Private::shiftBuffers()
+{
+    Q_ASSERT(innerBufferEmpty());
+    Q_ASSERT(!outerBufferEmpty());
+
+    state.lastWasFF = state.buffer.isEmpty() ? false : state.buffer.endsWith( (char)0xFF );
+
+    state.buffer = inCluster.second;
+    inCluster.second.clear();
+    state.bufferPos = 0;
+    blockCount = 0;
 }
 
 unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char* pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read, void *param)
@@ -207,12 +299,8 @@ unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char *pBuf, unsign
             cond.wait( &mutex );
             if (status != Init)
                 return PJPG_NO_MORE_BLOCKS;
-            if (!outerBufferEmpty()) {
-                state.buffer = inCluster.second;
-                inCluster.second.clear();
-                state.bufferPos = 0;
-                wasFetch = true;
-            }
+            if (!outerBufferEmpty())
+                shiftBuffers();
         }
 
 
@@ -221,16 +309,13 @@ unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char *pBuf, unsign
         if (innerBufferEmpty()) {
             if (outerBufferEmpty())
                 return PJPG_NO_MORE_BLOCKS;
-            state.buffer = inCluster.second;
-            inCluster.second.clear();
-            state.bufferPos = 0;
-            wasFetched = true;
+            shiftBuffers();
         }
     }
 
     state.bytesRead = *pBytes_actually_read = qMin( state.buffer.size() - state.bufferPos, (int)buf_size );
     memcpy( pBuf, state.buffer.data() + state.bufferPos, *pBytes_actually_read );
-    state,bufferPos += *pBytes_actually_read;
+    state.bufferPos += *pBytes_actually_read;
 
     return 0;
 }
@@ -242,17 +327,17 @@ bool PicoJpegDecodr::initialized() const
 
 bool PicoJpegDecodr::checkOk() const
 {
-    return m_d->checkOk();
+    return m_d->state.checkOk;
 }
 
 bool PicoJpegDecodr::decodOk() const
 {
-    return m_d->decodOk;
+    return m_d->state.decodOk;
 }
 
 bool PicoJpegDecodr::end() const
 {
-    return m_d->done;
+    return m_d->end;
 }
 
 const PicoJpegDecodr::State &PicoJpegDecodr::state() const

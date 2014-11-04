@@ -1,44 +1,16 @@
 #ifndef PICOJPEGDECODR_H
 #define PICOJPEGDECODR_H
 
-#include <core-3/decodr.h>
-#include <util/ilog.h>
-#include <util/singleton.h>
-#include <picojpeg/picojpeg.h>
-#include <jpeg/imagecursor.h>
+#include <jpeg/common.h>
 
-#include <QImage>
-#include <QStack>
+#include <core-3/decodr.h>
+#include <util/singleton.h>
 
 namespace Jpeg {
 
 class ICheck;
 
-struct DecodrState
-{
-    DecodrState(QImage *image =nullptr);
-
-    bool lastWasFF; //< used to find FFD9 splitted in 2 clusters. This param is set inside fetchCallback
-    QByteArray buffer;
-    int bufferPos;
-    int bytesRead; //< used to check FFD9,
-
-    QByteArray pjpegCtxt;
-    pjpeg_image_info_t imgInfo;
-    ImageCursor cursor;
-
-    //
-    bool decodOk;
-    bool checkOk;
-    struct {
-        int blockBegin;
-        QList<int> pixels;
-    } savedPixels;
-
-    void savePixels(const PicoJpegDecodFrame &prevFrame);
-};
-
-class PicoJpegDecodr : public Core3::Decodr< DecodrState >
+class PicoJpegDecodr : public Core3::Decodr< DecodrState >, public Singleton<PicoJpegDecodr>
 {
 public:
     PicoJpegDecodr(ICheck *checkr);

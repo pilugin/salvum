@@ -10,9 +10,9 @@ HEADERS += \
     $$PWD/defaultsettings.h \
     $$PWD/simplelogger.h \
     $$PWD/filelogger.h \
-#    $$PWD/rangefileresult.h \
+    $$PWD/rangefileresult.h \
     $$PWD/devicemapfetch.h \
-#    $$PWD/simplecheck.h \
+    $$PWD/simplecheck.h \
 #    $$PWD/guidedfetch.h
     
 SOURCES += \
@@ -23,7 +23,7 @@ SOURCES += \
     $$PWD/private/devicemapfetch.cpp \
     $$PWD/private/simplelogger.cpp \
     $$PWD/private/filelogger.cpp \
-#    $$PWD/private/rangefileresult.cpp \
+    $$PWD/private/rangefileresult.cpp \
 #    $$PWD/private/simplecheck.cpp \
 #    $$PWD/private/guidedfetch.cpp
     

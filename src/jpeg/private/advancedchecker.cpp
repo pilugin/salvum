@@ -8,7 +8,7 @@ using namespace Log;
 
 namespace Jpeg {
 
-AdvancedChecker::AdvancedChecker()
+AdvancedChecker::AdvancedChecker(QObject *parent) : QObject(parent)
 {
 }
 

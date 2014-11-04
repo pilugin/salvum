@@ -1,21 +1,20 @@
 #ifndef RANGEFILERESULTS_H
 #define RANGEFILERESULTS_H
 
-#include <core/result.h>
 #include <QFile>
+#include <common/types.h>
 
-class RangeFileResult : public Core::Result
+class RangeFileResult
 {
 public:
-    RangeFileResult(const QString &dir =".", QObject *parent =nullptr);
+    RangeFileResult(const QString &dir =".");
 
-    void restart(const QString &name);
-    void addClusters(const Common::Clusters &clusters);
+    void restart();
+    void addCluster(const Common::Cluster &cluster);
     void finalize(bool success);
 
-private:
+protected:
     const QString mDir;
-    QString mName;
     QFile mFile;
     QFile mDataFile;
 };

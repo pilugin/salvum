@@ -4,19 +4,16 @@
 #include <QDir>
 #include <QtDebug>
 
-using namespace Core;
-
-RangeFileResult::RangeFileResult(const QString &dir, QObject *parent) : Result(parent), mDir(dir)
+RangeFileResult::RangeFileResult(const QString &dir) : mDir(dir)
 {
     if (!QDir().mkpath(mDir))
         Log::Msg("Failed to mkdir %s\n", mDir.toUtf8().data());
 }
 
-void RangeFileResult::restart(const QString &name)
+void RangeFileResult::restart()
 {
-    mName = name;
-    mFile.setFileName(      QString("%1/%2.clusters").arg(mDir, name) );
-    mDataFile.setFileName(  QString("%1/%2.data").arg(mDir, name) );
+    mFile.setFileName(      QString("%1/clusters").arg(mDir) );
+    mDataFile.setFileName(  QString("%1/data").arg(mDir) );
     
     if (!mFile.open(QFile::WriteOnly | QFile::Truncate | QFile::Unbuffered)) 
         Log::Msg("Failed to create file %s\n", mFile.fileName().toUtf8().data());
@@ -24,6 +21,15 @@ void RangeFileResult::restart(const QString &name)
         Log::Msg("Failed to create file %s\n", mDataFile.fileName().toUtf8().data());
 }
 
+void RangeFileResult::addCluster(const Common::Cluster &cluster)
+{
+    if (mDataFile.write(cluster.second) == -1)
+        Log::Msg("Failed to Result::addCluster. %s", mDataFile.errorString().toUtf8().data());
+    if (mFile.write(QString().sprintf("%08X\n", cluster.first).toUtf8()) == -1)
+        Log::Msg("Failed to Result::addCluster. %s", mFile.errorString().toUtf8().data());
+}
+
+#if 0
 void RangeFileResult::addClusters(const Common::Clusters &clusters)
 {
     int len=0;
@@ -58,6 +64,7 @@ void RangeFileResult::addClusters(const Common::Clusters &clusters)
     }
     flush();
 }
+#endif
 
 void RangeFileResult::finalize(bool success)
 {
@@ -65,7 +72,7 @@ void RangeFileResult::finalize(bool success)
     mDataFile.close();
 
     if (!success) {
-        if (!QFile::rename(mFile.fileName(), QString("%1/%2.bad.clusters").arg(mDir, mName)))
+        if (!QFile::rename(mFile.fileName(), QString("%1/clusters.bad").arg(mDir)))
             Log::Msg("Failed to move file %s\n", mFile.fileName().toUtf8().data());
     }
 }

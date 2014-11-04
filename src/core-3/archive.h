@@ -16,8 +16,6 @@ public:
     void addNewCluster(const Common::Cluster &cluster);
     void setNewState(const DecodrState &decodrState, bool isOk);
 
-    DecodrState lastOkState() const;
-
     virtual QList<int> baseline(int clusterNo);
 
     // iface for Check
@@ -28,6 +26,8 @@ public:
         bool decodrStateSet;
         DecodrState decodrState;
     };
+
+    DecodrState lastOkState(ClusterStored *out =nullptr) const;
 
     QList<ClusterStored> pendingClusters() const { return mPendingClusters; }
 
@@ -78,13 +78,18 @@ void Archive<DecodrState>::setNewState(const DecodrState &decodrState, bool isOk
 }
 
 template <class DecodrState>
-DecodrState Archive<DecodrState>::lastOkState() const
+DecodrState Archive<DecodrState>::lastOkState(ClusterStored *out) const
 {
+    int index = 0;
     for (int i=0, cnt=mPendingClusters.size(); i<cnt; ++i) {
-        if (mPendingClusters[ cnt -i -1 ].isOk && mPendingClusters[ cnt -i -1 ].decodrStateSet)
-            return mPendingClusters[ cnt -i -1 ];
+        if (mPendingClusters[ cnt -i -1 ].isOk && mPendingClusters[ cnt -i -1 ].decodrStateSet) {
+            index = cnt -i -1;
+            break;
+        }
     }
-    return mPendingClusters.front().decodrState;
+    if (out)
+        *out = mPendingClusters[ index ];
+    return mPendingClusters[ index ].decodrState;
 }
 
 template <class DecodrState>

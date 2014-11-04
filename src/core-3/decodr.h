@@ -9,7 +9,6 @@ template <class DecodrState>
 class Decodr
 {
 public:
-//    struct State {};
     typedef DecodrState State;
 
     virtual ~Decodr()                               {}
