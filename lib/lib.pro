@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = salv
-
+CONFIG += debug
 LIBS += -L$$OUT_PWD/../picojpeg -lpicojpeg 
 
 include(../src/common/common.pri)

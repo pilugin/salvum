@@ -1,7 +1,7 @@
 QT       += core gui
 
 TARGET = salv
-CONFIG   += console debug
+CONFIG   += console debug debug
 CONFIG   -= app_bundle
 
 TEMPLATE = app

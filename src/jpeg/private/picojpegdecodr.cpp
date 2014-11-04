@@ -143,6 +143,8 @@ PicoJpegDecodr::Private::Private(ICheck *checkr)
 
 void PicoJpegDecodr::init()
 {
+    qDebug()<<__FUNCTION__;
+
     m_d->inited = false;
 
     m_d->thread->start();
@@ -152,6 +154,8 @@ void PicoJpegDecodr::init()
 
 bool PicoJpegDecodr::feed(const Common::Cluster &cluster)
 {
+    qDebug()<<__FUNCTION__<<cluster.first;
+
     if (m_d->status == Private::Idle)
         m_d->status = m_d->inited ? Private::Decode : Private::Init;
 
@@ -195,12 +199,17 @@ void PicoJpegDecodr::Private::threadFunc()
 
 void PicoJpegDecodr::Private::processInit()
 {
+    qDebug()<<__FUNCTION__;
+
     uchar rv = pjpeg_decode_init(&state.imgInfo, &PicoJpegDecodr::Private::fetchCallback, this, 0);
     if (rv != 0) {
         Msg("PicoJpegDecodr:init picojpeg err: %d\n", rv);
         end = true;
         state.decodOk = false;
     } else {
+
+        qDebug("INITED!!!!  %d %d", state.imgInfo.m_width, state.imgInfo.m_height);
+
         state.cursor.initCanvas( QSize(state.imgInfo.m_width, state.imgInfo.m_height) );
         end = false;
         inited = true;
@@ -209,6 +218,8 @@ void PicoJpegDecodr::Private::processInit()
 
 void PicoJpegDecodr::Private::processDecode(bool makeCheck)
 {
+    qDebug()<<__FUNCTION__;
+
     static const int MAX_BLOCKS_PER_CLUSTER = 450; // empirical
 
     while (!outerBufferEmpty()
@@ -293,14 +304,23 @@ unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char* pBuf, unsign
 
 unsigned char PicoJpegDecodr::Private::fetchCallback(unsigned char *pBuf, unsigned char buf_size, unsigned char *pBytes_actually_read)
 {
+        qDebug()<<__FUNCTION__<<buf_size<<(status==Init ? "INIT":"DECOD");
+
     if (status == Init) {
         while (innerBufferEmpty()) {
+
+            qDebug()<<"EMPTY. Wait for feed";
+
             cond.wakeAll();
             cond.wait( &mutex );
-            if (status != Init)
+            if (status != Init) {
+                qDebug("EIXT NO_MORE+_BLOCKS");
                 return PJPG_NO_MORE_BLOCKS;
+            }
             if (!outerBufferEmpty())
                 shiftBuffers();
+
+            qDebug("GOT IT");
         }
 
 
@@ -342,12 +362,16 @@ bool PicoJpegDecodr::end() const
 
 const PicoJpegDecodr::State &PicoJpegDecodr::state() const
 {
+        qDebug()<<__FUNCTION__;
+
     pjpeg_save_ctxt( m_d->state.pjpegCtxt.data() );
     return m_d->state;
 }
 
 void PicoJpegDecodr::doRestore(const PicoJpegDecodr::State &state)
 {
+    qDebug()<<__FUNCTION__;
+
     m_d->state = state;
     pjpeg_load_ctxt( m_d->state.pjpegCtxt.data() );
 }

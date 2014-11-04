@@ -13,7 +13,7 @@ bool ThumbnailCreator::create(const QString &inputPath, const QString &outputPat
     QStringList params;
     params << "-st" << outputPath << inputPath;
     if (!async) {
-        int rv = QProcess::execute("jhead", QStringList() << "-st" << outputPath << inputPath );
+        int rv = 0;//QProcess::execute("jhead", QStringList() << "-st" << outputPath << inputPath );
         if (rv != 0) {
             qDebug()<<"jhead: returned nonzero..."<<rv;
             return false;
