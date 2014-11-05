@@ -28,6 +28,8 @@ int main(int argc, char **argv)
     Jpeg::AdvancedChecker jpegCheck;
     Jpeg::PicoJpegDecodr decodr(&jpegCheck);
     Jpeg::Archive archive("SALV");
+
+    QObject::connect(&archive, SIGNAL(thumbnailCreated(QString)), &jpegCheck, SLOT(addThumbnail(QString)) );
     
     if (!fetch.init(QString(argv[1]), QString(argv[2])) ) {
         qDebug( "Failed to init the Fetch");

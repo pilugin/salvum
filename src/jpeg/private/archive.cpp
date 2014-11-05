@@ -6,7 +6,7 @@ namespace Jpeg {
 Archive::Archive(const QString &path)
     : RangeFileResult(path)
 {
-    restart();
+    restart("clusters", "data.jpg");
 }
 
 Archive::~Archive()
@@ -17,15 +17,15 @@ Archive::~Archive()
 void Archive::onInitialized()
 {
     QString thumbnailPath = QString("%1/thumbnail.jpg").arg(mDir);
-    mDataFile.close();
+    mDataFile.flush();
     if (ThumbnailCreator::create(mDataFile.fileName(), thumbnailPath))
         emit thumbnailCreated(thumbnailPath);
-    mDataFile.open(QFile::WriteOnly);
+
 }
 
 void Archive::archiveBaselined(const Common::Cluster &cluster)
 {
-    qDebug("Archive::archiveBaselined(%08X)", cluster.first);
+//    qDebug("Archive::archiveBaselined(%08X)", cluster.first);
     addCluster(cluster);
 }
 

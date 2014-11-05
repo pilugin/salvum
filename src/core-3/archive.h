@@ -15,6 +15,7 @@ public:
 
     void addNewCluster(const Common::Cluster &cluster);
     void setNewState(const DecodrState &decodrState, bool isOk);
+    void revertClusters();
 
     virtual QList<int> baseline(int clusterNo);
 
@@ -23,6 +24,7 @@ public:
     {
         Common::Cluster cluster;
         bool isOk;
+        bool baselined;
         bool decodrStateSet;
         DecodrState decodrState;
     };
@@ -65,7 +67,7 @@ void Archive<DecodrState>::archiveBaselined(const Common::Cluster &)
 template <class DecodrState>
 void Archive<DecodrState>::addNewCluster(const Common::Cluster &cluster)
 {
-    ClusterStored cs = { cluster, false, false, DecodrState() };
+    ClusterStored cs = { cluster, false, false, false, DecodrState() };
     mPendingClusters.push_back( cs );
 }
 
@@ -75,6 +77,13 @@ void Archive<DecodrState>::setNewState(const DecodrState &decodrState, bool isOk
     mPendingClusters.back().decodrState = decodrState;
     mPendingClusters.back().decodrStateSet = true;
     mPendingClusters.back().isOk = isOk;
+}
+
+template <class DecodrState>
+void Archive<DecodrState>::revertClusters()
+{
+    while (mPendingClusters.size()>0 && !mPendingClusters.back().decodrStateSet)
+        mPendingClusters.pop_back();
 }
 
 template <class DecodrState>
@@ -89,27 +98,38 @@ DecodrState Archive<DecodrState>::lastOkState(ClusterStored *out) const
     }
     if (out)
         *out = mPendingClusters[ index ];
+
     return mPendingClusters[ index ].decodrState;
 }
 
 template <class DecodrState>
 QList<int> Archive<DecodrState>::baseline(int clusterNo)
 {
-    auto itr = std::find_if( mPendingClusters.constBegin(), mPendingClusters.constEnd(),
+    auto itr = std::find_if( mPendingClusters.begin(), mPendingClusters.end(),
             [&](const ClusterStored &cs)->bool {
                 return cs.cluster.first == clusterNo;
             }
         );
 
-    if (itr == mPendingClusters.constEnd())
+    if (itr == mPendingClusters.end())
         return QList<int>();
 
     QList<int> rv;
-    for (auto i=mPendingClusters.constBegin(); i<=itr; ++i) {
+    auto i=mPendingClusters.begin();
+    while (i->baselined && i<=itr)
+        ++i;
+    for (; i<=itr; ++i) {
         rv.push_back( i->cluster.first );
         archiveBaselined( i->cluster );
+        i->baselined = true;
     }
-    mPendingClusters.clear();
+
+    QList<ClusterStored> newClusters;
+    while (!itr->decodrStateSet)
+        newClusters.append( *itr++ );
+    newClusters.append( *itr );
+
+    mPendingClusters.swap(newClusters);
 
     if (!mInitialized) {
         mInitialized = true;

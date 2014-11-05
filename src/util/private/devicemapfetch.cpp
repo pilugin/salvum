@@ -96,7 +96,7 @@ void DeviceMapFetch::fastfwd()
             ++mCurrentCluster;
 
     } else { //<
-        if (mCurrentCluster == 0)
+        if (mCurrentCluster == Common::InvalidClusterNo)
             ++mCurrentCluster;
         while (mCurrentCluster < mMap.size()
                 && ! ( goodClusters.contains(mMap[ mCurrentCluster ]) && !goodClusters.contains(mMap[ mCurrentCluster-1 ])   )  )
@@ -113,7 +113,8 @@ void DeviceMapFetch::skipClusters(const QList<int> &clusters)
 {
     static const char used = Get( UsedCluster ).toChar().toAscii();
 
-    Msg("\n[FSKIP: #=%d, (%08X, %08X)]", clusters.size(), clusters.front(), clusters.back());
+    if (clusters.size() >0)
+        Msg("\n[FSKIP: #=%d, (%08X, %08X)]", clusters.size(), clusters.front(), clusters.back());
 
     for (int i=0; i<clusters.size(); ++i)
         if (clusters[i] < mMap.size())

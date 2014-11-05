@@ -10,64 +10,57 @@ RangeFileResult::RangeFileResult(const QString &dir) : mDir(dir)
         Log::Msg("Failed to mkdir %s\n", mDir.toUtf8().data());
 }
 
-void RangeFileResult::restart()
+void RangeFileResult::restart(const QString &clustersName, const QString &dataName)
 {
-    mFile.setFileName(      QString("%1/clusters").arg(mDir) );
-    mDataFile.setFileName(  QString("%1/data").arg(mDir) );
+    mFile.setFileName(      QString("%1/%2").arg(mDir, clustersName) );
+    mDataFile.setFileName(  QString("%1/%2").arg(mDir, dataName) );
     
     if (!mFile.open(QFile::WriteOnly | QFile::Truncate | QFile::Unbuffered)) 
         Log::Msg("Failed to create file %s\n", mFile.fileName().toUtf8().data());
     if (!mDataFile.open(QFile::WriteOnly | QFile::Truncate | QFile::Unbuffered)) 
         Log::Msg("Failed to create file %s\n", mDataFile.fileName().toUtf8().data());
+
+    mClusterRange.len = 0;
 }
 
 void RangeFileResult::addCluster(const Common::Cluster &cluster)
 {
     if (mDataFile.write(cluster.second) == -1)
         Log::Msg("Failed to Result::addCluster. %s", mDataFile.errorString().toUtf8().data());
-    if (mFile.write(QString().sprintf("%08X\n", cluster.first).toUtf8()) == -1)
-        Log::Msg("Failed to Result::addCluster. %s", mFile.errorString().toUtf8().data());
+    store(cluster.first);
 }
 
-#if 0
-void RangeFileResult::addClusters(const Common::Clusters &clusters)
+void RangeFileResult::flush()
 {
-    int len=0;
-    int beginCluster=0;
-    bool flushed=true;
-    
-    std::function<void(int)> store = [&](int c) {  
-        beginCluster=c;
-        len=1;
-        flushed=false;
-    };
-    std::function<void()> flush = [&]() {
-        if (mFile.write(QString().sprintf("%X %X\n", beginCluster, beginCluster +len -1).toUtf8()) == -1)
-            Log::Msg("Failed to Result::addClusters. %s", mFile.errorString().toUtf8().data());
-        flushed=true;            
-    };
-    
-    for (int i=0; i<clusters.size(); ++i) {
-        if (flushed) {           
-            store(clusters[i].first);
-        } else {
-            if ((beginCluster + len) == clusters[i].first) 
-                ++len;
-            else {
-                flush();
-                store(clusters[i].first);
-            }                
-        }
-        
-        if (mDataFile.write(clusters[i].second) == -1)
-            Log::Msg("Result: Failed to write cluster. %s", mDataFile.errorString().toUtf8().data() );
+    QByteArray data;
+    if (mClusterRange.len == 1) {
+        data = QString().sprintf("%08X\n", mClusterRange.beginCluster).toUtf8();
+
+    } else if (mClusterRange.len > 1) {
+        data = QString().sprintf("%08X %08X\n", mClusterRange.beginCluster, mClusterRange.beginCluster+mClusterRange.len-1).toUtf8();
+
     }
-    flush();
+
+    if (data.size()>0)
+        if (mFile.write(data) == -1)
+            Log::Msg("Failed to Result::addCluster. %s", mFile.errorString().toUtf8().data());
+    mClusterRange.len = 0;
 }
-#endif
+
+void RangeFileResult::store(int beginCluster)
+{
+    if (beginCluster == (mClusterRange.beginCluster + mClusterRange.len)) {
+        ++mClusterRange.len;
+    } else {
+        flush();
+        mClusterRange.beginCluster = beginCluster;
+        mClusterRange.len = 1;
+    }
+}
 
 void RangeFileResult::finalize(bool success)
 {
+    flush();
     mFile.close();
     mDataFile.close();
 

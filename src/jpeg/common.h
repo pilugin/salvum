@@ -10,8 +10,6 @@ namespace Jpeg {
 
 struct DecodrState
 {
-    DecodrState(QImage *image =nullptr);
-
     bool lastWasFF; //< used to find FFD9 splitted in 2 clusters. This param is set inside fetchCallback
     QByteArray buffer;
     int bufferPos;
@@ -24,6 +22,7 @@ struct DecodrState
     //
     bool decodOk;
     bool checkOk;
+    bool end;
     struct {
         int blockBegin;
         QList<int> pixels;
@@ -33,6 +32,10 @@ struct DecodrState
 
     bool operator==(const DecodrState &other) const;
     bool operator!=(const DecodrState &other) const     { return !(*this == other); }
+
+//private:
+//    friend class PicoJpegDecodr;
+    DecodrState(QImage *image =nullptr);
 };
 
 }
