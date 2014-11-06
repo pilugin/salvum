@@ -2,7 +2,7 @@
 #include <jpeg/algo.h>
 
 using namespace Common;
-using namespace Core;
+using namespace Core3;
 using namespace Jpeg;
 
 Bcast::Bcast(const char *shmem, const SlotClosure &progressCallback, const SlotClosure &bitmapInfoCallback, Fetch *fetch) 
@@ -43,7 +43,7 @@ bool Bcast::processInternalMsg(int internalMsg)
         doEmitBitmapInfo();
         return true;        
     case Skip:
-        fetch()->skip(mSkip.clusterNo, mSkip.length);
+        fetch()->skipClusters(mSkip.clusterNo, mSkip.length);
         return true;
         
     default:

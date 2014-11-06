@@ -1,7 +1,7 @@
 #include "bcast.h"
 #include "bcastthread.h"
 
-using namespace Core;
+using namespace Core3;
 
 BcastThread::BcastThread(Bcast &bcast, QObject *parent)
 : QThread(parent)

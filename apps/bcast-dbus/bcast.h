@@ -10,7 +10,7 @@ class Bcast : public IPCFetch::Broadcast
 public:
     typedef IPCFetch::Broadcast Super;
 
-    Bcast(const char *shmem, const SlotClosure &progressCallback, const SlotClosure &bitmapInfo, Core::Fetch *fetch =nullptr);
+    Bcast(const char *shmem, const SlotClosure &progressCallback, const SlotClosure &bitmapInfo, Core3::Fetch *fetch =nullptr);
 
     void emitProgress();
     void emitBitmapInfo();

@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 using namespace Common;
-using namespace Core;
+using namespace Core3;
 
 class BcastDbusCtrl::Private 
 {
