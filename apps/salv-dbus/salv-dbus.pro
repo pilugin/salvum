@@ -15,12 +15,12 @@ SOURCES += \
     main.cpp \
     salvdbuscheck.cpp \
     dbusdecodeprocessor.cpp \
-    eventlooprecieverfetch.cpp
+#    eventlooprecieverfetch.cpp
 
 HEADERS += \
     salvdbuscheck.h \
     dbusdecodeprocessor.h \
-    eventlooprecieverfetch.h
+#    eventlooprecieverfetch.h
     
 RESOURCES +=
 

@@ -12,6 +12,11 @@
 <node name="/">
     <interface name="org.salvum.DecodrCtrl">
     
+<!-- TODO:
+    add: acceptedBlocks(int clusterNo, int blockOffset, list<pixel> pixels)
+    add: rejectedBlocks(int clusterNo, int blockOffset, list<pixel> pixels)
+    upd: remove params from fetchAtEnd
+-->
         <method name="fetchAtEnd">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
 

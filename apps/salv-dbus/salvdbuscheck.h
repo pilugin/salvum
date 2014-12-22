@@ -1,10 +1,12 @@
 #ifndef SALV_DBUS_CHECK_H
 #define SALV_DBUS_CHECK_H
 
-#include <core3/check.h>
+#include <QObject>
+#include <jpeg/common.h>
+#include <core-3/check.h>
 #include <common/types.h>
 
-class SalvDbusCheck : public Core3::Check
+class SalvDbusCheck : public QObject, public Core3::Check<Jpeg::DecodrState>
 {
     Q_OBJECT
 public:
@@ -22,8 +24,8 @@ public slots:
     void breakEventLoop(int retcod =-1);
     
 protected:
-    FrameDescription_itr chooseBaseline(const FrameDescription_v &frames);
-    void doAcceptFrame(const Common::Clusters &pendingClusters, const Core::DecodrFrame &frame);
+    SelectResult select(const Core3::Archive<Jpeg::DecodrState> &archive);
+
 private:        
     class Private;
     Private *m_d;
