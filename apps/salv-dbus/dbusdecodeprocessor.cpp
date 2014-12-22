@@ -15,6 +15,7 @@
 
 using namespace Log;
 
+#if 0
 class DbusDecodeProcessor::Private 
 {
 public:
@@ -62,6 +63,36 @@ public:
     Jpeg::ThumbnailCreator  *thumb;
 
     QString                 wspacePath;
+};
+
+#endif
+
+class DbusDecodeProcessor::Private
+{
+public:
+    Private(const QString &service, const QString &path, const QDBusConnection &connection, DbusDecodeProcessor *parent)
+    : dbus(new org::salvum::DecodrCtrl(service, path, connection, parent))
+    {
+        jpegCheckr = new Jpeg::AdvancedChecker;
+        decodr = new Jpeg::PicoJpegDecodr( jpegCheckr );
+        fetch = new EventLoopRecieverFetch;
+
+    }
+
+    ~Private()
+    {
+        delete decodr;
+        delete fetch;
+    }
+
+    org::salvum::DecodrCtrl *dbus;
+
+    Jpeg::AdvancedChecker   *jpegCheckr;
+    Jpeg::PicoJpegDecodr    *decodr;
+    EventLoopRecieverFetch  *fetch;
+
+    QString                 wspacePath;
+
 };
 
 /////////////////////////////////////////////////

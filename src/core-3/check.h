@@ -11,7 +11,7 @@ template <class DecodrState>
 class Check
 {
 public:
-    typedef QPair<int, DecodrState> SelectResult;
+    typedef QPair<int /*clusterNo*/, DecodrState> SelectResult;
 
     virtual ~Check() {}
 

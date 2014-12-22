@@ -10,7 +10,7 @@ bool Decoding() {
     D.init();                       // { create thread for picojpeg }
     while (!D.initOk()) {
         D.feed(F.fetch());
-        A.addInitFrame(F.lastFetched());        
+        A.addNewFrame(F.lastFetched());        
     }        
         
     if (!D.decodOk())
@@ -43,7 +43,7 @@ bool Decoding() {
         if (D.decodOk()) {       
             if (D.checkOk()) 
                 fit = true;
-            A.setLastFrameState(D.state(), D.checkOk());
+            A.setNewState(D.state(), D.checkOk());
         }
         if (!fit) {
             D.load( A.lastOkState() );

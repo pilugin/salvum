@@ -6,21 +6,15 @@ static struct DBusMetatypesRegistrer
 {
     DBusMetatypesRegistrer()
     {
-        qRegisterMetaType<Common::Pixmap>("Common::Pixmap");
         qRegisterMetaType<Common::ImageInfo>("Common::ImageInfo");
         qRegisterMetaType<Common::DecodedClusterInfo>("Common::DecodedClusterInfo");
-        qRegisterMetaType<Common::DecodedClusters>("Common::DecodedClusters");
-        qRegisterMetaType<Common::RejectedClusterInfo>("Common::RejectedClusterInfo");
-        qRegisterMetaType<Common::RejectedClusters>("Common::RejectedClusters");
+        qRegisterMetaType<Common::Pixels>("Common::Pixels");
         qRegisterMetaType<Common::Result>("Common::Result");
         qRegisterMetaType<Common::BitmapInfo>("Common::BitmapInfo");
 
-        qDBusRegisterMetaType<Common::Pixmap>();
         qDBusRegisterMetaType<Common::ImageInfo>();
         qDBusRegisterMetaType<Common::DecodedClusterInfo>();
-        qDBusRegisterMetaType<Common::DecodedClusters>();
-        qDBusRegisterMetaType<Common::RejectedClusterInfo>();
-        qDBusRegisterMetaType<Common::RejectedClusters>();
+        qDBusRegisterMetaType<Common::Pixels>();
         qDBusRegisterMetaType<Common::Result>();
         qDBusRegisterMetaType<Common::BitmapInfo>();
     }
@@ -87,22 +81,6 @@ QDBusArgument &operator<<(QDBusArgument &stream, const Common::DecodedClusterInf
 {
     stream.beginStructure();
     stream << dc.clusterNo << dc.blockBegin << dc.blockEnd;        
-    stream.endStructure();
-    return stream;
-}
-
-QDBusArgument &operator<<(QDBusArgument &stream, const Common::RejectedClusterInfo &rc)
-{
-    stream.beginStructure();
-    stream << rc.clusterNo << rc.blockBegin << rc.pixels;        
-    stream.endStructure();
-    return stream;
-}
-
-QDBusArgument &operator<<(QDBusArgument &stream, const Common::Pixmap &pixmap)
-{
-    stream.beginStructure();
-    stream << pixmap.width << pixmap.height << pixmap.pixels;
     stream.endStructure();
     return stream;
 }

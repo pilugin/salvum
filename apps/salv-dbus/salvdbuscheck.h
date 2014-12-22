@@ -13,12 +13,10 @@ public:
     explicit SalvDbusCheck(QObject *parent);    
     ~SalvDbusCheck();
     
-    bool isWaiting() const;
-    void setWorkspacePath(const QString &path);
+    bool isWaiting() const;    
 signals: 
-    void atEnd(const Common::DecodedClusters &decodedClusters, const Common::RejectedClusters &rejectedClusters, const Common::ImageInfo &ii);
-    void progress(int clustersDecoded, int blocksDecoded, int blocksTotal);
-    
+    void atEnd();
+
 public slots:
     void baseline(int clusterNo);
     void breakEventLoop(int retcod =-1);

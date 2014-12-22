@@ -20,26 +20,7 @@ struct DecodedClusterInfo
     int blockEnd;
 };
 
-typedef QList<DecodedClusterInfo> DecodedClusters;
-
-struct RejectedClusterInfo
-{
-    int clusterNo;
-    int blockBegin; //< offset of @property pixels
-    QList<int> pixels; //< pixels block by block { (b0x0, b0y0), (b0x1, b0y0),.. (b0x7, b0y7),.. (bNx7, bNy6), (bNx7, bNy7) }
-    
-    QList<int>::const_iterator block(int blockNumber) const;
-    int pixel(int blockNumber, int x, int y) const;
-};
-
-typedef QList<RejectedClusterInfo> RejectedClusters;
-
-struct Pixmap
-{
-    int width;
-    int height;
-    QList<int> pixels;
-};
+typedef QList<int> Pixels;
 
 struct ImageInfo
 {
@@ -65,8 +46,7 @@ struct BitmapInfo
     int decodable;
     int starts; //< [i-1]!=1 && [i]==1    
     
-    BitmapInfo();
-    
+    BitmapInfo();    
 };
 
 }
@@ -74,10 +54,7 @@ struct BitmapInfo
 Q_DECLARE_METATYPE(Common::Cluster)
 Q_DECLARE_METATYPE(Common::Clusters)
 Q_DECLARE_METATYPE(Common::DecodedClusterInfo)
-Q_DECLARE_METATYPE(Common::DecodedClusters)
-Q_DECLARE_METATYPE(Common::RejectedClusterInfo)
-Q_DECLARE_METATYPE(Common::RejectedClusters)
-Q_DECLARE_METATYPE(Common::Pixmap)
+Q-DECLARE_METATYPE(Common::Pixels);
 Q_DECLARE_METATYPE(Common::ImageInfo)
 Q_DECLARE_METATYPE(Common::Result)
 Q_DECLARE_METATYPE(Common::BitmapInfo)

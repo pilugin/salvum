@@ -2,7 +2,8 @@
 #include <QtCore/QEventLoop>
 
 EventLoopRecieverFetch::EventLoopRecieverFetch(QObject *parent)
-: IPCFetch::RecieverFetch(parent)
+: QObject(parent)
+, IPCFetch::RecieverFetch()
 , mEventLoop(new QEventLoop(this))
 {
 }

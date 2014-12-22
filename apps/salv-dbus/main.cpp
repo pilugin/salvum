@@ -1,4 +1,4 @@
-#include "org.salvum.DecodrHub.h"
+#include <dbus/org.salvum.DecodrHub.h>
 #include "dbusdecodeprocessor.h"
 
 #include <util/filelogger.h>

@@ -173,6 +173,7 @@ PicoJpegDecodr::Private::~Private()
     cond.wakeAll();
 
     thread->wait();
+    delete checkr;
 }
 
 void PicoJpegDecodr::Private::threadFunc()

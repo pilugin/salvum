@@ -35,12 +35,20 @@ public:
 
 protected:
     virtual void onInitialized();
+    virtual void onStateSet(const Common::Cluster &cluster, const DecodrState &decodrState, bool isOk);
     virtual void archiveBaselined(const Common::Cluster &cluster);
 
 private:
     QList<ClusterStored> mPendingClusters;
     bool mInitialized;
 };
+
+/////////////////////////////////////////////////////////////
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////
 
@@ -56,6 +64,11 @@ Archive<DecodrState>::~Archive()
 
 template <class DecodrState>
 void Archive<DecodrState>::onInitialized()
+{
+}
+
+template <class DecodrState>
+void Archive<DecodrState>::onStateSet(const Common::Cluster &/*cluster*/, const DecodrState &/*decodrState*/, bool /*isOk*/)
 {
 }
 
@@ -77,6 +90,8 @@ void Archive<DecodrState>::setNewState(const DecodrState &decodrState, bool isOk
     mPendingClusters.back().decodrState = decodrState;
     mPendingClusters.back().decodrStateSet = true;
     mPendingClusters.back().isOk = isOk;
+
+    onStateSet(mPendingClusters.back().cluster, decodrState, isOk);
 }
 
 template <class DecodrState>

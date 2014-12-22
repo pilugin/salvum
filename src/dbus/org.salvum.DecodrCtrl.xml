@@ -12,43 +12,37 @@
 <node name="/">
     <interface name="org.salvum.DecodrCtrl">
     
-<!-- TODO:
-    add: acceptedBlocks(int clusterNo, int blockOffset, list<pixel> pixels)
-    add: rejectedBlocks(int clusterNo, int blockOffset, list<pixel> pixels)
-    upd: remove params from fetchAtEnd
--->
         <method name="fetchAtEnd">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
-
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="Common::DecodedClusters"/>
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="Common::RejectedClusters"/>
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In2" value="Common::ImageInfo"/>
-
-            <arg type="a(iii)" name="decodedClusters" direction="in"/>
-            <arg type="a(iiai)" name="rejectedClusters" direction="in"/>
-            <arg type="(iis)" name="imageInfo" direction="in"/>
         </method>
         
-        <method name="decodingEnd">
+        <method name="decodingEnd">        
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
-        
+            
             <arg type="b" name="success" direction="in"/>
         </method>
         
         <method name="thumbnailCreated">
-            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
+            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>            
             
             <arg type="s" name="path" direction="in"/>
         </method>
-        
-        <method name="progress">
-            <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/>
-            
-            <arg type="i" name="clustersDecoded" direction="in"/>
-            <arg type="i" name="blocksDecoded" direction="in"/>
-            <arg type="i" name="blocksTotal" direction="in"/>
-        </method>
 
+        <method name="initialized">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="Common::ImageInfo"/>
+        
+            <arg type="(iis)" name="imageInfo" direction="in"/>
+        </method>
+        
+        <method name="clusterDecoded">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="Common::DecodedClusterInfo"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="Common::Pixels"/>
+        
+            <arg type="(iii)" name="clusterInfo" direction="in"/>
+            <arg type="a(i)" name="blocks" direction="in"/>
+            <arg type="b" name="accepted" direction="in"/>
+        </method>
+        
         <method name="heartbeat">
             <annotation name="org.freedesktop.DBus.Method.NoReply" value="true"/> 
         </method>

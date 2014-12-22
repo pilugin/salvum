@@ -23,8 +23,8 @@ Reader<T>::~Reader()
 
 template <class T>
 bool Reader<T>::init(const char *name)
-{
-    if (isValid())
+{    
+    if (isValid() || !name)
         return false;
         
     mMem = ShMem::attach(name);
